@@ -1,0 +1,84 @@
+#' Transfer Learning for Survival Analysis via Ordinary Differential Equations
+#' @param data a data frame containing the variables in the model.
+#' @param fit_source a survode object fitted to the source data.
+#' @param penalty a character string specifying the penalty function.
+#'  The default is "lasso". Other options are "MCP" and "SCAD".
+#' @param lambda a non-negative value specifying the penalty parameter. The
+#'  default is 0.
+#' @param gamma a non-negative value specifying the penalty parameter. The
+#' default is 3.7 for SCAD and 1.5 for MCP.
+#' @param init a numeric vector specifying the initial value of the
+#'  coefficients. The default is a zero vector.
+#' @param control Object of class \link{survtrans_control} containing
+#'   control parameters for the fitting algorithm. Default is
+#'  \code{survtrans_control(...)}.
+#' @param ... Other arguments passed to \code{\link{survtrans_control}}.
+#' @import survode
+#' @export
+#' @examples
+#' library(survode)
+#' library(survtrans)
+#' fit_src <- survode(Surv(time, status) ~ ., data = sim1_src, df = 10)
+#' survtrans(sim1_trg, fit_src, lambda = 0.1)
+survtrans <- function(
+    data, fit_source, penalty = "lasso", lambda = 0, gamma = NULL,
+    init, control, ...) {
+  if (missing(data)) stop("a data argument is required")
+  if (!inherits(fit_source, "survode")) {
+    stop("fit_source must be survode object")
+  }
+  # TODO: check formula, coefficient and data
+  form_src <- fit_source$formula
+  coef.src <- fit_source$coefficients
+
+  mf <- stats::model.frame(form_src, data)
+  y <- stats::model.response(mf)
+  x <- stats::model.matrix(form_src, data)
+  x <- x[, !colnames(x) %in% "(Intercept)"]
+  if (!is.matrix(x)) x <- as.matrix(x)
+  nvar <- ncol(x)
+  if (missing(init)) init <- rep(0, nvar)
+  if (missing(control)) control <- survtrans_control(...)
+
+  if (is.null(gamma)) {
+    gamma <- switch(penalty,
+      MCP = 1.5,
+      SCAD = 3.7,
+      1
+    )
+  }
+
+  time <- y[, 1]
+  status <- y[, 2]
+  cbh <- stats::predict(fit_source, type = "hazard", time = time)$cumhaz
+
+  eta <- init
+  iter <- 0
+  repeat {
+    iter <- iter + 1
+    eta_old <- eta
+    offset <- x %*% eta
+    w <- cbh * exp(offset + x %*% coef.src$beta)
+    z <- offset + status / w - 1
+    for (j in 1:nvar) {
+      xr <- mean(x[, j] * w * (z - x[, -j] %*% eta[-j]))
+      v <- mean(w * x[, j]**2)
+      eta[j] <- soft_threshold(xr, v, penalty, lambda, gamma)
+    }
+    if (max(abs(eta - eta_old)) <= control$eps || iter >= control$maxit) break
+  }
+
+  fit <- list()
+  coefficients <- coef.src
+  coefficients$beta <- coefficients$beta + eta
+  coefficients$eta <- eta
+
+  fit$coefficients <- coefficients
+  fit$penalty <- penalty
+  fit$lambda <- lambda
+  fit$gamma <- gamma
+  fit$iter <- iter
+  fit$formula <- form_src
+
+  return(fit)
+}

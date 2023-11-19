@@ -1,0 +1,23 @@
+Package: survtrans
+Title: Transfer Learning for Survival Analysis
+Version: 0.0.0.9000
+Authors@R: 
+    person("Ziyang", "Gong", , "gongziyang@swufe.edu.cn", role = c("aut", "cre"))
+Description: What the package does (one paragraph).
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Depends: 
+    R (>= 2.10),
+    survode (>= 0.0.0.9000)
+Imports: 
+    stats
+Remotes: 
+    SignorinoY/survode
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+URL: https://github.com/SignorinoY/survtrans
+BugReports: https://github.com/SignorinoY/survtrans/issues
+LazyData: true

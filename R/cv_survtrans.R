@@ -59,7 +59,7 @@ cv_survtrans <- function(
 
   time <- y[, 1]
   status <- y[, 2]
-  cbh <- stats::predict(fit_source, type = "hazard", time = time)$cumhaz
+  # cbh <- stats::predict(fit_source, type = "hazard", time = time)$cumhaz
 
   # TODO: cannot guarantee the coefficients be zero
   zw0 <- status # - cbh * exp(x %*% coef_src$beta)

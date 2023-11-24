@@ -13,7 +13,7 @@
 #'   control parameters for the fitting algorithm. Default is
 #'  \code{survtrans_control(...)}.
 #' @param ... Other arguments passed to \code{\link{survtrans_control}}.
-#' @return a cv.survtran object.
+#' @return a cv_survtran object.
 #' @import survode
 #' @export
 #' @examples
@@ -104,6 +104,6 @@ cv_survtrans <- function(
     coefficients = coefficients, lambdas = lambdas, etas = etas,
     cvm = cvm, cvsd = cvsd
   )
-  class(fit) <- "cv.survtran"
+  class(fit) <- "cv_survtran"
   fit
 }

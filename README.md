@@ -318,7 +318,7 @@ cv_survtrans(sim1_trg, fit_src, penalty = "SCAD")
 #>  [97] 4.214101 4.214101 4.214101 4.214101
 #> 
 #> attr(,"class")
-#> [1] "cv.survtran"
+#> [1] "cv_survtran"
 ```
 
 ## Code of Conduct

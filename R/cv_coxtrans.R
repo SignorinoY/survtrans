@@ -1,35 +1,33 @@
-#' Cross-validation for \code{survtran}
+#' Cross-validation for \code{coxtrans}
 #' @param data a data frame containing the variables in the model.
-#' @param fit_source a survode object.
-#' @param penalty a character string specifying the type of penalty.
-#'  Possible values are \code{"lasso"}, \code{"MCP"} and \code{"SCAD"}.
-#' @param gamma a numeric value specifying the tuning parameter for MCP or SCAD.
+#' @param fit_source a coxph object fitted to the source data.
+#' @param penalty a character string specifying the penalty function.
+#' The default is "lasso". Other options are "MCP" and "SCAD".
+#' @param gamma a non-negative value specifying the penalty parameter. The
+#' default is 3.7 for SCAD and 1.5 for MCP.
 #' @param nfolds an integer specifying the number of folds.
 #' @param nlambdas an integer specifying the number of lambda values.
 #' @param lambda_min_ratio a numeric value specifying the minimum lambda value
 #' as a fraction of lambda_max.
 #' @param seed an integer specifying the random seed.
 #' @param control Object of class \link{survtrans_control} containing
-#'   control parameters for the fitting algorithm. Default is
-#'  \code{survtrans_control(...)}.
+#' control parameters for the fitting algorithm. Default is
+#' \code{survtrans_control(...)}.
 #' @param ... Other arguments passed to \code{\link{survtrans_control}}.
-#' @return a cv_survtran object.
-#' @import survode
+#' @return a cv_coxtrans object.
 #' @export
 #' @examples
-#' library(survode)
+#' library(survival)
 #' library(survtrans)
-#' fit_src <- survode(Surv(time, status) ~ ., data = sim1_src, df = 10)
-#' cv_survtrans(sim1_trg, fit_src)
-cv_survtrans <- function(
+#' fit_src <- coxph(Surv(time, status) ~ ., data = sim1_src)
+#' cv_coxtrans(sim1_trg, fit_src)
+cv_coxtrans <- function(
     data, fit_source, penalty = "lasso", gamma = NULL, nfolds = 10,
     nlambdas = 100, lambda_min_ratio = NULL, seed = 0, control, ...) {
   if (missing(data)) stop("a data argument is required")
-  if (!inherits(fit_source, "survode")) {
-    stop("fit_source must be survode object")
-  }
-
-  # TODO: check formula, coefficient and data
+  # if (!inherits(fit_source, "survode")) {
+  #   stop("fit_source must be survode object")
+  # }
   form_src <- fit_source$formula
   coef_src <- fit_source$coefficients
 
@@ -55,11 +53,19 @@ cv_survtrans <- function(
 
   time <- y[, 1]
   status <- y[, 2]
-  cbh <- stats::predict(fit_source, type = "hazard", time = time)$cumhaz
 
-  # TODO: cannot guarantee the coefficients be zero
-  zw0 <- status - cbh * exp(x %*% coef_src$beta)
-  lambda_max <- max(colMeans(sweep(x, MARGIN = 1, zw0, `*`)))
+  sorted <- order(time, decreasing = TRUE)
+  time <- time[sorted]
+  status <- status[sorted]
+  x <- x[sorted, ]
+  offset <- x %*% coef_src
+  phi <- exp(offset)
+  risk_phi <- cumsum(phi)
+  zw0 <- sapply(1:nvar, function(i) {
+    idx <- time < time[i]
+    status[i] - sum(phi[i] / risk_phi[idx])
+  })
+  lambda_max <- max(colMeans(sweep(x, MARGIN = 2, zw0, `*`)))
   lambda_min <- lambda_max * lambda_min_ratio
   lambdas <- exp(seq(log(lambda_max), log(lambda_min), length.out = nlambdas))
 
@@ -70,17 +76,18 @@ cv_survtrans <- function(
   for (k in 1:nfolds) {
     eta0 <- rep(0, nvar)
     for (i in seq_along(lambdas)) {
-      fit_k <- survtrans(
+      fit_k <- coxtrans(
         data[idx != k, ], fit_source,
         penalty = penalty, lambda = lambdas[i], gamma = gamma,
         init = eta0, control = control
       )
       etas[i, ] <- etas[i, ] + fit_k$coefficients$eta / nfolds
-      criterions[i, k] <- loss_mle(data[idx == k, ], cbh[idx == k], fit_k)
+      criterions[i, k] <-
+        loss_mple(data, fit_k) - loss_mple(data[idx != k, ], fit_k)
     }
   }
   for (i in seq_along(lambdas)) {
-    etas[i, ] <- survtrans(
+    etas[i, ] <- coxtrans(
       data, fit_source,
       penalty = penalty, lambda = lambdas[i], gamma = gamma,
       init = etas[i, ], control = control
@@ -89,11 +96,11 @@ cv_survtrans <- function(
 
   cvm <- rowMeans(criterions)
   cvsd <- apply(criterions, 1, stats::sd)
-  lambda_opt <- lambdas[which.max(cvm)]
-  eta_opt <- etas[which.max(cvm), ]
+  lambda_opt <- lambdas[which.min(cvm)]
+  eta_opt <- etas[which.min(cvm), ]
 
-  coefficients <- coef_src
-  coefficients$beta <- coefficients$beta + eta_opt
+  coefficients <- list()
+  coefficients$beta <- coef_src + eta_opt
   coefficients$eta <- eta_opt
   coefficients$penalty <- penalty
   coefficients$lambda <- lambda_opt
@@ -103,6 +110,6 @@ cv_survtrans <- function(
     coefficients = coefficients, lambdas = lambdas, etas = etas,
     cvm = cvm, cvsd = cvsd, formula = form_src
   )
-  class(fit) <- "cv_survtran"
+  class(fit) <- "cv_coxtrans"
   fit
 }

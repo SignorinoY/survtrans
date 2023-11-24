@@ -7,12 +7,16 @@ loss_mle <- function(data, cbh, fit) {
   x <- x[, !colnames(x) %in% "(Intercept)"]
   if (!is.matrix(x)) x <- as.matrix(x)
 
-  gamma <- coef$gamma
+  if (is.null(coef$gamma)) {
+    bh <- y[, 1] ** 2
+  } else {
+       gamma <- coef$gamma
   b <- splines::bs(y[, 1],
     knots = gamma$knots, Boundary.knots = gamma$Boundary.knots,
     degree = gamma$degree, intercept = TRUE
   )
   bh <- exp(b %*% gamma$alpha)
+  }
 
   sum(y[, 2] * (log(bh) + x %*% coef$beta) - cbh * exp(x %*% coef$beta))
 }

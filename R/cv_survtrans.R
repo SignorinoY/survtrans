@@ -59,7 +59,12 @@ cv_survtrans <- function(
 
   time <- y[, 1]
   status <- y[, 2]
-  # cbh <- stats::predict(fit_source, type = "hazard", time = time)$cumhaz
+  if (is.null(cbh_func)) {
+    cbh <- stats::predict(fit_source, type = "hazard", time = time)$cumhaz
+  } else {
+    if (!is.function(cbh_func)) stop("cbh_func must be a function")
+    cbh <- cbh_func(time)
+  }
 
   # TODO: cannot guarantee the coefficients be zero
   zw0 <- status # - cbh * exp(x %*% coef_src$beta)

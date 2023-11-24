@@ -4,13 +4,16 @@
 #' @param penalty a character string specifying the type of penalty.
 #'  Possible values are \code{"lasso"}, \code{"MCP"} and \code{"SCAD"}.
 #' @param gamma a numeric value specifying the tuning parameter for MCP or SCAD.
+#' @param cbh_func a function specifying the cumulative baseline hazard. The
+#'  default is NULL, which means the cumulative baseline hazard is estimateds
+#'  from the survode object fitted to the source data.
 #' @param nfolds an integer specifying the number of folds.
 #' @param nlambdas an integer specifying the number of lambda values.
 #' @param lambda_min_ratio a numeric value specifying the minimum lambda value
-#' as a fraction of lambda_max.
+#'  as a fraction of lambda_max.
 #' @param seed an integer specifying the random seed.
 #' @param control Object of class \link{survtrans_control} containing
-#'   control parameters for the fitting algorithm. Default is
+#'  control parameters for the fitting algorithm. Default is
 #'  \code{survtrans_control(...)}.
 #' @param ... Other arguments passed to \code{\link{survtrans_control}}.
 #' @return a cv_survtran object.
@@ -22,8 +25,9 @@
 #' fit_src <- survode(Surv(time, status) ~ ., data = sim1_src, df = 10)
 #' cv_survtrans(sim1_trg, fit_src)
 cv_survtrans <- function(
-    data, fit_source, penalty = "lasso", gamma = NULL, nfolds = 10,
-    nlambdas = 100, lambda_min_ratio = NULL, seed = 0, control, ...) {
+    data, fit_source, penalty = "lasso", gamma = NULL, cbh_func = NULL,
+    nfolds = 10, nlambdas = 100, lambda_min_ratio = NULL, seed = 0,
+    control, ...) {
   if (missing(data)) stop("a data argument is required")
   if (!inherits(fit_source, "survode")) {
     stop("fit_source must be survode object")
@@ -73,7 +77,7 @@ cv_survtrans <- function(
       fit_k <- survtrans(
         data[idx != k, ], fit_source,
         penalty = penalty, lambda = lambdas[i], gamma = gamma,
-        init = eta0, control = control
+        cbh_func = cbh_func, init = eta0, control = control
       )
       etas[i, ] <- etas[i, ] + fit_k$coefficients$eta / nfolds
       criterions[i, k] <- loss_mle(data[idx == k, ], cbh[idx == k], fit_k)
@@ -83,7 +87,7 @@ cv_survtrans <- function(
     etas[i, ] <- survtrans(
       data, fit_source,
       penalty = penalty, lambda = lambdas[i], gamma = gamma,
-      init = etas[i, ], control = control
+      cbh_func = cbh_func, init = etas[i, ], control = control
     )$coefficients$eta
   }
 

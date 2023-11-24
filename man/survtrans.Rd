@@ -10,6 +10,7 @@ survtrans(
   penalty = "lasso",
   lambda = 0,
   gamma = NULL,
+  cbh_func = NULL,
   init,
   control,
   ...
@@ -28,6 +29,10 @@ default is 0.}
 
 \item{gamma}{a non-negative value specifying the penalty parameter. The
 default is 3.7 for SCAD and 1.5 for MCP.}
+
+\item{cbh_func}{a function specifying the cumulative baseline hazard. The
+default is NULL, which means the cumulative baseline hazard is estimateds
+from the survode object fitted to the source data.}
 
 \item{init}{a numeric vector specifying the initial value of the
 coefficients. The default is a zero vector.}

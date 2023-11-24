@@ -6,11 +6,14 @@
 #' @param lambda a non-negative value specifying the penalty parameter. The
 #'  default is 0.
 #' @param gamma a non-negative value specifying the penalty parameter. The
-#' default is 3.7 for SCAD and 1.5 for MCP.
+#'  default is 3.7 for SCAD and 1.5 for MCP.
+#' @param cbh_func a function specifying the cumulative baseline hazard. The
+#'  default is NULL, which means the cumulative baseline hazard is estimateds
+#'  from the survode object fitted to the source data.
 #' @param init a numeric vector specifying the initial value of the
 #'  coefficients. The default is a zero vector.
 #' @param control Object of class \link{survtrans_control} containing
-#'   control parameters for the fitting algorithm. Default is
+#'  control parameters for the fitting algorithm. Default is
 #'  \code{survtrans_control(...)}.
 #' @param ... Other arguments passed to \code{\link{survtrans_control}}.
 #' @import survode
@@ -22,7 +25,7 @@
 #' survtrans(sim1_trg, fit_src, lambda = 0.1)
 survtrans <- function(
     data, fit_source, penalty = "lasso", lambda = 0, gamma = NULL,
-    init, control, ...) {
+    cbh_func = NULL, init, control, ...) {
   if (missing(data)) stop("a data argument is required")
   if (!inherits(fit_source, "survode")) {
     stop("fit_source must be survode object")
@@ -50,7 +53,12 @@ survtrans <- function(
 
   time <- y[, 1]
   status <- y[, 2]
-  cbh <- stats::predict(fit_source, type = "hazard", time = time)$cumhaz
+  if (is.null(cbh_func)) {
+    cbh <- stats::predict(fit_source, type = "hazard", time = time)$cumhaz
+  } else {
+    if (!is.function(cbh_func)) stop("cbh_func must be a function")
+    cbh <- cbh_func(time)
+  }
   offset <- x %*% coef_src$beta
 
   eta <- init

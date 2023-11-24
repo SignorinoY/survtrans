@@ -29,7 +29,7 @@ survtrans <- function(
   }
   # TODO: check formula, coefficient and data
   form_src <- fit_source$formula
-  coef.src <- fit_source$coefficients
+  coef_src <- fit_source$coefficients
 
   mf <- stats::model.frame(form_src, data)
   y <- stats::model.response(mf)
@@ -51,15 +51,16 @@ survtrans <- function(
   time <- y[, 1]
   status <- y[, 2]
   cbh <- stats::predict(fit_source, type = "hazard", time = time)$cumhaz
+  offset <- x %*% coef_src$beta
 
   eta <- init
   iter <- 0
   repeat {
     iter <- iter + 1
     eta_old <- eta
-    offset <- x %*% eta
-    w <- cbh * exp(offset + x %*% coef.src$beta)
-    z <- offset + status / w - 1
+    theta <- x %*% eta
+    w <- cbh * exp(theta + offset)
+    z <- theta + status / w - 1
     for (j in 1:nvar) {
       xr <- mean(x[, j] * w * (z - x[, -j] %*% eta[-j]))
       v <- mean(w * x[, j]**2)
@@ -69,7 +70,7 @@ survtrans <- function(
   }
 
   fit <- list()
-  coefficients <- coef.src
+  coefficients <- coef_src
   coefficients$beta <- coefficients$beta + eta
   coefficients$eta <- eta
 

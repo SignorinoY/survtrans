@@ -58,7 +58,7 @@ cv_survtrans <- function(
   cbh <- stats::predict(fit_source, type = "hazard", time = time)$cumhaz
 
   # TODO: cannot guarantee the coefficients be zero
-  zw0 <- status - cbh * exp(x %*% coef_src$beta)
+  zw0 <- status # - cbh * exp(x %*% coef_src$beta)
   lambda_max <- max(colMeans(sweep(x, MARGIN = 1, zw0, `*`)))
   lambda_min <- lambda_max * lambda_min_ratio
   lambdas <- exp(seq(log(lambda_max), log(lambda_min), length.out = nlambdas))

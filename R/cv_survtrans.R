@@ -12,10 +12,10 @@
 #' @param lambda_min_ratio a numeric value specifying the minimum lambda value
 #'  as a fraction of lambda_max.
 #' @param seed an integer specifying the random seed.
-#' @param control Object of class \link{survtrans_control} containing
+#' @param control Object of class \link{survtrans.control} containing
 #'  control parameters for the fitting algorithm. Default is
-#'  \code{survtrans_control(...)}.
-#' @param ... Other arguments passed to \code{\link{survtrans_control}}.
+#'  \code{survtrans.control(...)}.
+#' @param ... Other arguments passed to \code{\link{survtrans.control}}.
 #' @return a cv_survtran object.
 #' @import survode
 #' @export
@@ -55,7 +55,7 @@ cv_survtrans <- function(
   if (is.null(lambda_min_ratio)) {
     lambda_min_ratio <- ifelse(nobs < nvar, 0.01, 1e-04)
   }
-  if (missing(control)) control <- survtrans_control(...)
+  if (missing(control)) control <- survtrans.control(...)
 
   time <- y[, 1]
   status <- y[, 2]

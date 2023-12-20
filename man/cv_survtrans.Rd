@@ -41,11 +41,11 @@ as a fraction of lambda_max.}
 
 \item{seed}{an integer specifying the random seed.}
 
-\item{control}{Object of class \link{survtrans_control} containing
+\item{control}{Object of class \link{survtrans.control} containing
 control parameters for the fitting algorithm. Default is
-\code{survtrans_control(...)}.}
+\code{survtrans.control(...)}.}
 
-\item{...}{Other arguments passed to \code{\link{survtrans_control}}.}
+\item{...}{Other arguments passed to \code{\link{survtrans.control}}.}
 }
 \value{
 a cv_survtran object.

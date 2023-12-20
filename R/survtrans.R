@@ -12,11 +12,13 @@
 #'  from the survode object fitted to the source data.
 #' @param init a numeric vector specifying the initial value of the
 #'  coefficients. The default is a zero vector.
-#' @param control Object of class \link{survtrans_control} containing
+#' @param control Object of class \link{survtrans.control} containing
 #'  control parameters for the fitting algorithm. Default is
-#'  \code{survtrans_control(...)}.
-#' @param ... Other arguments passed to \code{\link{survtrans_control}}.
+#'  \code{survtrans.control(...)}.
+#' @param ... Other arguments passed to \code{\link{survtrans.control}}.
 #' @import survode
+#' @importFrom stats model.frame model.matrix model.response ave
+#' @importFrom survival Surv
 #' @export
 #' @examples
 #' library(survode)
@@ -41,7 +43,7 @@ survtrans <- function(
   if (!is.matrix(x)) x <- as.matrix(x)
   nvar <- ncol(x)
   if (missing(init)) init <- rep(0, nvar)
-  if (missing(control)) control <- survtrans_control(...)
+  if (missing(control)) control <- survtrans.control(...)
 
   if (is.null(gamma)) {
     gamma <- switch(penalty,

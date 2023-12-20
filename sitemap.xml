@@ -19,10 +19,7 @@
     <loc>/index.html</loc>
   </url>
   <url>
-    <loc>/reference/coxtrans.html</loc>
-  </url>
-  <url>
-    <loc>/reference/cv_coxtrans.html</loc>
+    <loc>/reference/cv_ncvcox.html</loc>
   </url>
   <url>
     <loc>/reference/cv_survtrans.html</loc>
@@ -31,15 +28,18 @@
     <loc>/reference/index.html</loc>
   </url>
   <url>
+    <loc>/reference/ncvcox.html</loc>
+  </url>
+  <url>
     <loc>/reference/sim1_src.html</loc>
   </url>
   <url>
     <loc>/reference/sim1_trg.html</loc>
   </url>
   <url>
-    <loc>/reference/survtrans.html</loc>
+    <loc>/reference/survtrans.control.html</loc>
   </url>
   <url>
-    <loc>/reference/survtrans_control.html</loc>
+    <loc>/reference/survtrans.html</loc>
   </url>
 </urlset>

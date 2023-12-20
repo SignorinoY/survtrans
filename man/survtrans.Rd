@@ -7,9 +7,9 @@
 survtrans(
   data,
   fit_source,
-  penalty = "lasso",
+  penalty = c("lasso", "MCP", "SCAD"),
+  gamma = switch(penalty, SCAD = 3.7, MCP = 3, 1),
   lambda = 0,
-  gamma = NULL,
   cbh_func = NULL,
   init,
   control,
@@ -24,11 +24,11 @@ survtrans(
 \item{penalty}{a character string specifying the penalty function.
 The default is "lasso". Other options are "MCP" and "SCAD".}
 
-\item{lambda}{a non-negative value specifying the penalty parameter. The
-default is 0.}
-
 \item{gamma}{a non-negative value specifying the penalty parameter. The
 default is 3.7 for SCAD and 1.5 for MCP.}
+
+\item{lambda}{a non-negative value specifying the penalty parameter. The
+default is 0.}
 
 \item{cbh_func}{a function specifying the cumulative baseline hazard. The
 default is NULL, which means the cumulative baseline hazard is estimateds
@@ -37,11 +37,11 @@ from the survode object fitted to the source data.}
 \item{init}{a numeric vector specifying the initial value of the
 coefficients. The default is a zero vector.}
 
-\item{control}{Object of class \link{survtrans.control} containing
+\item{control}{Object of class \link{survtrans_control} containing
 control parameters for the fitting algorithm. Default is
-\code{survtrans.control(...)}.}
+\code{survtrans_control(...)}.}
 
-\item{...}{Other arguments passed to \code{\link{survtrans.control}}.}
+\item{...}{Other arguments passed to \code{\link{survtrans_control}}.}
 }
 \description{
 Transfer Learning for Survival Analysis via Ordinary Differential Equations

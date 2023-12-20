@@ -37,11 +37,11 @@ default is 0.}
 \item{init}{a numeric vector specifying the initial value of the
 coefficients. The default is a zero vector.}
 
-\item{control}{Object of class \link{survtrans.control} containing
+\item{control}{Object of class \link{survtrans_control} containing
 control parameters for the fitting algorithm. Default is
-\code{survtrans.control(...)}.}
+\code{survtrans_control(...)}.}
 
-\item{...}{Other arguments passed to \code{\link{survtrans.control}}.}
+\item{...}{Other arguments passed to \code{\link{survtrans_control}}.}
 }
 \description{
 Non-convex penalized Cox proportional hazards model

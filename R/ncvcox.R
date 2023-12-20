@@ -12,10 +12,10 @@
 #' default is 3.7 for SCAD and 1.5 for MCP.
 #' @param init a numeric vector specifying the initial value of the
 #' coefficients. The default is a zero vector.
-#' @param control Object of class \link{survtrans.control} containing
+#' @param control Object of class \link{survtrans_control} containing
 #'  control parameters for the fitting algorithm. Default is
-#' \code{survtrans.control(...)}.
-#' @param ... Other arguments passed to \code{\link{survtrans.control}}.
+#' \code{survtrans_control(...)}.
+#' @param ... Other arguments passed to \code{\link{survtrans_control}}.
 #' @importFrom stats model.frame model.matrix model.response ave
 #' @export
 #' @examples
@@ -29,8 +29,6 @@ ncvcox <- function(
       1
     ), lambda = 0, init, control, ...) {
   penalty <- match.arg(penalty)
-  if (missing(formula)) stop("a formula argument is required")
-
   # Load X, y from formula and data
   mf <- model.frame(formula, data)
   y <- model.response(mf)
@@ -39,7 +37,6 @@ ncvcox <- function(
 
   # Standardize the covariates
   x <- scale(x)
-  x_center <- attr(x, "scaled:center")
   x_scale <- attr(x, "scaled:scale")
 
   # Properties of the data
@@ -68,7 +65,7 @@ ncvcox <- function(
   }
 
   # Check the control argument
-  if (missing(control)) control <- survtrans.control(...)
+  if (missing(control)) control <- survtrans_control(...)
 
   # Initialize the coefficients
   n_iterations <- 0

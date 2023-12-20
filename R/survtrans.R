@@ -12,10 +12,10 @@
 #'  from the survode object fitted to the source data.
 #' @param init a numeric vector specifying the initial value of the
 #'  coefficients. The default is a zero vector.
-#' @param control Object of class \link{survtrans.control} containing
+#' @param control Object of class \link{survtrans_control} containing
 #'  control parameters for the fitting algorithm. Default is
-#'  \code{survtrans.control(...)}.
-#' @param ... Other arguments passed to \code{\link{survtrans.control}}.
+#'  \code{survtrans_control(...)}.
+#' @param ... Other arguments passed to \code{\link{survtrans_control}}.
 #' @import survode
 #' @importFrom stats model.frame model.matrix model.response ave
 #' @importFrom survival Surv
@@ -26,12 +26,14 @@
 #' fit_src <- survode(Surv(time, status) ~ ., data = sim1_src, df = 10)
 #' survtrans(sim1_trg, fit_src, lambda = 0.1)
 survtrans <- function(
-    data, fit_source, penalty = "lasso", lambda = 0, gamma = NULL,
-    cbh_func = NULL, init, control, ...) {
-  if (missing(data)) stop("a data argument is required")
-  if (!inherits(fit_source, "survode")) {
-    stop("fit_source must be survode object")
-  }
+    data, fit_source, penalty = c("lasso", "MCP", "SCAD"),
+    gamma = switch(penalty,
+      SCAD = 3.7,
+      MCP = 3,
+      1
+    ), lambda = 0, cbh_func = NULL, init, control, ...) {
+  penalty <- match.arg(penalty)
+
   # TODO: check formula, coefficient and data
   form_src <- fit_source$formula
   coef_src <- fit_source$coefficients
@@ -43,15 +45,7 @@ survtrans <- function(
   if (!is.matrix(x)) x <- as.matrix(x)
   nvar <- ncol(x)
   if (missing(init)) init <- rep(0, nvar)
-  if (missing(control)) control <- survtrans.control(...)
-
-  if (is.null(gamma)) {
-    gamma <- switch(penalty,
-      MCP = 1.5,
-      SCAD = 3.7,
-      1
-    )
-  }
+  if (missing(control)) control <- survtrans_control(...)
 
   time <- y[, 1]
   status <- y[, 2]

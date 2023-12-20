@@ -12,10 +12,10 @@
 #' @param lambda_min_ratio a numeric value specifying the minimum lambda value
 #'  as a fraction of lambda_max.
 #' @param seed an integer specifying the random seed.
-#' @param control Object of class \link{survtrans.control} containing
+#' @param control Object of class \link{survtrans_control} containing
 #'  control parameters for the fitting algorithm. Default is
-#'  \code{survtrans.control(...)}.
-#' @param ... Other arguments passed to \code{\link{survtrans.control}}.
+#'  \code{survtrans_control(...)}.
+#' @param ... Other arguments passed to \code{\link{survtrans_control}}.
 #' @return a cv_survtran object.
 #' @import survode
 #' @export
@@ -25,14 +25,14 @@
 #' fit_src <- survode(Surv(time, status) ~ ., data = sim1_src, df = 10)
 #' cv_survtrans(sim1_trg, fit_src)
 cv_survtrans <- function(
-    data, fit_source, penalty = "lasso", gamma = NULL, cbh_func = NULL,
-    nfolds = 10, nlambdas = 100, lambda_min_ratio = NULL, seed = 0,
-    control, ...) {
-  if (missing(data)) stop("a data argument is required")
-  if (!inherits(fit_source, "survode")) {
-    stop("fit_source must be survode object")
-  }
-
+    data, fit_source, penalty = c("lasso", "MCP", "SCAD"),
+    gamma = switch(penalty,
+      SCAD = 3.7,
+      MCP = 3,
+      1
+    ), cbh_func = NULL, nfolds = 10, nlambdas = 100, lambda_min_ratio = NULL,
+    seed = 0, control, ...) {
+  penalty <- match.arg(penalty)
   # TODO: check formula, coefficient and data
   form_src <- fit_source$formula
   coef_src <- fit_source$coefficients
@@ -45,17 +45,10 @@ cv_survtrans <- function(
   nobs <- nrow(x)
   nvar <- ncol(x)
 
-  if (is.null(gamma)) {
-    gamma <- switch(penalty,
-      MCP = 1.5,
-      SCAD = 3.7,
-      1
-    )
-  }
   if (is.null(lambda_min_ratio)) {
     lambda_min_ratio <- ifelse(nobs < nvar, 0.01, 1e-04)
   }
-  if (missing(control)) control <- survtrans.control(...)
+  if (missing(control)) control <- survtrans_control(...)
 
   time <- y[, 1]
   status <- y[, 2]
@@ -67,7 +60,7 @@ cv_survtrans <- function(
   }
 
   # TODO: cannot guarantee the coefficients be zero
-  zw0 <- status # - cbh * exp(x %*% coef_src$beta)
+  zw0 <- status
   lambda_max <- max(colMeans(sweep(x, MARGIN = 1, zw0, `*`)))
   lambda_min <- lambda_max * lambda_min_ratio
   lambdas <- exp(seq(log(lambda_max), log(lambda_min), length.out = nlambdas))

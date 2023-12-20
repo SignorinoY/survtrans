@@ -7,8 +7,8 @@
 cv_survtrans(
   data,
   fit_source,
-  penalty = "lasso",
-  gamma = NULL,
+  penalty = c("lasso", "MCP", "SCAD"),
+  gamma = switch(penalty, SCAD = 3.7, MCP = 3, 1),
   cbh_func = NULL,
   nfolds = 10,
   nlambdas = 100,
@@ -41,11 +41,11 @@ as a fraction of lambda_max.}
 
 \item{seed}{an integer specifying the random seed.}
 
-\item{control}{Object of class \link{survtrans.control} containing
+\item{control}{Object of class \link{survtrans_control} containing
 control parameters for the fitting algorithm. Default is
-\code{survtrans.control(...)}.}
+\code{survtrans_control(...)}.}
 
-\item{...}{Other arguments passed to \code{\link{survtrans.control}}.}
+\item{...}{Other arguments passed to \code{\link{survtrans_control}}.}
 }
 \value{
 a cv_survtran object.

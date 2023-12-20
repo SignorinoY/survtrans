@@ -12,10 +12,10 @@
 #' @param lambda_min_ratio a numeric value specifying the minimum lambda value
 #' as a fraction of lambda_max.
 #' @param seed an integer specifying the random seed.
-#' @param control Object of class \link{survtrans.control} containing
+#' @param control Object of class \link{survtrans_control} containing
 #' control parameters for the fitting algorithm. Default is
-#' \code{survtrans.control(...)}.
-#' @param ... Other arguments passed to \code{\link{survtrans.control}}.
+#' \code{survtrans_control(...)}.
+#' @param ... Other arguments passed to \code{\link{survtrans_control}}.
 #' @return a cv_ncvcox object.
 #' @export
 cv_ncvcox <- function(
@@ -27,7 +27,6 @@ cv_ncvcox <- function(
     ), nfolds = 10, nlambdas = 100, lambda_min_ratio = NULL,
     seed = 0, control, ...) {
   penalty <- match.arg(penalty)
-  if (missing(formula)) stop("a formula argument is required")
 
   # Load X, y from formula and data
   mf <- model.frame(formula, data)
@@ -46,7 +45,7 @@ cv_ncvcox <- function(
   if (is.null(lambda_min_ratio)) {
     lambda_min_ratio <- ifelse(n_samples < n_features, 0.01, 1e-04)
   }
-  if (missing(control)) control <- survtrans.control(...)
+  if (missing(control)) control <- survtrans_control(...)
 
   # Determmine the lambda sequence
   coef_init <- rep(0, n_features)
@@ -78,7 +77,7 @@ cv_ncvcox <- function(
       )
       coef_init <- fit$coefficients
       coefs[i, ] <- coefs[i, ] + coef_init / nfolds
-      criterions[i, k] <- logLik(fit, data, offset) - logLik(fit, data[idx != k, ], offset[idx != k])
+      criterions[i, k] <- logLik(fit, data, offset) - fit$logLik
     }
   }
   for (i in seq_along(lambdas)) {

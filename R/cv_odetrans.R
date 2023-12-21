@@ -19,10 +19,9 @@
 #' @return a cv_survtran object.
 #' @export
 #' @examples
-#' library(survode)
-#' library(survtrans)
-#' fit_src <- survode(Surv(time, status) ~ ., data = sim1_src, df = 10)
-#' cv_odetrans(sim1_trg, fit_src)
+#' formula <- Surv(time, status) ~ . - group - id
+#' fit_src <- survode(formula, data = sim1[sim1$group == 1, ], df = 10)
+#' cv_fit <- cv_odetrans(sim1[sim1$group == 2, ], fit_src, lambda = 0.1)
 cv_odetrans <- function(
     data, fit_source, penalty = c("lasso", "MCP", "SCAD"),
     gamma = switch(penalty,

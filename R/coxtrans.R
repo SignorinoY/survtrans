@@ -18,6 +18,16 @@
 #' control parameters for the fitting algorithm. Default is
 #' \code{survtrans_control(...)}.
 #' @param ... Other arguments passed to \code{\link{survtrans_control}}.
+#' @return a coxtrans object.
+#' @export
+#' @examples
+#' library(survtrans)
+#' formula <- Surv(time, status) ~ . - group - id
+#' group <- as.factor(sim1$group)
+#' fit <- coxtrans(
+#'   formula, data = sim1, group = group, lambda1 = 0.02, penalty = "SCAD"
+#' )
+#' fit$coefficients
 coxtrans <- function(
     formula, data, group, lambda1 = 0, lambda2 = 0,
     penalty = c("lasso", "MCP", "SCAD"),
@@ -128,7 +138,7 @@ coxtrans <- function(
 
   # Return the fit
   fit <- list(
-    coef = coef_final, logLik = -record$best_loss,
+    coefficients = coef_final, logLik = -record$best_loss,
     penalty = penalty, lambda1 = lambda1, gamma = gamma,
     iter = record$n_iterations, formula = formula, call = match.call()
   )

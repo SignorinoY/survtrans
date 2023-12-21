@@ -37,10 +37,13 @@ This is a basic example which shows you how to solve a common problem:
 
 ```{r example}
 library(survtrans)
-library(survode)
 ## basic example code
-fit_src <- survode(Surv(time, status) ~ ., data = sim1_src, df = 10)
-cv_odetrans(sim1_trg, fit_src, penalty = "SCAD")
+formula <- Surv(time, status) ~ . - group - id
+group <- as.factor(sim1$group)
+fit <- coxtrans(
+  formula, data = sim1, group = group, lambda1 = 0.02, penalty = "SCAD"
+)
+fit$coefficients
 ```
 
 ## Code of Conduct

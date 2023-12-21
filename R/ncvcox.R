@@ -17,9 +17,6 @@
 #' \code{survtrans_control(...)}.
 #' @param ... Other arguments passed to \code{\link{survtrans_control}}.
 #' @export
-#' @examples
-#' library(survtrans)
-#' ncvcox(Surv(time, status) ~ ., data = sim1_src, lambda = 0.1)
 ncvcox <- function(
     formula, data, offset, penalty = c("lasso", "MCP", "SCAD"),
     gamma = switch(penalty,

@@ -47,6 +47,18 @@ control parameters for the fitting algorithm. Default is
 
 \item{...}{Other arguments passed to \code{\link{survtrans_control}}.}
 }
+\value{
+a coxtrans object.
+}
 \description{
 Transfer Learning of Multi-source for Cox proportional hazards model
+}
+\examples{
+library(survtrans)
+formula <- Surv(time, status) ~ . - group - id
+group <- as.factor(sim1$group)
+fit <- coxtrans(
+  formula, data = sim1, group = group, lambda1 = 0.02, penalty = "SCAD"
+)
+fit$coefficients
 }

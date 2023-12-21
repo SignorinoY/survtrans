@@ -49,6 +49,7 @@ Transfer Learning for Survival Analysis via Ordinary Differential Equations
 \examples{
 library(survode)
 library(survtrans)
-fit_src <- survode(Surv(time, status) ~ ., data = sim1_src, df = 10)
-odetrans(sim1_trg, fit_src, lambda = 0.1)
+formula <- Surv(time, status) ~ . - group - id
+fit_src <- survode(formula, data = sim1[sim1$group == 1, ], df = 10)
+fit <- odetrans(sim1[sim1$group == 2, ], fit_src, lambda = 0.1)
 }

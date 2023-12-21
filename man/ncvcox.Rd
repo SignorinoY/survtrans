@@ -46,7 +46,3 @@ control parameters for the fitting algorithm. Default is
 \description{
 Non-convex penalized Cox proportional hazards model
 }
-\examples{
-library(survtrans)
-ncvcox(Surv(time, status) ~ ., data = sim1_src, lambda = 0.1)
-}

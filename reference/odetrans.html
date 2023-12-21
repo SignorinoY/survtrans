@@ -24,7 +24,7 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/coxtrans-algorithm.html">The Algorithm of Coxtrans</a>
+    <a class="dropdown-item" href="../articles/simulate-data.html">The Generation of Simulated Survival Data</a>
   </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
@@ -118,53 +118,9 @@ control parameters for the fitting algorithm. Default is
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/SignorinoY/survode" class="external-link">survode</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/SignorinoY/survtrans" class="external-link">survtrans</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">fit_src</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survode/man/survode.html" class="external-link">survode</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">sim1_src</span>, df <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">odetrans</span><span class="op">(</span><span class="va">sim1_trg</span>, <span class="va">fit_src</span>, lambda <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $coefficients</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $coefficients$gamma</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $coefficients$gamma$alpha</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          1          2          3          4          5          6          7 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> -7.7179140 -2.5200193 -2.1594945  0.1540275  0.4985528  1.0876469  1.5330337 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          8          9         10 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1.9965076  2.5194536  1.3360220 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $coefficients$gamma$knots</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.4285714 0.8571429 1.2857143 1.7142857 2.1428571 2.5714286</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $coefficients$gamma$Boundary.knots</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $coefficients$gamma$degree</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $coefficients$beta</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         X1         X2         X3         X4         X5         X6         X7 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> -0.6942710  1.3445972 -0.9953343  1.0047907 -0.9238103  1.0413994 -1.0573907 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         X8         X9        X10 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  0.9215155 -0.9986449  1.0025988 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $coefficients$eta</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  0.30935633  0.28759595  0.00000000  0.00000000  0.10021684  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] -0.02537279  0.00000000  0.00000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $penalty</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "lasso"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $lambda</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $gamma</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $iter</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $formula</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Surv(time, status) ~ .</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x560532d918a0&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="va">formula</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">.</span> <span class="op">-</span> <span class="va">group</span> <span class="op">-</span> <span class="va">id</span></span></span>
+<span class="r-in"><span><span class="va">fit_src</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survode/man/survode.html" class="external-link">survode</a></span><span class="op">(</span><span class="va">formula</span>, data <span class="op">=</span> <span class="va">sim1</span><span class="op">[</span><span class="va">sim1</span><span class="op">$</span><span class="va">group</span> <span class="op">==</span> <span class="fl">1</span>, <span class="op">]</span>, df <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">odetrans</span><span class="op">(</span><span class="va">sim1</span><span class="op">[</span><span class="va">sim1</span><span class="op">$</span><span class="va">group</span> <span class="op">==</span> <span class="fl">2</span>, <span class="op">]</span>, <span class="va">fit_src</span>, lambda <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

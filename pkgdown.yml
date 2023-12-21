@@ -2,6 +2,6 @@ pandoc: 2.19.2
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
-  coxtrans-algorithm: coxtrans-algorithm.html
-last_built: 2023-12-21T12:04Z
+  simulate-data: simulate-data.html
+last_built: 2023-12-21T14:22Z
 

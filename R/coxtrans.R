@@ -95,10 +95,9 @@ coxtrans <- function(
     w <- diag(weights)
     r <- residuals
     coef_increment <- solve(t(x) %*% w %*% x) %*% t(x) %*% w %*% r
-    if (record$n_iterations_no_improvement) {
-      decay_factor <- 0.5**record$n_iterations_no_improvement
-      coef_increment <- coef_increment * decay_factor
-    }
+
+    decay_factor <- 0.1**record$n_iterations_no_improvement
+    coef_increment <- coef_increment * decay_factor
     coef[, n_groups + 1] <- coef[, n_groups + 1] + coef_increment
     offset <- offset + x %*% coef_increment
 
@@ -111,7 +110,10 @@ coxtrans <- function(
     # Calculate the log-likelihood
     haz <- exp(offset)
     risk_set <- ave(haz, group, FUN = cumsum)
-    risk_set <- ave(risk_set, group, time, FUN = max)
+    for (k in 1:n_groups) {
+      ind <- which(group == group_levels[k])
+      risk_set[ind] <- ave(risk_set[ind], time[ind], FUN = max)
+    }
     log_lik <- sum(status * (offset - log(risk_set)))
 
     # Check the convergence

@@ -2,8 +2,10 @@
 #' Heterogeneous Effects
 #'
 #' A dataset containing 2 groups of survival data, where the baseline hazards
-#' are homogeneous and the effects are heterogeneous. The survival time of group
-#' \eqn{i} is generated according to the following models:
+#' are homogeneous and the effects are heterogeneous. The first group, also
+#' called the source group, contains 900 individuals, while the second group,
+#' also called the target group, contains 100 individuals. The survival time
+#' of group \eqn{i} is generated according to the following models:
 #' \deqn{\lambda^{(i)}(t)=\lambda_{0}(t)\exp\left(x^\top(\beta+\eta^{(i)})
 #' \right),} where \eqn{\lambda_{0}(t)} represents the baseline hazard,
 #' \eqn{\beta+\eta^{(i)}} represents the effects of group \eqn{i}, and

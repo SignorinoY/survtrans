@@ -100,3 +100,29 @@ sim2 <- left_join(covs, times, by = c("id", "group")) %>%
   mutate(id = seq_len(nrow(.))) %>%
   select(id, group, time, status, X1:X10)
 ```
+
+## Other Examples
+
+### Example Sparsity: Sparse Effects
+
+```{r}
+n_features <- 10
+n_samples <- 1000
+
+mu <- rep(0, n_features)
+sigma <- diag(n_features)
+beta <- c(1, 0.5, rep(0, n_features - 2))
+names(beta) <- paste0("X", 1:n_features)
+
+covs <- data.frame(
+  id = 1:n_samples, mvrnorm(n_samples, mu = mu, Sigma = sigma)
+)
+times <- simsurv(
+  lambdas = 1 / 3, gammas = 3, x = covs, betas = beta, maxt = 3
+)
+
+sim_sparse <- left_join(covs, times, by = "id") %>%
+  rename(time = "eventtime") %>%
+  mutate(id = seq_len(nrow(.))) %>%
+  select(id, time, status, X1:X10)
+```

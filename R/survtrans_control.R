@@ -4,7 +4,6 @@
 #'   Default is 1000.
 #' @param patience the number of iterations without improvement before
 #'  stopping the CCD algorithm. Default is 10.
-#' @export
 survtrans_control <- function(eps = 1e-6, maxit = 1000, patience = 10) {
   if (eps <= 0) stop("Invalid convergence criteria")
   if (maxit < 0) stop("Invalid value for iterations")

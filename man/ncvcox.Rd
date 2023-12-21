@@ -43,6 +43,14 @@ control parameters for the fitting algorithm. Default is
 
 \item{...}{Other arguments passed to \code{\link{survtrans_control}}.}
 }
+\value{
+a ncvcox object.
+}
 \description{
 Non-convex penalized Cox proportional hazards model
+}
+\examples{
+library(survtrans)
+fit <- ncvcox(Surv(time, status) ~ . - id, data = sim_sparse, lambda = 0.1)
+fit$coefficients
 }

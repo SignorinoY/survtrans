@@ -29,8 +29,9 @@ A data frame with 1000 rows and 14 variables:
 }
 \description{
 A dataset containing 10 groups of survival data, where part of the effects
-and baseline hazards are heterogeneous. The survival time \eqn{T} of group
-\eqn{i} is generated according to the following models:
+and baseline hazards are heterogeneous. Each group contains 100 individuals.
+The survival time \eqn{T} of group \eqn{i} is generated according to the
+following models:
 \deqn{\lambda^{(i)}(t)=\lambda_{0}^{(i)}(t)\exp\left(x^\top(\beta+\eta^{(i)})
 \right),} where \eqn{\lambda_{0}^{(i)}(t)} represents the baseline hazard of
 group \eqn{i}, \eqn{\beta+\eta^{(i)}} represents the effects of group

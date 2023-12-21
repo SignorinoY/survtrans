@@ -16,7 +16,12 @@
 #'  control parameters for the fitting algorithm. Default is
 #' \code{survtrans_control(...)}.
 #' @param ... Other arguments passed to \code{\link{survtrans_control}}.
+#' @return a ncvcox object.
 #' @export
+#' @examples
+#' library(survtrans)
+#' fit <- ncvcox(Surv(time, status) ~ . - id, data = sim_sparse, lambda = 0.1)
+#' fit$coefficients
 ncvcox <- function(
     formula, data, offset, penalty = c("lasso", "MCP", "SCAD"),
     gamma = switch(penalty,

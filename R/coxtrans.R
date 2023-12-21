@@ -24,9 +24,7 @@
 #' library(survtrans)
 #' formula <- Surv(time, status) ~ . - group - id
 #' group <- as.factor(sim1$group)
-#' fit <- coxtrans(
-#'   formula, data = sim1, group = group, lambda1 = 0.02, penalty = "SCAD"
-#' )
+#' fit <- coxtrans(formula, sim1, group, lambda1 = 0.02, penalty = "SCAD")
 #' fit$coefficients
 coxtrans <- function(
     formula, data, group, lambda1 = 0, lambda2 = 0,

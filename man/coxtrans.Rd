@@ -57,8 +57,6 @@ Transfer Learning of Multi-source for Cox proportional hazards model
 library(survtrans)
 formula <- Surv(time, status) ~ . - group - id
 group <- as.factor(sim1$group)
-fit <- coxtrans(
-  formula, data = sim1, group = group, lambda1 = 0.02, penalty = "SCAD"
-)
+fit <- coxtrans(formula, sim1, group, lambda1 = 0.02, penalty = "SCAD")
 fit$coefficients
 }

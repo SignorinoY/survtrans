@@ -53,3 +53,9 @@ a cv_ncvcox object.
 \description{
 Cross-validation for \code{coxtrans}
 }
+\examples{
+library(survtrans)
+formula <- Surv(time, status) ~ . - id
+cv_fit <- cv_ncvcox(formula, sim_sparse, penalty = "SCAD")
+coef(cv_fit, "lambda.min")
+}

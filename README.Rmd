@@ -40,7 +40,7 @@ library(survtrans)
 library(survode)
 ## basic example code
 fit_src <- survode(Surv(time, status) ~ ., data = sim1_src, df = 10)
-cv_survtrans(sim1_trg, fit_src, penalty = "SCAD")
+cv_odetrans(sim1_trg, fit_src, penalty = "SCAD")
 ```
 
 ## Code of Conduct

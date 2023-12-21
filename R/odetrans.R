@@ -6,7 +6,7 @@
 #' @param lambda a non-negative value specifying the penalty parameter. The
 #'  default is 0.
 #' @param gamma a non-negative value specifying the penalty parameter. The
-#'  default is 3.7 for SCAD and 1.5 for MCP.
+#'  default is 3.7 for SCAD and 3.0 for MCP.
 #' @param cbh_func a function specifying the cumulative baseline hazard. The
 #'  default is NULL, which means the cumulative baseline hazard is estimateds
 #'  from the survode object fitted to the source data.
@@ -16,16 +16,13 @@
 #'  control parameters for the fitting algorithm. Default is
 #'  \code{survtrans_control(...)}.
 #' @param ... Other arguments passed to \code{\link{survtrans_control}}.
-#' @import survode
-#' @importFrom stats model.frame model.matrix model.response ave
-#' @importFrom survival Surv
 #' @export
 #' @examples
 #' library(survode)
 #' library(survtrans)
 #' fit_src <- survode(Surv(time, status) ~ ., data = sim1_src, df = 10)
-#' survtrans(sim1_trg, fit_src, lambda = 0.1)
-survtrans <- function(
+#' odetrans(sim1_trg, fit_src, lambda = 0.1)
+odetrans <- function(
     data, fit_source, penalty = c("lasso", "MCP", "SCAD"),
     gamma = switch(penalty,
       SCAD = 3.7,

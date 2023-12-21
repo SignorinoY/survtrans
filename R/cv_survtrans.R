@@ -17,14 +17,13 @@
 #'  \code{survtrans_control(...)}.
 #' @param ... Other arguments passed to \code{\link{survtrans_control}}.
 #' @return a cv_survtran object.
-#' @import survode
 #' @export
 #' @examples
 #' library(survode)
 #' library(survtrans)
 #' fit_src <- survode(Surv(time, status) ~ ., data = sim1_src, df = 10)
-#' cv_survtrans(sim1_trg, fit_src)
-cv_survtrans <- function(
+#' cv_odetrans(sim1_trg, fit_src)
+cv_odetrans <- function(
     data, fit_source, penalty = c("lasso", "MCP", "SCAD"),
     gamma = switch(penalty,
       SCAD = 3.7,
@@ -72,7 +71,7 @@ cv_survtrans <- function(
   for (k in 1:nfolds) {
     eta0 <- rep(0, nvar)
     for (i in seq_along(lambdas)) {
-      fit_k <- survtrans(
+      fit_k <- odetrans(
         data[idx != k, ], fit_source,
         penalty = penalty, lambda = lambdas[i], gamma = gamma,
         cbh_func = cbh_func, init = eta0, control = control
@@ -82,7 +81,7 @@ cv_survtrans <- function(
     }
   }
   for (i in seq_along(lambdas)) {
-    etas[i, ] <- survtrans(
+    etas[i, ] <- odetrans(
       data, fit_source,
       penalty = penalty, lambda = lambdas[i], gamma = gamma,
       cbh_func = cbh_func, init = etas[i, ], control = control

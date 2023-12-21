@@ -14,12 +14,46 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Problem Formulation
-
-$$
-\ell(\boldsymbol{\beta},\boldsymbol{\eta}_{1},\ldots,\boldsymbol{\eta}_{s})=\sum_{i=1}^{s}\sum_{j=1}^{n_{i}}\delta_{ij}\left\{\mathbf{x}_{ij}\left(\boldsymbol{\beta}+\boldsymbol{\eta}_{i}\right)-\log\left(\sum_{k\in\mathcal{R}_{ij}}\exp\left(\eta_{k}(t_{j})\beta_{k}\right)\right)\right\}
-$$
-
 ```{r setup}
+library(MASS)
+library(dplyr)
+library(simsurv)
 library(survtrans)
+```
+
+## Examples
+
+```{r}
+n_groups <- 10
+n_samples <- 100
+n_features <- 10
+
+mu <- rep(0, n_features)
+sigma <- diag(n_features)
+beta <- rep(1, n_features)
+names(beta) <- paste0("X", 1:n_features)
+etas <- rbind(
+  c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+  c(-2, 0, -2, 0, -2, 0, -2, 0, -2, 0)
+)
+lambdas <- c(1 / 3, 1 / 2)
+gammas <- c(3, 2)
+
+covs <- c()
+times <- c()
+for (k in 1:n_groups) {
+  cov <- data.frame(
+    id = 1:n_samples, mvrnorm(n_samples, mu = mu, Sigma = sigma)
+  )
+  time <- simsurv(
+    lambdas = lambdas[k %% 2 + 1], gammas = gammas[k %% 2 + 1],
+    x = cov, betas = beta + etas[k %% 2 + 1, ], maxt = 3
+  )
+  cov$group <- k
+  time$group <- k
+  covs <- rbind(covs, cov)
+  times <- rbind(times, time)
+}
+
+data <- left_join(covs, times, by = c("id", "group"))
 ```

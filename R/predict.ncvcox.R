@@ -1,4 +1,3 @@
-#' @importFrom stats predict
 #' @export
 predict.ncvcox <- function(object, newdata, type = c("risk", "lp"), ...) {
   type <- match.arg(type)

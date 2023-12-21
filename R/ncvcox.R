@@ -9,14 +9,13 @@
 #' @param lambda a non-negative value specifying the penalty parameter. The
 #' default is 0.
 #' @param gamma a non-negative value specifying the penalty parameter. The
-#' default is 3.7 for SCAD and 1.5 for MCP.
+#' default is 3.7 for SCAD and 3.0 for MCP.
 #' @param init a numeric vector specifying the initial value of the
 #' coefficients. The default is a zero vector.
 #' @param control Object of class \link{survtrans_control} containing
 #'  control parameters for the fitting algorithm. Default is
 #' \code{survtrans_control(...)}.
 #' @param ... Other arguments passed to \code{\link{survtrans_control}}.
-#' @importFrom stats model.frame model.matrix model.response ave
 #' @export
 #' @examples
 #' library(survtrans)
@@ -29,33 +28,16 @@ ncvcox <- function(
       1
     ), lambda = 0, init, control, ...) {
   penalty <- match.arg(penalty)
-  # Load X, y from formula and data
-  mf <- model.frame(formula, data)
-  y <- model.response(mf)
-  x <- model.matrix(formula, data)
-  x <- x[, -1] # Remove the intercept column
 
-  # Standardize the covariates
-  x <- scale(x)
-  x_scale <- attr(x, "scaled:scale")
-
-  # Properties of the data
-  n_samples <- nrow(x)
-  n_features <- ncol(x)
-
-  # Sort the data by time
-  time <- y[, 1]
-  status <- y[, 2]
-  sorted <- order(time, decreasing = TRUE)
-  time <- time[sorted]
-  status <- status[sorted]
-  x <- x[sorted, , drop = FALSE]
-
-  # Check the offset argument
-  if (missing(offset)) offset <- rep(0.0, n_samples)
-  offset <- offset[sorted]
+  data_ <- preprocess_data(formula, data, offset)
+  x <- data_$x
+  x_scale <- attr(x, "scale")
+  time <- data_$time
+  status <- data_$status
+  offset <- data_$offset
 
   # Check the init argument
+  n_features <- ncol(x)
   if (!missing(init) && length(init) > 0) {
     if (length(init) != n_features) {
       stop("Wrong length for inital values")

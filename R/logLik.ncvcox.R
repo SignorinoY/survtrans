@@ -1,4 +1,3 @@
-#' @importFrom stats logLik
 #' @export
 logLik.ncvcox <- function(object, data, offset, ...) {
   # load x from data

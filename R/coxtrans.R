@@ -7,13 +7,11 @@ coxtrans <- function(
       SCAD = 3.7,
       MCP = 3,
       1
-    ), # styler: ignore
+    ),
     init, control, ...) {
   penalty <- match.arg(penalty)
-  if (missing(control)) control <- survtrans_control(...)
-  if (missing(formula)) stop("a formula argument is required")
 
-  # Load response and design matrix from the data
+  # Load X, y from formula and data
   mf <- model.frame(formula, data)
   y <- model.response(mf)
   x <- model.matrix(formula, data)
@@ -23,7 +21,8 @@ coxtrans <- function(
   x <- scale(x)
   x_scale <- attr(x, "scaled:scale")
 
-  group <- factor(group)
+  # Check the group argument
+  if (!is.factor(group)) group <- factor(group)
 
   # Properties of the data
   n_samples <- nrow(x)
@@ -37,8 +36,8 @@ coxtrans <- function(
   sorted <- order(group, time, decreasing = c(FALSE, TRUE))
   time <- time[sorted]
   status <- status[sorted]
-  group <- group[sorted]
   x <- x[sorted, , drop = FALSE]
+  group <- group[sorted]
 
   # Check the init argument
   if (!missing(init) && length(init) > 0) {
@@ -52,44 +51,99 @@ coxtrans <- function(
     )
   }
 
+  # Check the control argument
+  if (missing(control)) control <- survtrans_control(...)
 
   # Initialize the coefficients
-  n_iterations <- 0
   coef <- init
+  n_iterations <- 0
+  best_log_lik <- -Inf
+  n_iterations_no_improvement <- 0
+  weights <- rep(0, n_samples)
+  residuals <- rep(0, n_samples)
+  offset <- rep(0, n_samples)
   repeat {
     n_iterations <- n_iterations + 1
 
-    offset <- x %*% coef[, n_groups + 1]
+    coef_old <- coef
 
-    weights <- rep(0.0, n_samples)
-    residuals <- rep(0.0, n_samples)
+    # Calculate the weights and residuals
     for (k in 1:n_groups) {
       ind <- which(group == group_levels[k])
-      x_ <- x[ind, , drop = FALSE]
-      time_ <- time[ind]
-      status_ <- status[ind]
-      offset_ <- offset[ind]
-
       temp <- calc_weights_residuals(
-        coef[, k], x_, time_, status_, offset_
+        coef = rep(0, n_features), x = x[ind, ], time = time[ind],
+        status = status[ind], offset = offset[ind]
       )
-      weights_ <- temp$weights
-      residuals_ <- temp$residuals
-
-      for (j in 1:n_features) {
-        v <- sum(weights_ * x_[, j]**2)
-        z <- sum(x_[, j] * weights_ * residuals_) + coef[j, k] * v
-        coef[j, k] <- soft_threshold(z, v, penalty, lambda1, gamma)
-      }
-
-      weights[ind] <- weights_
-      residuals[ind] <- residuals_
+      weights[ind] <- temp$weights
+      residuals[ind] <- temp$residuals
     }
 
-    # Update the offset
+    # Update the common coefficients
     w <- diag(weights)
-    coef_ <- solve(t(x) %*% w %*% x) %*% t(x) %*% w %*% residuals
-    coef[, n_groups + 1] <- coef[, n_groups + 1] + coef_
-    coef <- coef / x_scale
+    r <- residuals
+    coef_imporve <- solve(t(x) %*% w %*% x) %*% t(x) %*% w %*% r
+    if (n_iterations_no_improvement > 0) {
+      coef_imporve <- coef_imporve * 0.5
+      print(coef_imporve)
+    }
+    coef[, n_groups + 1] <- coef[, n_groups + 1] + coef_imporve
+    offset <- offset + x %*% coef_imporve
+
+    # Update the coefficients for each group
+    for (k in 1:n_groups) {
+      ind <- which(group == group_levels[k])
+
+      w <- weights[ind]
+      r <- residuals[ind]
+
+      coef_ <- coef[, k]
+      for (j in 1:n_features) {
+        v <- mean(w * x[ind, j]**2)
+        z <- mean(x[ind, j] * w * r) + coef[j, k] * v
+        coef[j, k] <- soft_threshold(z, v, penalty, lambda1, gamma)
+      }
+      offset[ind] <- offset[ind] + x[ind, ] %*% (coef[, k] - coef_)
+    }
+
+    # Centralize the coefficients
+    coef_group <- coef[, 1:n_groups]
+    coef_center <- rowMeans()
+    coef[, 1:n_groups] <- sweep(coef_group, MARGIN = 1, coef_center, `-`)
+    coef[, n_groups + 1] <- coef[, n_groups + 1] + coef_center
+
+    # Calculate the log-likelihood
+    haz <- exp(offset)
+    risk_set <- ave(haz, group, FUN = cumsum)
+    risk_set <- ave(risk_set, group, time, FUN = max)
+    log_lik <- sum(status * (offset - log(risk_set)))
+
+    # Check the convergence
+    if (n_iterations >= control$maxit) {
+      warning("Maximum number of iterations reached")
+      break
+    }
+    if (max(abs(coef_old - coef)) <= control$eps) break
+
+    if (log_lik <= best_log_lik) {
+      n_iterations_no_improvement <- n_iterations_no_improvement + 1
+    }
+    if (log_lik > best_log_lik) {
+      best_log_lik <- log_lik
+      best_coef <- coef
+      n_iterations_no_improvement <- 0
+    }
+
   }
+
+  # Unstandardize the coefficients
+  best_coef <- sweep(best_coef, MARGIN = 1, x_scale, `/`)
+
+  # Return the fit
+  fit <- list(
+    coef = best_coef, logLik = best_log_lik,
+    penalty = penalty, lambda1 = lambda1, gamma = gamma,
+    iter = n_iterations, formula = formula, call = match.call()
+  )
+  class(fit) <- "coxtrans"
+  return(fit)
 }

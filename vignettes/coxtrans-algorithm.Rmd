@@ -1,0 +1,25 @@
+---
+title: "The Algorithm of Coxtrans"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{coxtrans-algorithm}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Problem Formulation
+
+$$
+\ell(\boldsymbol{\beta},\boldsymbol{\eta}_{1},\ldots,\boldsymbol{\eta}_{s})=\sum_{i=1}^{s}\sum_{j=1}^{n_{i}}\delta_{ij}\left\{\mathbf{x}_{ij}\left(\boldsymbol{\beta}+\boldsymbol{\eta}_{i}\right)-\log\left(\sum_{k\in\mathcal{R}_{ij}}\exp\left(\eta_{k}(t_{j})\beta_{k}\right)\right)\right\}
+$$
+
+```{r setup}
+library(survtrans)
+```

@@ -33,34 +33,31 @@ cv_ncvcox <- function(
     seed = 0, control, ...) {
   penalty <- match.arg(penalty)
 
-  # Load X, y from formula and data
-  mf <- model.frame(formula, data)
-  y <- model.response(mf)
-  x <- model.matrix(formula, data)
-  x <- x[, -1] # Remove the intercept column
+  data_ <- preprocess_data(formula, data, offset)
+  x <- data_$x
+  time <- data_$time
+  status <- data_$status
+  offset_ <- data_$offset
 
   # Properties of the data
   n_samples <- nrow(x)
   n_features <- ncol(x)
 
   # Check the offset argument
-  if (missing(offset)) offset <- rep(0.0, n_samples)
+  if (missing(offset)) offset <- rep(0, nrow(x))
 
   # Check the lambda_min_ratio argument
   if (is.null(lambda_min_ratio)) {
     lambda_min_ratio <- ifelse(n_samples < n_features, 0.01, 1e-04)
   }
+
+  # Check the control argument
   if (missing(control)) control <- survtrans_control(...)
 
   # Determmine the lambda sequence
-  coef_init <- rep(0, n_features)
-  sorted <- order(y[, 1], decreasing = TRUE)
-  time <- y[sorted, 1]
-  status <- y[sorted, 2]
-  x <- x[sorted, , drop = FALSE]
-  offset_ <- offset[sorted]
   temp <- calc_weights_residuals(
-    coef = coef_init, x = x, time = time, status = status, offset = offset_
+    coef = rep(0, n_features), x = x, time = time, status = status,
+    offset = offset_
   )
   weights <- temp$weights
   residuals <- temp$residuals

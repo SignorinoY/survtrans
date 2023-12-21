@@ -68,6 +68,7 @@ cv_ncvcox <- function(
 
   idx <- sample(1:nfolds, nrow(x), replace = TRUE)
 
+  coef_init <- rep(0, n_features)
   criterions <- matrix(0, nrow = nlambdas, ncol = nfolds)
   coefs <- matrix(0, nrow = nlambdas, ncol = n_features)
   for (i in seq_along(lambdas)) {

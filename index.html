@@ -87,24 +87,20 @@
 <span><span class="co">#&gt; 载入需要的程辑包：survival</span></span>
 <span><span class="co">## basic example code</span></span>
 <span><span class="va">formula</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">.</span> <span class="op">-</span> <span class="va">group</span> <span class="op">-</span> <span class="va">id</span></span>
-<span><span class="va">group</span> <span class="op">&lt;-</span> <span class="va">sim1</span><span class="op">$</span><span class="va">group</span></span>
-<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/coxtrans.html">coxtrans</a></span><span class="op">(</span></span>
-<span>  <span class="va">formula</span>, data <span class="op">=</span> <span class="va">sim1</span>, group <span class="op">=</span> <span class="va">group</span>, lambda1 <span class="op">=</span> <span class="fl">0.02</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in check_convergence(coef = coef, loss = -log_lik, last_record =</span></span>
-<span><span class="co">#&gt; record, : No improvement for 10 iterations</span></span>
-<span><span class="va">fit</span><span class="op">$</span><span class="va">coefficients</span></span>
-<span><span class="co">#&gt;               [,1]        [,2]      [,3]</span></span>
-<span><span class="co">#&gt;  [1,] -0.238688218 0.238688218 1.2635865</span></span>
-<span><span class="co">#&gt;  [2,]  0.000000000 0.000000000 1.0005424</span></span>
-<span><span class="co">#&gt;  [3,]  0.000000000 0.000000000 1.0266637</span></span>
-<span><span class="co">#&gt;  [4,]  0.000000000 0.000000000 0.9846528</span></span>
-<span><span class="co">#&gt;  [5,]  0.000000000 0.000000000 1.0506290</span></span>
-<span><span class="co">#&gt;  [6,] -0.001838417 0.001838417 1.0238844</span></span>
-<span><span class="co">#&gt;  [7,]  0.000000000 0.000000000 0.9236874</span></span>
-<span><span class="co">#&gt;  [8,]  0.000000000 0.000000000 1.0204494</span></span>
-<span><span class="co">#&gt;  [9,]  0.000000000 0.000000000 1.0595770</span></span>
-<span><span class="co">#&gt; [10,]  0.000000000 0.000000000 1.0035363</span></span></code></pre></div>
+<span><span class="va">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">sim1</span><span class="op">$</span><span class="va">group</span><span class="op">)</span></span>
+<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cv_coxtrans.html">cv_coxtrans</a></span><span class="op">(</span><span class="va">formula</span>, <span class="va">sim1</span>, <span class="va">group</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<span><span class="co">#&gt;              [,1]        [,2]      [,3]</span></span>
+<span><span class="co">#&gt;  [1,] -0.10396483  0.10396483 1.0964685</span></span>
+<span><span class="co">#&gt;  [2,]  0.02007187 -0.02007187 0.8679913</span></span>
+<span><span class="co">#&gt;  [3,]  0.00000000  0.00000000 0.9126952</span></span>
+<span><span class="co">#&gt;  [4,]  0.00000000  0.00000000 0.8735655</span></span>
+<span><span class="co">#&gt;  [5,]  0.01844098 -0.01844098 0.9146741</span></span>
+<span><span class="co">#&gt;  [6,] -0.04535751  0.04535751 0.9815223</span></span>
+<span><span class="co">#&gt;  [7,]  0.00000000  0.00000000 0.8255911</span></span>
+<span><span class="co">#&gt;  [8,]  0.00000000  0.00000000 0.9077969</span></span>
+<span><span class="co">#&gt;  [9,]  0.00000000  0.00000000 0.9500952</span></span>
+<span><span class="co">#&gt; [10,]  0.00000000  0.00000000 0.8960722</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>

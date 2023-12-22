@@ -58,6 +58,8 @@
 <span>  <span class="va">formula</span>,</span>
 <span>  <span class="va">data</span>,</span>
 <span>  <span class="va">group</span>,</span>
+<span>  <span class="va">bgroup</span>,</span>
+<span>  <span class="va">egroup</span>,</span>
 <span>  penalty <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"lasso"</span>, <span class="st">"MCP"</span>, <span class="st">"SCAD"</span><span class="op">)</span>,</span>
 <span>  gamma <span class="op">=</span> <span class="kw"><a href="https://rdrr.io/r/base/switch.html" class="external-link">switch</a></span><span class="op">(</span><span class="va">penalty</span>, SCAD <span class="op">=</span> <span class="fl">3.7</span>, MCP <span class="op">=</span> <span class="fl">3</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>  penalty_weights <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -87,6 +89,15 @@ returned by the <code><a href="https://rdrr.io/pkg/survival/man/Surv.html" class
 <dd><p>a factor specifying the group of each sample.</p></dd>
 
 
+<dt>bgroup</dt>
+<dd><p>a factor specifying the group of each sample for baseline
+hazard.</p></dd>
+
+
+<dt>egroup</dt>
+<dd><p>a factor specifying the group of each sample for effect.</p></dd>
+
+
 <dt>penalty</dt>
 <dd><p>a character string specifying the penalty function.
 The default is "lasso". Other options are "MCP" and "SCAD".</p></dd>
@@ -95,12 +106,6 @@ The default is "lasso". Other options are "MCP" and "SCAD".</p></dd>
 <dt>gamma</dt>
 <dd><p>a non-negative value specifying the penalty parameter. The
 default is 3.7 for SCAD and 3.0 for MCP.</p></dd>
-
-
-<dt>penalty_weights</dt>
-<dd><p>a numeric vector specifying the weights of the
-groups. The default is NULL, which means that the weights are set to be
-proportional to the number of samples in each group.</p></dd>
 
 
 <dt>nfolds</dt>
@@ -148,17 +153,17 @@ control parameters for the fitting algorithm. Default is
 <span class="r-in"><span><span class="va">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">sim1</span><span class="op">$</span><span class="va">group</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">cv_fit</span> <span class="op">&lt;-</span> <span class="fu">cv_coxtrans</span><span class="op">(</span><span class="va">formula</span>, <span class="va">sim1</span>, <span class="va">group</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">cv_fit</span>, <span class="st">"lambda.min"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              [,1]        [,2]      [,3]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] -0.10396483  0.10396483 1.0964685</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,]  0.02007187 -0.02007187 0.8679913</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,]  0.00000000  0.00000000 0.9126952</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,]  0.00000000  0.00000000 0.8735655</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,]  0.01844098 -0.01844098 0.9146741</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] -0.04535751  0.04535751 0.9815223</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,]  0.00000000  0.00000000 0.8255911</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,]  0.00000000  0.00000000 0.9077969</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,]  0.00000000  0.00000000 0.9500952</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10,]  0.00000000  0.00000000 0.8960722</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       [,1] [,2]      [,3]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,]    0    0 1.0532897</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,]    0    0 0.9840042</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,]    0    0 1.0174705</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,]    0    0 0.9665517</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,]    0    0 1.0378416</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,]    0    0 1.0120942</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,]    0    0 0.9215592</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,]    0    0 1.0145633</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,]    0    0 1.0512351</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10,]    0    0 0.9964803</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

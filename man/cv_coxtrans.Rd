@@ -8,6 +8,8 @@ cv_coxtrans(
   formula,
   data,
   group,
+  bgroup,
+  egroup,
   penalty = c("lasso", "MCP", "SCAD"),
   gamma = switch(penalty, SCAD = 3.7, MCP = 3, 1),
   penalty_weights = NULL,
@@ -29,15 +31,16 @@ returned by the \code{\link{Surv}} function.}
 
 \item{group}{a factor specifying the group of each sample.}
 
+\item{bgroup}{a factor specifying the group of each sample for baseline
+hazard.}
+
+\item{egroup}{a factor specifying the group of each sample for effect.}
+
 \item{penalty}{a character string specifying the penalty function.
 The default is "lasso". Other options are "MCP" and "SCAD".}
 
 \item{gamma}{a non-negative value specifying the penalty parameter. The
 default is 3.7 for SCAD and 3.0 for MCP.}
-
-\item{penalty_weights}{a numeric vector specifying the weights of the
-groups. The default is NULL, which means that the weights are set to be
-proportional to the number of samples in each group.}
 
 \item{nfolds}{an integer specifying the number of folds.}
 

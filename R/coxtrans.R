@@ -4,15 +4,15 @@
 #' returned by the \code{\link{Surv}} function.
 #' @param data a data frame containing the variables in the model.
 #' @param group a factor specifying the group of each sample.
+#' @param bgroup a factor specifying the group of each sample for baseline
+#' hazard.
+#' @param egroup a factor specifying the group of each sample for effect.
 #' @param lambda1 a non-negative value specifying the sparisity penalty
 #' parameter. The default is 0.
 #' @param lambda2 a non-negative value specifying the group penalty
 #' parameter. The default is 0.
 #' @param penalty a character string specifying the penalty function.
 #' The default is "lasso". Other options are "MCP" and "SCAD".
-#' @param penalty_weights a numeric vector specifying the weights of the
-#' groups. The default is NULL, which means that the weights are set to be
-#' proportional to the number of samples in each group.
 #' @param gamma a non-negative value specifying the penalty parameter. The
 #' default is 3.7 for SCAD and 3.0 for MCP.
 #' @param init a numeric vector specifying the initial value of the
@@ -30,58 +30,55 @@
 #' fit <- coxtrans(formula, sim1, group, lambda1 = 0.1, penalty = "SCAD")
 #' fit$coefficients
 coxtrans <- function( # nolint: cyclocomp_linter.
-    formula, data, group, lambda1 = 0, lambda2 = 0,
-    penalty = c("lasso", "MCP", "SCAD"), penalty_weights = NULL,
+    formula, data, group, bgroup, egroup,
+    lambda1 = 0, lambda2 = 0,
+    penalty = c("lasso", "MCP", "SCAD"),
     gamma = switch(penalty,
       SCAD = 3.7,
       MCP = 3,
       1
     ),
     init, control, ...) {
+
+  # Check the group argument
+  if (missing(bgroup)) bgroup <- group
+  if (missing(egroup)) egroup <- group
+
   # Load the data
-  data_ <- preprocess_data(formula, data, group = group)
+  data_ <- preprocess_data(formula, data)
   x <- data_$x
   x_scale <- attr(x, "scale")
   time <- data_$time
   status <- data_$status
   group <- data_$group
+  bgroup <- bgroup[data_$sorted]
+  egroup <- egroup[data_$sorted]
 
   # Properties of the data
   n_samples <- nrow(x)
   n_features <- ncol(x)
-  n_groups <- length(unique(group))
-  group_levels <- levels(group)
-  risk_set_size <- ave(rep(1, n_samples), group, FUN = cumsum)
-  for (k in 1:n_groups) {
-    ind <- which(group == group_levels[k])
+  n_bgroups <- length(unique(bgroup))
+  bgroup_levels <- levels(bgroup)
+  n_egroups <- length(unique(egroup))
+  egroup_levels <- levels(egroup)
+
+  risk_set_size <- ave(rep(1, n_samples), bgroup, FUN = cumsum)
+  for (k in 1:n_bgroups) {
+    ind <- which(bgroup == bgroup_levels[k])
     risk_set_size[ind] <- ave(risk_set_size[ind], time[ind], FUN = max)
   }
   null_deviance <- - sum(status * log(risk_set_size))
 
   penalty <- match.arg(penalty)
 
-  # Check the penalty_weights argument
-  if (is.null(penalty_weights)) {
-    penalty_weights <- c()
-    for (k in 1:n_groups) {
-      ind <- which(group == group_levels[k])
-      penalty_weights <- c(penalty_weights, length(ind))
-    }
-  } else {
-    if (length(penalty_weights) != n_groups) {
-      stop("Wrong length for penalty_weights")
-    }
-  }
-  penalty_weights <- penalty_weights / sum(penalty_weights)
-
   # Check the init argument
   if (!missing(init) && length(init) > 0) {
-    if (length(init) != n_features * (n_groups + 1)) {
+    if (length(init) != n_features * (n_egroups + 1)) {
       stop("Wrong length for inital values")
     }
   } else {
     init <- matrix(
-      rep(0, n_features * (n_groups + 1)),
+      rep(0, n_features * (n_egroups + 1)),
       nrow = n_features
     )
   }
@@ -103,23 +100,25 @@ coxtrans <- function( # nolint: cyclocomp_linter.
   repeat {
     # Calculate the weights and residuals
     # Update the coefficients for each group
-    for (k in 1:n_groups) {
-      ind <- which(group == group_levels[k])
+    for (k in 1:n_bgroups) {
+      ind <- which(bgroup == bgroup_levels[k])
       temp <- calc_weights_residuals(
         coef = rep(0, n_features), x = x[ind, ], time = time[ind],
         status = status[ind], offset = offset[ind]
       )
       weights[ind] <- temp$weights
       residuals[ind] <- temp$residuals
+    }
 
+    for (k in 1:n_egroups) {
+      ind <- which(egroup == egroup_levels[k])
       w <- weights[ind]
       r <- residuals[ind]
       coef_ <- coef[, k]
-      l1_penalty <- lambda1 * penalty_weights[k]
       for (j in 1:n_features) {
         v <- mean(w * x[ind, j]**2)
         z <- mean(x[ind, j] * w * r) + coef[j, k] * v
-        coef[j, k] <- soft_threshold(z, v, penalty, l1_penalty, gamma)
+        coef[j, k] <- soft_threshold(z, v, penalty, lambda1, gamma)
       }
       offset[ind] <- offset[ind] + x[ind, ] %*% (coef[, k] - coef_)
     }
@@ -131,25 +130,25 @@ coxtrans <- function( # nolint: cyclocomp_linter.
 
     decay_factor <- 0.1**record$n_iterations_no_improvement
     coef_increment <- coef_increment * decay_factor
-    coef[, n_groups + 1] <- coef[, n_groups + 1] + coef_increment
+    coef[, n_egroups + 1] <- coef[, n_egroups + 1] + coef_increment
     offset <- offset + x %*% coef_increment
 
     # Centralize the coefficients
-    coef_group <- coef[, 1:n_groups]
+    coef_group <- coef[, 1:n_egroups]
     coef_center <- rowMeans(coef_group)
-    coef[, 1:n_groups] <- sweep(coef_group, MARGIN = 1, coef_center, `-`)
-    coef[, n_groups + 1] <- coef[, n_groups + 1] + coef_center
+    coef[, 1:n_egroups] <- sweep(coef_group, MARGIN = 1, coef_center, `-`)
+    coef[, n_egroups + 1] <- coef[, n_egroups + 1] + coef_center
 
     # Calculate the log-likelihood !TODO: exists problem
-    eta <- x %*% coef[, n_groups + 1]
-    for (k in 1:n_groups) {
-      ind <- which(group == group_levels[k])
+    eta <- x %*% coef[, n_egroups + 1]
+    for (k in 1:n_egroups) {
+      ind <- which(egroup == egroup_levels[k])
       eta[ind] <- eta[ind] + x[ind, ] %*% coef[, k]
     }
     haz <- exp(eta)
-    risk_set <- ave(haz, group, FUN = cumsum)
-    for (k in 1:n_groups) {
-      ind <- which(group == group_levels[k])
+    risk_set <- ave(haz, bgroup, FUN = cumsum)
+    for (k in 1:n_bgroups) {
+      ind <- which(bgroup == bgroup_levels[k])
       risk_set[ind] <- ave(risk_set[ind], time[ind], FUN = max)
     }
     log_lik <- sum(status * (eta - log(risk_set)))

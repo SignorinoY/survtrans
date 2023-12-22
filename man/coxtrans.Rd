@@ -8,10 +8,11 @@ coxtrans(
   formula,
   data,
   group,
+  bgroup,
+  egroup,
   lambda1 = 0,
   lambda2 = 0,
   penalty = c("lasso", "MCP", "SCAD"),
-  penalty_weights = NULL,
   gamma = switch(penalty, SCAD = 3.7, MCP = 3, 1),
   init,
   control,
@@ -27,6 +28,11 @@ returned by the \code{\link{Surv}} function.}
 
 \item{group}{a factor specifying the group of each sample.}
 
+\item{bgroup}{a factor specifying the group of each sample for baseline
+hazard.}
+
+\item{egroup}{a factor specifying the group of each sample for effect.}
+
 \item{lambda1}{a non-negative value specifying the sparisity penalty
 parameter. The default is 0.}
 
@@ -35,10 +41,6 @@ parameter. The default is 0.}
 
 \item{penalty}{a character string specifying the penalty function.
 The default is "lasso". Other options are "MCP" and "SCAD".}
-
-\item{penalty_weights}{a numeric vector specifying the weights of the
-groups. The default is NULL, which means that the weights are set to be
-proportional to the number of samples in each group.}
 
 \item{gamma}{a non-negative value specifying the penalty parameter. The
 default is 3.7 for SCAD and 3.0 for MCP.}

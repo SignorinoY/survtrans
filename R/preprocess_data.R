@@ -36,5 +36,8 @@ preprocess_data <- function(formula, data, offset, group) {
   offset <- offset[sorted]
   group <- group[sorted]
 
-  list(x = x, time = time, status = status, offset = offset, group = group)
+  list(
+    x = x, time = time, status = status, offset = offset, group = group,
+    sorted = sorted
+  )
 }

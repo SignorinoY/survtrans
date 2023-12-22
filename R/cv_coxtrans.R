@@ -4,11 +4,11 @@
 #' returned by the \code{\link{Surv}} function.
 #' @param data a data frame containing the variables in the model.
 #' @param group a factor specifying the group of each sample.
+#' @param bgroup a factor specifying the group of each sample for baseline
+#' hazard.
+#' @param egroup a factor specifying the group of each sample for effect.
 #' @param  penalty a character string specifying the penalty function.
 #' The default is "lasso". Other options are "MCP" and "SCAD".
-#' @param penalty_weights a numeric vector specifying the weights of the
-#' groups. The default is NULL, which means that the weights are set to be
-#' proportional to the number of samples in each group.
 #' @param gamma a non-negative value specifying the penalty parameter. The
 #' default is 3.7 for SCAD and 3.0 for MCP.
 #' @param nfolds an integer specifying the number of folds.
@@ -30,7 +30,8 @@
 #' cv_fit <- cv_coxtrans(formula, sim1, group, penalty = "SCAD")
 #' coef(cv_fit, "lambda.min")
 cv_coxtrans <- function( # nolint: cyclocomp_linter.
-    formula, data, group, penalty = c("lasso", "MCP", "SCAD"),
+    formula, data, group, bgroup, egroup,
+    penalty = c("lasso", "MCP", "SCAD"),
     gamma = switch(penalty,
       SCAD = 3.7,
       MCP = 3,
@@ -40,34 +41,27 @@ cv_coxtrans <- function( # nolint: cyclocomp_linter.
   # Set the random seed
   set.seed(seed)
 
+  # Check the group argument
+  if (missing(bgroup)) bgroup <- group
+  if (missing(egroup)) egroup <- group
+
   # Load the data
-  data_ <- preprocess_data(formula, data, group = group)
+  data_ <- preprocess_data(formula, data)
   x <- data_$x
   time <- data_$time
   status <- data_$status
-  group_ <- data_$group
+  bgroup_ <- bgroup[data_$sorted]
+  egroup_ <- egroup[data_$sorted]
 
   # Properties of the data
   n_samples <- nrow(x)
   n_features <- ncol(x)
-  n_groups <- length(unique(group_))
-  group_levels <- levels(group_)
+  n_bgroups <- length(unique(bgroup_))
+  bgroup_levels <- levels(bgroup_)
+  n_egroups <- length(unique(egroup_))
+  egroup_levels <- levels(egroup_)
 
   penalty <- match.arg(penalty)
-
-  # Check the penalty_weights argument
-  if (is.null(penalty_weights)) {
-    penalty_weights <- c()
-    for (k in 1:n_groups) {
-      ind <- which(group == group_levels[k])
-      penalty_weights <- c(penalty_weights, length(ind))
-    }
-  } else {
-    if (length(penalty_weights) != n_groups) {
-      stop("Wrong length for penalty_weights")
-    }
-  }
-  penalty_weights <- penalty_weights / sum(penalty_weights)
 
   # Check the lambda_min_ratio argument
   if (is.null(lambda_min_ratio)) {
@@ -79,20 +73,26 @@ cv_coxtrans <- function( # nolint: cyclocomp_linter.
 
   # Determmine the lambda sequence
   lambda_max <- 0
-  for (k in 1:n_groups) {
-    ind <- which(group_ == group_levels[k])
+  weights <- rep(0, n_samples)
+  residuals <- rep(0, n_samples)
+  for (k in 1:n_bgroups) {
+    ind <- which(bgroup_ == bgroup_levels[k])
     temp <- calc_weights_residuals(
       coef = rep(0, n_features), x = x[ind, ], time = time[ind],
       status = status[ind], offset = rep(0, length(ind))
     )
-    weights <- temp$weights
-    residuals <- temp$residuals
-    zw0 <- residuals * weights
+    weights[ind] <- temp$weights
+    residuals[ind] <- temp$residuals
+  }
+  for (k in 1:n_egroups) {
+    ind <- which(egroup_ == egroup_levels[k])
+    w <- weights[ind]
+    r <- residuals[ind]
+    zw0 <- w * r
     lambda_max_ <- max(abs(colMeans(sweep(x[ind, ], MARGIN = 1, zw0, `*`))))
-    lambda_max_ <- lambda_max_ / penalty_weights[k]
     if (lambda_max_ > lambda_max) lambda_max <- lambda_max_
   }
-  lambda_min <- lambda_max * lambda_min_ratio * min(penalty_weights)
+  lambda_min <- lambda_max * lambda_min_ratio
   lambdas <- exp(seq(log(lambda_max), log(lambda_min), length.out = nlambdas))
 
   if (verbose) {
@@ -103,23 +103,26 @@ cv_coxtrans <- function( # nolint: cyclocomp_linter.
   }
 
   idx <- sample(1:nfolds, nrow(x), replace = TRUE)
-  coefs <- matrix(0, nrow = nlambdas, ncol = n_features * (n_groups + 1))
+  coefs <- matrix(0, nrow = nlambdas, ncol = n_features * (n_egroups + 1))
   criterions <- matrix(0, nrow = nlambdas, ncol = nfolds)
   for (i in seq_along(lambdas)) {
     fit <- coxtrans(
-      formula = formula, data = data, group = group,
-      lambda1 = lambdas[i], penalty = penalty, gamma = gamma,
+      formula = formula, data = data, group = group, bgroup = bgroup,
+      egroup = egroup, lambda1 = lambdas[i], penalty = penalty, gamma = gamma,
       control = control, ...
     )
     coefs[i, ] <- as.vector(fit$coefficients)
     for (k in 1:nfolds) {
       fit <- coxtrans(
         formula = formula, data = data[idx != k, ], group = group[idx != k],
+        bgroup = bgroup[idx != k], egroup = egroup[idx != k],
         lambda1 = lambdas[i], penalty = penalty, gamma = gamma,
         init = matrix(coefs[i, ], nrow = n_features), control = control, ...
       )
-      log_lik <- logLik(fit, data[idx != k, ], group[idx != k])
-      criterions[i, k] <- logLik(fit, data, group) - log_lik
+      log_lik <- logLik(
+        fit, data[idx != k, ], bgroup[idx != k], egroup[idx != k]
+      )
+      criterions[i, k] <- logLik(fit, data, bgroup, egroup) - log_lik
     }
     if (verbose) {
       pb$tick(

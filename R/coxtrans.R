@@ -125,7 +125,7 @@ coxtrans <- function( # nolint: cyclocomp_linter.
     }
 
     # Update the common coefficients
-    w <- diag(weights / sum(weights))
+    w <- diag(weights)
     r <- residuals
     coef_increment <- solve(t(x) %*% w %*% x) %*% t(x) %*% w %*% r
 

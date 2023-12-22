@@ -28,6 +28,7 @@ This is a basic example which shows you how to solve a common problem:
 
 ``` r
 library(survtrans)
+#> 载入需要的程辑包：progress
 #> 载入需要的程辑包：survode
 #> 载入需要的程辑包：survival
 ## basic example code

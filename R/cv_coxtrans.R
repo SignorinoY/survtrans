@@ -6,6 +6,9 @@
 #' @param group a factor specifying the group of each sample.
 #' @param  penalty a character string specifying the penalty function.
 #' The default is "lasso". Other options are "MCP" and "SCAD".
+#' @param penalty_weights a numeric vector specifying the weights of the
+#' groups. The default is NULL, which means that the weights are set to be
+#' proportional to the inverse number of samples in each group.
 #' @param gamma a non-negative value specifying the penalty parameter. The
 #' default is 3.7 for SCAD and 3.0 for MCP.
 #' @param nfolds an integer specifying the number of folds.

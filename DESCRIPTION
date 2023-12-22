@@ -10,6 +10,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Depends: 
     R (>= 2.10),
+    progress,
     survode (>= 0.0.0.9000),
     survival
 Remotes: 

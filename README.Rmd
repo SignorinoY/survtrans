@@ -40,8 +40,8 @@ library(survtrans)
 ## basic example code
 formula <- Surv(time, status) ~ . - group - id
 group <- as.factor(sim1$group)
-fit <- fit <- coxtrans(formula, sim1, group, lambda1 = 0.02, penalty = "SCAD")
-fit$coefficients
+fit <- cv_coxtrans(formula, sim1, group, penalty = "SCAD")
+coef(fit)
 ```
 
 ## Code of Conduct

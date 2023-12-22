@@ -1,6 +1,7 @@
 #' Cross-validation for \code{coxtrans}
-#' @param formula a formula object, with the response on the left of a ~
-#' operator, and the terms, separated by + operators, on the right.
+#' @param formula a formula expression as for regression models, of the form
+#' \code{response ~ predictors}. The response must be a survival object as
+#' returned by the \code{\link{Surv}} function.
 #' @param data a data frame containing the variables in the model.
 #' @param offset a numeric vector specifying the offset.
 #' @param penalty a character string specifying the penalty function.
@@ -31,6 +32,7 @@ cv_ncvcox <- function(
       1
     ), nfolds = 10, nlambdas = 100, lambda_min_ratio = NULL,
     seed = 0, control, ...) {
+  set.seed(seed)
   penalty <- match.arg(penalty)
 
   data_ <- preprocess_data(formula, data, offset)
@@ -95,8 +97,9 @@ cv_ncvcox <- function(
   cvsd <- apply(criterions, 1, stats::sd)
 
   fit <- list(
-    lambdas = lambdas, coefs = coefs,
-    cvm = cvm, cvsd = cvsd, formula = formula, call = match.call()
+    lambdas = lambdas, coefs = coefs, cvm = cvm, cvsd = cvsd,
+    formula = formula, call = match.call(),
+    n_features = n_features
   )
   class(fit) <- "cv_ncvcox"
   return(fit)

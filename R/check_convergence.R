@@ -14,7 +14,7 @@ check_convergence <- function(coef, loss, last_record, control) {
     convergence <- TRUE
   }
 
-  if (loss > best_loss) {
+  if (loss >= best_loss) {
     n_iterations_no_improvement <- n_iterations_no_improvement + 1
   } else {
     best_loss <- loss
@@ -23,7 +23,6 @@ check_convergence <- function(coef, loss, last_record, control) {
   }
 
   if (n_iterations_no_improvement >= control$patience) {
-    warning("No improvement for ", control$patience, " iterations")
     convergence <- TRUE
   }
 

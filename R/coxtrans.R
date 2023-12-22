@@ -10,6 +10,9 @@
 #' parameter. The default is 0.
 #' @param penalty a character string specifying the penalty function.
 #' The default is "lasso". Other options are "MCP" and "SCAD".
+#' @param penalty_weights a numeric vector specifying the weights of the
+#' groups. The default is NULL, which means that the weights are set to be
+#' proportional to the inverse number of samples in each group.
 #' @param gamma a non-negative value specifying the penalty parameter. The
 #' default is 3.7 for SCAD and 3.0 for MCP.
 #' @param init a numeric vector specifying the initial value of the
@@ -24,19 +27,18 @@
 #' library(survtrans)
 #' formula <- Surv(time, status) ~ . - group - id
 #' group <- as.factor(sim1$group)
-#' fit <- coxtrans(formula, sim1, group, lambda1 = 0.02, penalty = "SCAD")
+#' fit <- coxtrans(formula, sim1, group, lambda1 = 0.1, penalty = "SCAD")
 #' fit$coefficients
-coxtrans <- function(
+coxtrans <- function( # nolint: cyclocomp_linter.
     formula, data, group, lambda1 = 0, lambda2 = 0,
-    penalty = c("lasso", "MCP", "SCAD"),
+    penalty = c("lasso", "MCP", "SCAD"), penalty_weights = NULL,
     gamma = switch(penalty,
       SCAD = 3.7,
       MCP = 3,
       1
     ),
     init, control, ...) {
-  penalty <- match.arg(penalty)
-
+  # Load the data
   data_ <- preprocess_data(formula, data, group = group)
   x <- data_$x
   x_scale <- attr(x, "scale")
@@ -49,6 +51,28 @@ coxtrans <- function(
   n_features <- ncol(x)
   n_groups <- length(unique(group))
   group_levels <- levels(group)
+  risk_set_size <- ave(rep(1, n_samples), group, FUN = cumsum)
+  for (k in 1:n_groups) {
+    ind <- which(group == group_levels[k])
+    risk_set_size[ind] <- ave(risk_set_size[ind], time[ind], FUN = max)
+  }
+  null_deviance <- - sum(status * log(risk_set_size))
+
+  penalty <- match.arg(penalty)
+
+  # Check the penalty_weights argument
+  if (is.null(penalty_weights)) {
+    penalty_weights <- c()
+    for (k in 1:n_groups) {
+      ind <- which(group == group_levels[k])
+      penalty_weights <- c(penalty_weights, length(ind))
+    }
+  } else {
+    if (length(penalty_weights) != n_groups) {
+      stop("Wrong length for penalty_weights")
+    }
+  }
+  penalty_weights <- penalty_weights / sum(penalty_weights)
 
   # Check the init argument
   if (!missing(init) && length(init) > 0) {
@@ -91,16 +115,17 @@ coxtrans <- function(
       w <- weights[ind]
       r <- residuals[ind]
       coef_ <- coef[, k]
+      l1_penalty <- lambda1 * penalty_weights[k]
       for (j in 1:n_features) {
-        v <- sum(w * x[ind, j]**2) / n_samples
-        z <- sum(x[ind, j] * w * r) / n_samples + coef[j, k] * v
-        coef[j, k] <- soft_threshold(z, v, penalty, lambda1, gamma)
+        v <- mean(w * x[ind, j]**2)
+        z <- mean(x[ind, j] * w * r) + coef[j, k] * v
+        coef[j, k] <- soft_threshold(z, v, penalty, l1_penalty, gamma)
       }
       offset[ind] <- offset[ind] + x[ind, ] %*% (coef[, k] - coef_)
     }
 
     # Update the common coefficients
-    w <- diag(weights)
+    w <- diag(weights / sum(weights))
     r <- residuals
     coef_increment <- solve(t(x) %*% w %*% x) %*% t(x) %*% w %*% r
 
@@ -115,19 +140,27 @@ coxtrans <- function(
     coef[, 1:n_groups] <- sweep(coef_group, MARGIN = 1, coef_center, `-`)
     coef[, n_groups + 1] <- coef[, n_groups + 1] + coef_center
 
-    # Calculate the log-likelihood
-    haz <- exp(offset)
+    # Calculate the log-likelihood !TODO: exists problem
+    eta <- x %*% coef[, n_groups + 1]
+    for (k in 1:n_groups) {
+      ind <- which(group == group_levels[k])
+      eta[ind] <- eta[ind] + x[ind, ] %*% coef[, k]
+    }
+    haz <- exp(eta)
     risk_set <- ave(haz, group, FUN = cumsum)
     for (k in 1:n_groups) {
       ind <- which(group == group_levels[k])
       risk_set[ind] <- ave(risk_set[ind], time[ind], FUN = max)
     }
-    log_lik <- sum(status * (offset - log(risk_set)))
+    log_lik <- sum(status * (eta - log(risk_set)))
 
     # Check the convergence
     record <- check_convergence(
       coef = coef, loss = -log_lik, last_record = record, control = control
     )
+    if (log_lik / null_deviance  < 0.01) {
+      record$convergence <- TRUE
+    }
     if (record$convergence) break
   }
 

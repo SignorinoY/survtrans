@@ -2,6 +2,7 @@
 "_PACKAGE"
 
 ## usethis namespace: start
+#' @import progress
 #' @importFrom stats ave
 #' @importFrom stats logLik
 #' @importFrom stats model.frame

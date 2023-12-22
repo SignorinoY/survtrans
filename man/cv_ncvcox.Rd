@@ -19,8 +19,9 @@ cv_ncvcox(
 )
 }
 \arguments{
-\item{formula}{a formula object, with the response on the left of a ~
-operator, and the terms, separated by + operators, on the right.}
+\item{formula}{a formula expression as for regression models, of the form
+\code{response ~ predictors}. The response must be a survival object as
+returned by the \code{\link{Surv}} function.}
 
 \item{data}{a data frame containing the variables in the model.}
 

@@ -35,6 +35,10 @@ The default is "lasso". Other options are "MCP" and "SCAD".}
 \item{gamma}{a non-negative value specifying the penalty parameter. The
 default is 3.7 for SCAD and 3.0 for MCP.}
 
+\item{penalty_weights}{a numeric vector specifying the weights of the
+groups. The default is NULL, which means that the weights are set to be
+proportional to the number of samples in each group.}
+
 \item{nfolds}{an integer specifying the number of folds.}
 
 \item{nlambdas}{an integer specifying the number of lambda values.}

@@ -12,7 +12,6 @@ cv_coxtrans(
   egroup,
   penalty = c("lasso", "MCP", "SCAD"),
   gamma = switch(penalty, SCAD = 3.7, MCP = 3, 1),
-  penalty_weights = NULL,
   nfolds = 10,
   nlambdas = 100,
   lambda_min_ratio = NULL,

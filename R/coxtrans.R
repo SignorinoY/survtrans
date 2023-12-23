@@ -29,7 +29,8 @@
 #' group <- as.factor(sim1$group)
 #' fit <- coxtrans(formula, sim1, group, lambda1 = 0.1, penalty = "SCAD")
 #' fit$coefficients
-coxtrans <- function( # nolint: cyclocomp_linter.
+coxtrans <- function(
+    # nolint: cyclocomp_linter.
     formula, data, group, bgroup, egroup,
     lambda1 = 0, lambda2 = 0,
     penalty = c("lasso", "MCP", "SCAD"),
@@ -39,46 +40,54 @@ coxtrans <- function( # nolint: cyclocomp_linter.
       1
     ),
     init, control, ...) {
-
-  # Check the group argument
-  if (missing(bgroup)) bgroup <- group
-  if (missing(egroup)) egroup <- group
-
   # Load the data
   data_ <- preprocess_data(formula, data)
   x <- data_$x
   x_scale <- attr(x, "scale")
   time <- data_$time
   status <- data_$status
-  group <- data_$group
-  bgroup <- bgroup[data_$sorted]
-  egroup <- egroup[data_$sorted]
 
   # Properties of the data
   n_samples <- nrow(x)
   n_features <- ncol(x)
+
+  # Check the group argument
+  if (missing(bgroup)) bgroup <- group
+  if (missing(egroup)) {
+    egroup <- matrix(rep(group, n_features), ncol = n_features)
+  }
+  bgroup <- bgroup[data_$sorted]
+  egroup <- egroup[data_$sorted, ]
+
+  # Properties of the data
   n_bgroups <- length(unique(bgroup))
   bgroup_levels <- levels(bgroup)
-  n_egroups <- length(unique(egroup))
-  egroup_levels <- levels(egroup)
+  n_egroups <- c()
+  for (k in 1:n_features) {
+    n_egroups[k] <- length(unique(egroup[, k]))
+  }
+  egroup_levels <- list()
+  for (k in 1:n_features) {
+    egroup_levels[[k]] <- levels(as.factor(egroup[, k]))
+  }
 
   risk_set_size <- ave(rep(1, n_samples), bgroup, FUN = cumsum)
   for (k in 1:n_bgroups) {
     ind <- which(bgroup == bgroup_levels[k])
     risk_set_size[ind] <- ave(risk_set_size[ind], time[ind], FUN = max)
   }
-  null_deviance <- - sum(status * log(risk_set_size))
+  null_deviance <- -sum(status * log(risk_set_size))
 
   penalty <- match.arg(penalty)
 
   # Check the init argument
   if (!missing(init) && length(init) > 0) {
-    if (length(init) != n_features * (n_egroups + 1)) {
+    if (length(init) != n_features * (max(n_egroups) + 1)) {
       stop("Wrong length for inital values")
     }
   } else {
     init <- matrix(
-      rep(0, n_features * (n_egroups + 1)),
+      rep(0, n_features * (max(n_egroups) + 1)),
       nrow = n_features
     )
   }
@@ -110,17 +119,20 @@ coxtrans <- function( # nolint: cyclocomp_linter.
       residuals[ind] <- temp$residuals
     }
 
-    for (k in 1:n_egroups) {
-      ind <- which(egroup == egroup_levels[k])
-      w <- weights[ind]
-      r <- residuals[ind]
-      coef_ <- coef[, k]
-      for (j in 1:n_features) {
+    for (j in 1:n_features) {
+      for (k in 1:n_egroups[j]) {
+        coef_ <- coef[j, k]
+
+        ind <- which(egroup[, j] == egroup_levels[[j]][k])
+        w <- weights[ind]
+        r <- residuals[ind]
+
         v <- mean(w * x[ind, j]**2)
         z <- mean(x[ind, j] * w * r) + coef[j, k] * v
         coef[j, k] <- soft_threshold(z, v, penalty, lambda1, gamma)
+
+        offset[ind] <- offset[ind] + x[ind, j] * (coef[j, k] - coef_)
       }
-      offset[ind] <- offset[ind] + x[ind, ] %*% (coef[, k] - coef_)
     }
 
     # Update the common coefficients
@@ -130,20 +142,22 @@ coxtrans <- function( # nolint: cyclocomp_linter.
 
     decay_factor <- 0.1**record$n_iterations_no_improvement
     coef_increment <- coef_increment * decay_factor
-    coef[, n_egroups + 1] <- coef[, n_egroups + 1] + coef_increment
+    coef[, max(n_egroups) + 1] <- coef[, max(n_egroups) + 1] + coef_increment
     offset <- offset + x %*% coef_increment
 
     # Centralize the coefficients
-    coef_group <- coef[, 1:n_egroups]
+    coef_group <- coef[, 1:max(n_egroups)]
     coef_center <- rowMeans(coef_group)
-    coef[, 1:n_egroups] <- sweep(coef_group, MARGIN = 1, coef_center, `-`)
-    coef[, n_egroups + 1] <- coef[, n_egroups + 1] + coef_center
+    coef[, 1:max(n_egroups)] <- sweep(coef_group, MARGIN = 1, coef_center, `-`)
+    coef[, max(n_egroups) + 1] <- coef[, max(n_egroups) + 1] + coef_center
 
     # Calculate the log-likelihood !TODO: exists problem
-    eta <- x %*% coef[, n_egroups + 1]
-    for (k in 1:n_egroups) {
-      ind <- which(egroup == egroup_levels[k])
-      eta[ind] <- eta[ind] + x[ind, ] %*% coef[, k]
+    eta <- x %*% coef[, max(n_egroups) + 1]
+    for (j in 1:n_features) {
+      for (k in 1:n_egroups[j]) {
+        ind <- which(egroup[, j] == egroup_levels[[j]][k])
+        eta[ind] <- eta[ind] + x[ind, j] * coef[j, k]
+      }
     }
     haz <- exp(eta)
     risk_set <- ave(haz, bgroup, FUN = cumsum)
@@ -157,7 +171,7 @@ coxtrans <- function( # nolint: cyclocomp_linter.
     record <- check_convergence(
       coef = coef, loss = -log_lik, last_record = record, control = control
     )
-    if (log_lik / null_deviance  < 0.01) {
+    if (log_lik / null_deviance < 0.01) {
       record$convergence <- TRUE
     }
     if (record$convergence) break

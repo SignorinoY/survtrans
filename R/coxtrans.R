@@ -90,15 +90,24 @@ coxtrans <- function(
       rep(0, n_features * (max(n_egroups) + 1)),
       nrow = n_features
     )
+    init <- init / 0
+   for (j in 1:n_features) {
+      for (k in 1:n_egroups[j]) {
+        init[j, k] <- 0
+      }
+    }
+    init[, max(n_egroups) + 1] <- rep(0, n_features)
   }
 
   # Check the control argument
   if (missing(control)) control <- survtrans_control(...)
 
   # Initialize the coefficients
+  init_ <- init
+  init_[is.na(init_)] <- 0
   record <- list(
     convergence = FALSE, n_iterations = 0, n_iterations_no_improvement = 0,
-    best_loss = Inf, best_coef = init, coef = init
+    best_loss = Inf, best_coef = init_, coef = init_
   )
 
   coef <- init
@@ -147,7 +156,7 @@ coxtrans <- function(
 
     # Centralize the coefficients
     coef_group <- coef[, 1:max(n_egroups)]
-    coef_center <- rowMeans(coef_group)
+    coef_center <- rowMeans(coef_group, na.rm = TRUE)
     coef[, 1:max(n_egroups)] <- sweep(coef_group, MARGIN = 1, coef_center, `-`)
     coef[, max(n_egroups) + 1] <- coef[, max(n_egroups) + 1] + coef_center
 
@@ -168,8 +177,10 @@ coxtrans <- function(
     log_lik <- sum(status * (eta - log(risk_set)))
 
     # Check the convergence
+    coef_ <- coef
+    coef_[is.na(coef_)] <- 0
     record <- check_convergence(
-      coef = coef, loss = -log_lik, last_record = record, control = control
+      coef = coef_, loss = -log_lik, last_record = record, control = control
     )
     if (log_lik / null_deviance < 0.01) {
       record$convergence <- TRUE

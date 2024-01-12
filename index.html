@@ -88,20 +88,33 @@
 <span><span class="co">#&gt; 载入需要的程辑包：survival</span></span>
 <span><span class="co">## basic example code</span></span>
 <span><span class="va">formula</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">.</span> <span class="op">-</span> <span class="va">group</span> <span class="op">-</span> <span class="va">id</span></span>
-<span><span class="va">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">sim1</span><span class="op">$</span><span class="va">group</span><span class="op">)</span></span>
-<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cv_coxtrans.html">cv_coxtrans</a></span><span class="op">(</span><span class="va">formula</span>, <span class="va">sim1</span>, <span class="va">group</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
-<span><span class="co">#&gt;              [,1]        [,2]      [,3]</span></span>
-<span><span class="co">#&gt;  [1,] -0.10396483  0.10396483 1.0964685</span></span>
-<span><span class="co">#&gt;  [2,]  0.02007187 -0.02007187 0.8679913</span></span>
-<span><span class="co">#&gt;  [3,]  0.00000000  0.00000000 0.9126952</span></span>
-<span><span class="co">#&gt;  [4,]  0.00000000  0.00000000 0.8735655</span></span>
-<span><span class="co">#&gt;  [5,]  0.01844098 -0.01844098 0.9146741</span></span>
-<span><span class="co">#&gt;  [6,] -0.04535751  0.04535751 0.9815223</span></span>
-<span><span class="co">#&gt;  [7,]  0.00000000  0.00000000 0.8255911</span></span>
-<span><span class="co">#&gt;  [8,]  0.00000000  0.00000000 0.9077969</span></span>
-<span><span class="co">#&gt;  [9,]  0.00000000  0.00000000 0.9500952</span></span>
-<span><span class="co">#&gt; [10,]  0.00000000  0.00000000 0.8960722</span></span></code></pre></div>
+<span><span class="va">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">sim2</span><span class="op">$</span><span class="va">group</span><span class="op">)</span></span>
+<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/coxtrans.html">coxtrans</a></span><span class="op">(</span></span>
+<span>  <span class="va">formula</span>, <span class="va">sim2</span>, <span class="va">group</span>, lambda1 <span class="op">=</span> <span class="fl">0.05</span>, lambda2 <span class="op">=</span> <span class="fl">0.05</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/sweep.html" class="external-link">sweep</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">eta</span>, <span class="fl">1</span>, <span class="va">fit</span><span class="op">$</span><span class="va">beta</span>, <span class="st">"+"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;           [,1]      [,2]       [,3]      [,4]       [,5]      [,6]       [,7]</span></span>
+<span><span class="co">#&gt; X1   1.1054434 1.1054434  1.1054434 1.1054434  1.1054434 1.1054434  1.1054434</span></span>
+<span><span class="co">#&gt; X2  -1.1539259 0.8995398 -1.1539259 0.8995398 -1.1539259 0.8995398 -1.1539259</span></span>
+<span><span class="co">#&gt; X3   1.0519998 1.0519998  1.0519998 1.0519998  1.0519998 1.0519998  1.0519998</span></span>
+<span><span class="co">#&gt; X4  -0.9805338 0.9504827 -0.9805338 0.9504827 -0.9805338 0.9504827 -0.9805338</span></span>
+<span><span class="co">#&gt; X5   1.0742583 1.0742583  1.0742583 1.0742583  1.0742583 1.0742583  1.0742583</span></span>
+<span><span class="co">#&gt; X6  -1.1291167 1.0882749 -1.1291167 1.0882749 -1.1291167 1.0882749 -1.1291167</span></span>
+<span><span class="co">#&gt; X7   1.0460208 1.0460208  1.0460208 1.0460208  1.0460208 1.0460208  1.0460208</span></span>
+<span><span class="co">#&gt; X8  -1.1278733 1.1502917 -1.1278733 1.1502917 -1.1278733 1.1502917 -1.1278733</span></span>
+<span><span class="co">#&gt; X9   1.0382267 1.0382267  1.0382267 1.0382267  1.0382267 1.0382267  1.0382267</span></span>
+<span><span class="co">#&gt; X10 -0.9650904 1.0959670 -0.9650904 1.0959670 -0.9650904 1.0959670 -0.9650904</span></span>
+<span><span class="co">#&gt;          [,8]       [,9]     [,10]</span></span>
+<span><span class="co">#&gt; X1  1.1054434  1.1054434 1.1054434</span></span>
+<span><span class="co">#&gt; X2  0.8995398 -1.1539259 1.3680706</span></span>
+<span><span class="co">#&gt; X3  1.0519998  1.0519998 1.0519998</span></span>
+<span><span class="co">#&gt; X4  0.9504827 -0.9805338 0.9504827</span></span>
+<span><span class="co">#&gt; X5  1.0742583  1.0742583 1.0742583</span></span>
+<span><span class="co">#&gt; X6  1.0506468 -1.1291167 1.0882749</span></span>
+<span><span class="co">#&gt; X7  1.0460208  1.0460208 1.0460208</span></span>
+<span><span class="co">#&gt; X8  1.1502917 -1.1278733 1.1502917</span></span>
+<span><span class="co">#&gt; X9  1.0382267  1.0382267 1.0382267</span></span>
+<span><span class="co">#&gt; X10 1.0959670 -0.9650904 1.0959670</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>

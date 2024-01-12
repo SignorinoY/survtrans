@@ -41,7 +41,8 @@ library(survtrans)
 formula <- Surv(time, status) ~ . - group - id
 group <- as.factor(sim2$group)
 fit <- coxtrans(
-  formula, sim2, group, lambda1 = 0.05, lambda2 = 0.05, penalty = "SCAD"
+  formula, sim2, group,
+  lambda1 = 0.05, lambda2 = 0.05, penalty = "SCAD"
 )
 sweep(fit$eta, 1, fit$beta, "+")
 ```

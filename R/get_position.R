@@ -1,4 +1,4 @@
-get_position <- function(i_vec, j_vec, s) {
+get_position <- function(i_vec, j_vec, s) { # nolint: cyclocomp_linter.
   if (length(i_vec) != length(j_vec)) {
     stop("The lengths of i and j must be the same")
   }

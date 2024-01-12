@@ -1,8 +1,8 @@
-calc_weights_residuals <- function(coef, x, time, status, offset) {
-  n_samples <- nrow(x)
+calc_weights_residuals <- function(offset, time, status) {
+  n_samples <- length(time)
 
   # Update hazard
-  haz <- exp(x %*% coef + offset)
+  haz <- exp(offset)
 
   # Update risk set
   risk_set <- cumsum(haz)

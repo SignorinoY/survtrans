@@ -51,6 +51,7 @@ Non-convex penalized Cox proportional hazards model
 }
 \examples{
 library(survtrans)
-fit <- ncvcox(Surv(time, status) ~ . - id, data = sim_sparse, lambda = 0.1)
+formula <- Surv(time, status) ~ . - id
+fit <- ncvcox(formula, data = sim_sparse, lambda = 0.1, penalty = "SCAD")
 fit$coefficients
 }

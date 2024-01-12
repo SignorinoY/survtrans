@@ -7,10 +7,15 @@ check_convergence <- function(coef, loss, last_record, control) {
   last_coef <- last_record$coef
 
   if (n_iterations >= control$maxit) {
-    warning("Maximum number of iterations reached")
+    message <- paste0(
+      "Maximum number of iterations reached (", control$maxit, ")."
+    )
     convergence <- TRUE
   }
   if (max(abs(coef - last_coef)) <= control$eps) {
+    message <- paste0(
+      "Convergence reached at iteration ", n_iterations, "."
+    )
     convergence <- TRUE
   }
 
@@ -23,12 +28,17 @@ check_convergence <- function(coef, loss, last_record, control) {
   }
 
   if (n_iterations_no_improvement >= control$patience) {
+    message <- paste0(
+      "No improvement for ", n_iterations_no_improvement,
+      " iterations. Stopping the algorithm."
+    )
     convergence <- TRUE
   }
 
   list(
     convergence = convergence, n_iterations = n_iterations + 1,
     n_iterations_no_improvement = n_iterations_no_improvement,
-    best_loss = best_loss, best_coef = best_coef, coef = coef
+    best_loss = best_loss, best_coef = best_coef, coef = coef,
+    message = message
   )
 }

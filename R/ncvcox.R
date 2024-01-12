@@ -20,7 +20,8 @@
 #' @export
 #' @examples
 #' library(survtrans)
-#' fit <- ncvcox(Surv(time, status) ~ . - id, data = sim_sparse, lambda = 0.1)
+#' formula <- Surv(time, status) ~ . - id
+#' fit <- ncvcox(formula, data = sim_sparse, lambda = 0.1, penalty = "SCAD")
 #' fit$coefficients
 ncvcox <- function(
     formula, data, offset, penalty = c("lasso", "MCP", "SCAD"),
@@ -58,7 +59,7 @@ ncvcox <- function(
     n_iterations <- n_iterations + 1
 
     # calculate the weights and residuals
-    temp <- calc_weights_residuals(coef, x, time, status, offset)
+    temp <- calc_weights_residuals(x %*% coef + offset, time, status)
     weights <- temp$weights
     residuals <- temp$residuals
 

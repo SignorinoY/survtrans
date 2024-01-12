@@ -1,40 +1,26 @@
 #' @export
-logLik.coxtrans <- function(object, data, bgroup, egroup, ...) {
-  data_ <- preprocess_data(object$formula, data)
+logLik.coxtrans <- function(object, data, group, ...) {
+  data_ <- preprocess_data(object$formula, data, group = group)
   x <- data_$x
   time <- data_$time
   status <- data_$status
-  bgroup <- bgroup[data_$sorted]
-  egroup <- egroup[data_$sorted, ]
+  group <- data_$group
 
-  # Properties of the data
-  n_features <- ncol(x)
-  n_bgroups <- length(unique(bgroup))
-  bgroup_levels <- levels(bgroup)
-  n_egroups <- c()
-  for (k in 1:n_features) {
-    n_egroups[k] <- length(unique(egroup[, k]))
-  }
-  egroup_levels <- list()
-  for (k in 1:n_features) {
-    egroup_levels[[k]] <- levels(as.factor(egroup[, k]))
-  }
+  group_levels <- unique(group)
+  n_groups <- length(group_levels)
 
-  # Calculate the log-likelihood
-  eta <- x %*% object$coefficients[, max(n_egroups) + 1]
-  for (j in 1:n_features) {
-    for (k in 1:n_egroups[j]) {
-      ind <- which(egroup[, j] == egroup_levels[[j]][k])
-      eta[ind] <- eta[ind] + x[ind, j] * object$coefficients[j, k]
-    }
+  offset <- x %*% object$beta
+  for (k in 1:n_groups) {
+    ind <- group == group_levels[k]
+    offset[ind] <- offset[ind] + x[ind, ] %*% object$eta[, k]
   }
-  haz <- exp(eta)
-  risk_set <- ave(haz, bgroup, FUN = cumsum)
-  for (k in 1:n_bgroups) {
-    ind <- which(bgroup == bgroup_levels[k])
+  hazard <- exp(offset)
+  risk_set <- ave(hazard, group, FUN = cumsum)
+  for (k in 1:n_groups) {
+    ind <- group == group_levels[k]
     risk_set[ind] <- ave(risk_set[ind], time[ind], FUN = max)
   }
-  log_lik <- sum(status * (eta - log(risk_set)))
 
-  return(log_lik)
+  loglik <- sum(status * (offset - log(risk_set)))
+  return(loglik)
 }

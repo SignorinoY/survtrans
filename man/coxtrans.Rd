@@ -8,12 +8,11 @@ coxtrans(
   formula,
   data,
   group,
-  bgroup,
-  egroup,
   lambda1 = 0,
   lambda2 = 0,
   penalty = c("lasso", "MCP", "SCAD"),
   gamma = switch(penalty, SCAD = 3.7, MCP = 3, 1),
+  rho = 1.1,
   init,
   control,
   ...
@@ -28,11 +27,6 @@ returned by the \code{\link{Surv}} function.}
 
 \item{group}{a factor specifying the group of each sample.}
 
-\item{bgroup}{a factor specifying the group of each sample for baseline
-hazard.}
-
-\item{egroup}{a factor specifying the group of each sample for effect.}
-
 \item{lambda1}{a non-negative value specifying the sparisity penalty
 parameter. The default is 0.}
 
@@ -44,6 +38,9 @@ The default is "lasso". Other options are "MCP" and "SCAD".}
 
 \item{gamma}{a non-negative value specifying the penalty parameter. The
 default is 3.7 for SCAD and 3.0 for MCP.}
+
+\item{rho}{a value in (2, 10) specifying the expansion factor of the
+augmented Lagrangian's penalty parameter. The default is 1.1.}
 
 \item{init}{a numeric vector specifying the initial value of the
 coefficients. The default is a zero vector.}
@@ -63,7 +60,10 @@ Transfer Learning of Multi-source for Cox proportional hazards model
 \examples{
 library(survtrans)
 formula <- Surv(time, status) ~ . - group - id
-group <- as.factor(sim1$group)
-fit <- coxtrans(formula, sim1, group, lambda1 = 0.1, penalty = "SCAD")
+group <- as.factor(sim2$group)
+fit <- coxtrans(
+  formula, sim2, group,
+  lambda1 = 0.1, lambda2 = 0.1, penalty = "SCAD"
+)
 fit$coefficients
 }

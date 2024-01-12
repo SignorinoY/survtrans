@@ -1,4 +1,4 @@
-preprocess_data <- function(formula, data, offset, group) {
+preprocess_data <- function(formula, data, group, offset) {
   mf <- model.frame(formula, data)
 
   # Load time and status from formula and data
@@ -37,7 +37,6 @@ preprocess_data <- function(formula, data, offset, group) {
   group <- group[sorted]
 
   list(
-    x = x, time = time, status = status, offset = offset, group = group,
-    sorted = sorted
+    x = x, time = time, status = status, group = group, offset = offset
   )
 }

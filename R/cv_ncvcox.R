@@ -57,10 +57,7 @@ cv_ncvcox <- function(
   if (missing(control)) control <- survtrans_control(...)
 
   # Determmine the lambda sequence
-  temp <- calc_weights_residuals(
-    coef = rep(0, n_features), x = x, time = time, status = status,
-    offset = offset_
-  )
+  temp <- calc_weights_residuals(offset = offset_, time = time, status = status)
   weights <- temp$weights
   residuals <- temp$residuals
   zw0 <- (offset_ + residuals) * weights

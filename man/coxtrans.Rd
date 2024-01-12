@@ -63,7 +63,7 @@ formula <- Surv(time, status) ~ . - group - id
 group <- as.factor(sim2$group)
 fit <- coxtrans(
   formula, sim2, group,
-  lambda1 = 0.1, lambda2 = 0.1, penalty = "SCAD"
+  lambda1 = 0.05, lambda2 = 0.05, penalty = "SCAD"
 )
 fit$coefficients
 }

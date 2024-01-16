@@ -65,5 +65,5 @@ fit <- coxtrans(
   formula, sim2, group,
   lambda1 = 0.05, lambda2 = 0.05, penalty = "SCAD"
 )
-fit$coefficients
+fit$eta
 }

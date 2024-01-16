@@ -8,11 +8,10 @@ get_position <- function(i_vec, j_vec, s) { # nolint: cyclocomp_linter.
   for (k in seq_len(n_search)) {
     i <- i_vec[k]
     j <- j_vec[k]
-    if (is.na(i) || is.na(j)) {
-      pos[k] <- NA
-    }
-    if (i >= j || i > s || j > s) {
-      pos[k] <- NA
+    if (is.na(i) || is.na(j) || i > s || j > s || i == j) {
+      next
+    } else  if (i > j) {
+      pos[k] <- get_position(j, i, s)
     } else {
       if (i == 1) {
         pos[k] <- j - 1
@@ -21,5 +20,6 @@ get_position <- function(i_vec, j_vec, s) { # nolint: cyclocomp_linter.
       }
     }
   }
+  pos <- pos[pos != 0]
   return(pos)
 }

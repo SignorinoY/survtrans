@@ -30,7 +30,7 @@
 #'   formula, sim2, group,
 #'   lambda1 = 0.05, lambda2 = 0.05, penalty = "SCAD"
 #' )
-#' fit$coefficients
+#' fit$eta
 coxtrans <- function( # nolint: cyclocomp_linter.
     formula, data, group, lambda1 = 0, lambda2 = 0,
     penalty = c("lasso", "MCP", "SCAD"),
@@ -136,17 +136,13 @@ coxtrans <- function( # nolint: cyclocomp_linter.
     w <- weights
     for (i in 1:n_groups) {
       idx <- which(group == group_levels[i])
-      for (iter in 1:control$maxit) {
-        eta_old <- eta[, i]
-        features_idx <- 1:n_features
-        for (k in features_idx) {
-          xk <- as.vector(x[idx, k])
-          phi <- mean(w[idx] * xk * (r[idx] - x[idx, -k] %*% eta[-k, i])) -
-            mu[k] - nu_sum[k, i] + alpha * xi_sum[k, i]
-          psi <- mean(w[idx] * xk^2) + alpha * n_groups
-          eta[k, i] <- soft_threshold(phi, psi, penalty, lambda1, gamma)
-        }
-        if (max(abs(eta_old - eta[, i])) < control$eps) break
+      features_idx <- 1:n_features
+      for (k in features_idx) {
+        xk <- as.vector(x[idx, k])
+        phi <- mean(w[idx] * xk * (r[idx] - x[idx, -k] %*% eta[-k, i])) -
+          mu[k] - nu_sum[k, i] + alpha * xi_sum[k, i]
+        psi <- mean(w[idx] * xk^2) + alpha * n_groups
+        eta[k, i] <- soft_threshold(phi, psi, penalty, lambda1, gamma)
       }
     }
 
@@ -216,9 +212,40 @@ coxtrans <- function( # nolint: cyclocomp_linter.
   mu <- record$best_coef[, n_groups * (n_groups + 1) / 2 + 2]
   nu <- record$best_coef[, (n_groups * (n_groups + 1) / 2 + 3):n_parameters]
 
+  # Recognize the group assignment
+  eta_processed <- matrix(0, nrow = n_features, ncol = n_groups)
+  eta_group <- matrix(0, nrow = n_features, ncol = n_groups)
+  for (i in 1:n_features) {
+    is_processed <- rep(FALSE, n_groups)
+    for (j in 1:n_groups) {
+      if (is_processed[j]) next
+      is_processed[j] <- TRUE
+      eta_group[i, j] <- j
+      for (k in 1:n_groups) {
+        if (is_processed[k]) next
+        pos <- get_position(j, k, n_groups)
+        if (abs(xi[i, pos]) < control$eps) {
+          eta_group[i, k] <- j
+          is_processed[k] <- TRUE
+        }
+      }
+    }
+    for (j in unique(eta_group[i, ])) {
+      idx <- which(eta_group[i, ] == j)
+      eta_processed[i, idx] <- mean(eta[i, idx])
+    }
+  }
+
+  eta_bar <- rowMeans(eta_processed)
+  eta_processed <- sweep(eta_processed, 1, eta_bar, "-")
+  eta_processed[abs(eta_processed) < control$eps] <- 0
+  beta <- beta + eta_bar
+
   # Return the fit
   fit <- list(
-    coefficients = coef, beta = beta, eta = eta, xi = xi, mu = mu, nu = nu,
+    coefficients = coef,
+    beta = beta, eta = eta_processed, eta_group = eta_group,
+    xi = xi, mu = mu, nu = nu,
     logLik = -record$best_loss, message = record$message,
     penalty = penalty, lambda1 = lambda1, gamma = gamma,
     iter = record$n_iterations, formula = formula, call = match.call()

@@ -41,10 +41,11 @@ library(survtrans)
 formula <- Surv(time, status) ~ . - group - id
 group <- as.factor(sim2$group)
 fit <- coxtrans(
-  formula, sim2, group,
-  lambda1 = 0.05, lambda2 = 0.05, penalty = "SCAD"
+  formula, sim2, group, group_target = 10,
+  lambda1 = 0.05, lambda2 = 0.06, penalty = "SCAD"
 )
-sweep(fit$eta, 1, fit$beta, "+")
+round(fit$beta, 3)
+round(fit$eta, 3)
 ```
 
 ## Code of Conduct

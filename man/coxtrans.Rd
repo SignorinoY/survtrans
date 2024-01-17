@@ -8,6 +8,7 @@ coxtrans(
   formula,
   data,
   group,
+  group_target,
   lambda1 = 0,
   lambda2 = 0,
   penalty = c("lasso", "MCP", "SCAD"),
@@ -26,6 +27,8 @@ returned by the \code{\link{Surv}} function.}
 \item{data}{a data frame containing the variables in the model.}
 
 \item{group}{a factor specifying the group of each sample.}
+
+\item{group_target}{a character string specifying the target group.}
 
 \item{lambda1}{a non-negative value specifying the sparisity penalty
 parameter. The default is 0.}
@@ -62,7 +65,7 @@ library(survtrans)
 formula <- Surv(time, status) ~ . - group - id
 group <- as.factor(sim2$group)
 fit <- coxtrans(
-  formula, sim2, group,
+  formula, sim2, group, group_target = 10,
   lambda1 = 0.05, lambda2 = 0.05, penalty = "SCAD"
 )
 fit$eta

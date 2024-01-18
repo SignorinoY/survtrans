@@ -108,6 +108,7 @@ coxtrans <- function( # nolint: cyclocomp_linter.
   )
   weights <- rep(0, n_samples)
   residuals <- rep(0, n_samples)
+  x2 <- x^2
 
   repeat {
     # Update the coefficients of constraints on eta
@@ -141,23 +142,25 @@ coxtrans <- function( # nolint: cyclocomp_linter.
 
     # Update beta by weighted least squares
     r <- residuals + x %*% beta
-    w <- diag(weights)
-    beta <- solve(t(x) %*% w %*% x) %*% t(x) %*% w %*% r
+    beta <- solve(t(x) %*% (weights * x)) %*% t(x) %*% (weights * r)
 
     # Update eta by cyclic coordinate descent
     r <- residuals + offset - x %*% beta
     w <- weights
     for (i in 1:n_groups) {
       idx <- which(group == group_levels[i])
+      r_ <- r[idx]
+      x_ <- x[idx, , drop = FALSE]
+      xw_ <- x_ * w[idx]
+      psi <- colMeans(w[idx] * x2[idx, , drop = FALSE]) + alpha * n_groups
       for (iter in 1:control$maxit) {
         eta_old <- eta[, i]
         features_idx <- sample(seq_len(n_features), n_features, replace = FALSE)
         for (k in features_idx) {
-          xk <- as.vector(x[idx, k])
-          phi <- mean(w[idx] * xk * (r[idx] - x[idx, -k] %*% eta[-k, i])) -
+          r_tilde <- r_ - x_[, -k] %*% eta[-k, i]
+          phi <- mean(xw_[, k] * r_tilde) -
             mu[k] - nu_sum[k, i] + alpha * xi_sum[k, i]
-          psi <- mean(w[idx] * xk^2) + alpha * n_groups
-          eta[k, i] <- soft_threshold(phi, psi, penalty, lambda1, gamma)
+          eta[k, i] <- soft_threshold(phi, psi[k], penalty, lambda1, gamma)
         }
         if (max(abs(eta_old - eta[, i])) <= control$eps) break
       }
@@ -192,9 +195,16 @@ coxtrans <- function( # nolint: cyclocomp_linter.
     }
 
     # Check the convergence
-    fit$eta <- sweep(eta, 1, x_scale, `/`)
-    fit$beta <- beta / x_scale
-    loss <- -logLik(fit, data_, group_)
+    offset <- x %*% beta
+    for (i in 1:n_groups) {
+      idx <- which(group == group_levels[i])
+      offset[idx] <- offset[idx] + x[idx, ] %*% eta[, i]
+    }
+    hazard <- exp(offset)
+    risk_set <- ave(hazard, group, FUN = cumsum)
+    # Warning: The max operator is undone by ave
+    loss <- -sum(status * (offset - log(risk_set)))
+
 
     coef_ <- cbind(eta, beta, xi)
     coefficients <- coef_

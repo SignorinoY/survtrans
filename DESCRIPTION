@@ -18,14 +18,14 @@ Remotes:
 Suggests: 
     knitr,
     rmarkdown,
-    testthat (>= 3.0.0),
-    MASS,
-    dplyr,
-    simsurv
+    testthat (>= 3.0.0)
 Config/testthat/edition: 3
 URL: https://github.com/SignorinoY/survtrans
 BugReports: https://github.com/SignorinoY/survtrans/issues
 LazyData: true
 VignetteBuilder: knitr
 Imports: 
+    dplyr,
+    MASS,
+    simsurv,
     stats

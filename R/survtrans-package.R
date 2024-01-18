@@ -3,6 +3,12 @@
 
 ## usethis namespace: start
 #' @import progress
+#' @importFrom dplyr %>%
+#' @importFrom dplyr left_join
+#' @importFrom dplyr mutate
+#' @importFrom dplyr rename
+#' @importFrom MASS mvrnorm
+#' @importFrom simsurv simsurv
 #' @importFrom stats ave
 #' @importFrom stats logLik
 #' @importFrom stats model.frame

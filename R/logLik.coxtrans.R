@@ -19,7 +19,7 @@ logLik.coxtrans <- function(object, data, group, ...) {
   beta <- object$beta
   beta <- beta * x_scale
   eta <- object$eta
-  eta <- sweep(eta, 2, x_scale, `*`)
+  eta <- sweep(eta, 1, x_scale, `*`)
 
   offset <- x %*% beta
   for (k in 1:n_groups) {

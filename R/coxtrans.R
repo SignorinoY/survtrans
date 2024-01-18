@@ -192,7 +192,7 @@ coxtrans <- function( # nolint: cyclocomp_linter.
     }
 
     # Check the convergence
-    fit$eta <- sweep(eta, 2, x_scale, `/`)
+    fit$eta <- sweep(eta, 1, x_scale, `/`)
     fit$beta <- beta / x_scale
     loss <- -logLik(fit, data_, group_)
 

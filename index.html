@@ -88,39 +88,50 @@
 <span><span class="co">#&gt; 载入需要的程辑包：survival</span></span>
 <span><span class="co">## basic example code</span></span>
 <span><span class="va">formula</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">.</span> <span class="op">-</span> <span class="va">group</span> <span class="op">-</span> <span class="va">id</span></span>
-<span><span class="va">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">sim2</span><span class="op">$</span><span class="va">group</span><span class="op">)</span></span>
 <span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/coxtrans.html">coxtrans</a></span><span class="op">(</span></span>
-<span>  <span class="va">formula</span>, <span class="va">sim2</span>, <span class="va">group</span>,</span>
-<span>  lambda1 <span class="op">=</span> <span class="fl">1.5</span>, lambda2 <span class="op">=</span> <span class="fl">2.3</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span>
+<span>  <span class="va">formula</span>, <span class="va">sim2</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">sim2</span><span class="op">$</span><span class="va">group</span><span class="op">)</span>,</span>
+<span>  lambda1 <span class="op">=</span> <span class="fl">0.05</span>, lambda2 <span class="op">=</span> <span class="fl">0.04</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">fit</span><span class="op">$</span><span class="va">beta</span></span>
 <span><span class="co">#&gt;           X1           X2           X3           X4           X5           X6 </span></span>
-<span><span class="co">#&gt;  1.068926330 -0.070782625  0.999758363 -0.010462933  1.013309017 -0.015555871 </span></span>
+<span><span class="co">#&gt;  1.136068531 -0.078963659  1.064432409 -0.023868649  1.081120313 -0.019824581 </span></span>
 <span><span class="co">#&gt;           X7           X8           X9          X10 </span></span>
-<span><span class="co">#&gt;  0.976674175  0.007754945  0.956393854  0.071373260</span></span>
+<span><span class="co">#&gt;  1.042387046  0.004917742  1.026540812  0.069437346</span></span>
 <span><span class="va">fit</span><span class="op">$</span><span class="va">eta</span></span>
-<span><span class="co">#&gt;             [,1]      [,2]       [,3]      [,4]       [,5]      [,6]       [,7]</span></span>
-<span><span class="co">#&gt;  [1,]  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
-<span><span class="co">#&gt;  [2,] -0.9675488 0.7243923 -0.9675488 0.9298314 -0.9675488 0.9298314 -0.9675488</span></span>
-<span><span class="co">#&gt;  [3,]  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
-<span><span class="co">#&gt;  [4,] -0.9222461 0.9222461 -0.9222461 0.9222461 -0.9222461 0.9222461 -0.9222461</span></span>
-<span><span class="co">#&gt;  [5,]  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
-<span><span class="co">#&gt;  [6,] -1.0701280 1.1300472 -1.0701280 1.1554052 -1.0701280 1.1125420 -1.0701280</span></span>
-<span><span class="co">#&gt;  [7,]  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
-<span><span class="co">#&gt;  [8,] -1.0194940 1.0167989 -1.0194940 1.0167989 -1.0060182 1.0167989 -1.0194940</span></span>
-<span><span class="co">#&gt;  [9,]  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
-<span><span class="co">#&gt; [10,] -0.9361251 0.9677459 -0.9875176 0.9677459 -0.9875176 0.9677459 -0.9400515</span></span>
-<span><span class="co">#&gt;            [,8]       [,9]     [,10]</span></span>
-<span><span class="co">#&gt;  [1,] 0.0000000  0.0000000 0.0000000</span></span>
-<span><span class="co">#&gt;  [2,] 0.9298314 -0.9675488 1.3238577</span></span>
-<span><span class="co">#&gt;  [3,] 0.0000000  0.0000000 0.0000000</span></span>
-<span><span class="co">#&gt;  [4,] 0.9222461 -0.9222461 0.9222461</span></span>
-<span><span class="co">#&gt;  [5,] 0.0000000  0.0000000 0.0000000</span></span>
-<span><span class="co">#&gt;  [6,] 0.7785170 -1.0701280 1.1741286</span></span>
-<span><span class="co">#&gt;  [7,] 0.0000000  0.0000000 0.0000000</span></span>
-<span><span class="co">#&gt;  [8,] 1.0167989 -1.0194940 1.0167989</span></span>
-<span><span class="co">#&gt;  [9,] 0.0000000  0.0000000 0.0000000</span></span>
-<span><span class="co">#&gt; [10,] 0.9677459 -0.9875176 0.9677459</span></span></code></pre></div>
+<span><span class="co">#&gt;            [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]</span></span>
+<span><span class="co">#&gt;  [1,]  0.000000 0.0000000  0.000000 0.0000000  0.000000 0.0000000  0.000000</span></span>
+<span><span class="co">#&gt;  [2,] -1.046848 0.9317925 -1.046848 0.9591964 -1.046848 0.9591964 -1.046848</span></span>
+<span><span class="co">#&gt;  [3,]  0.000000 0.0000000  0.000000 0.0000000  0.000000 0.0000000  0.000000</span></span>
+<span><span class="co">#&gt;  [4,] -1.005511 1.0055114 -1.005511 1.0055114 -1.005511 1.0055114 -1.005511</span></span>
+<span><span class="co">#&gt;  [5,]  0.000000 0.0000000  0.000000 0.0000000  0.000000 0.0000000  0.000000</span></span>
+<span><span class="co">#&gt;  [6,] -1.161986 1.2387476 -1.161986 1.2387476 -1.161986 1.2387476 -1.161986</span></span>
+<span><span class="co">#&gt;  [7,]  0.000000 0.0000000  0.000000 0.0000000  0.000000 0.0000000  0.000000</span></span>
+<span><span class="co">#&gt;  [8,] -1.096769 1.0967686 -1.096769 1.0967686 -1.096769 1.0967686 -1.096769</span></span>
+<span><span class="co">#&gt;  [9,]  0.000000 0.0000000  0.000000 0.0000000  0.000000 0.0000000  0.000000</span></span>
+<span><span class="co">#&gt; [10,] -1.052338 1.0523384 -1.052338 1.0523384 -1.052338 1.0523384 -1.052338</span></span>
+<span><span class="co">#&gt;            [,8]      [,9]    [,10]</span></span>
+<span><span class="co">#&gt;  [1,] 0.0000000  0.000000 0.000000</span></span>
+<span><span class="co">#&gt;  [2,] 0.9591964 -1.046848 1.424857</span></span>
+<span><span class="co">#&gt;  [3,] 0.0000000  0.000000 0.000000</span></span>
+<span><span class="co">#&gt;  [4,] 1.0055114 -1.005511 1.005511</span></span>
+<span><span class="co">#&gt;  [5,] 0.0000000  0.000000 0.000000</span></span>
+<span><span class="co">#&gt;  [6,] 0.8549381 -1.161986 1.238748</span></span>
+<span><span class="co">#&gt;  [7,] 0.0000000  0.000000 0.000000</span></span>
+<span><span class="co">#&gt;  [8,] 1.0967686 -1.096769 1.096769</span></span>
+<span><span class="co">#&gt;  [9,] 0.0000000  0.000000 0.000000</span></span>
+<span><span class="co">#&gt; [10,] 1.0523384 -1.052338 1.052338</span></span>
+<span><span class="va">fit</span><span class="op">$</span><span class="va">eta_group</span></span>
+<span><span class="co">#&gt;       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]</span></span>
+<span><span class="co">#&gt;  [1,]    1    1    1    1    1    1    1    1    1     1</span></span>
+<span><span class="co">#&gt;  [2,]    1    2    1    4    1    4    1    4    1    10</span></span>
+<span><span class="co">#&gt;  [3,]    1    1    1    1    1    1    1    1    1     1</span></span>
+<span><span class="co">#&gt;  [4,]    1    2    1    2    1    2    1    2    1     2</span></span>
+<span><span class="co">#&gt;  [5,]    1    1    1    1    1    1    1    1    1     1</span></span>
+<span><span class="co">#&gt;  [6,]    1    2    1    2    1    2    1    8    1     2</span></span>
+<span><span class="co">#&gt;  [7,]    1    1    1    1    1    1    1    1    1     1</span></span>
+<span><span class="co">#&gt;  [8,]    1    2    1    2    1    2    1    2    1     2</span></span>
+<span><span class="co">#&gt;  [9,]    1    1    1    1    1    1    1    1    1     1</span></span>
+<span><span class="co">#&gt; [10,]    1    2    1    2    1    2    1    2    1     2</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>

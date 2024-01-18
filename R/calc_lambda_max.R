@@ -1,3 +1,12 @@
+#' Determine the maximum value of the penalty parameter lambda
+#' @param formula a formula expression as for regression models, of the form
+#' \code{response ~ predictors}. The response must be a survival object as
+#' returned by the \code{\link{Surv}} function.
+#' @param data a data frame containing the variables in the model.
+#' @param group a factor specifying the group of each sample.
+#' @param offset a numeric vector specifying the offset.
+#' @return the maximum value of the penalty parameter lambda.
+#' @export
 calc_lambda_max <- function(formula, data, group, offset) {
   if (missing(group)) {
     group <- rep(1, nrow(data))

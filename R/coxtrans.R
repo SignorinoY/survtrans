@@ -154,9 +154,9 @@ coxtrans <- function( # nolint: cyclocomp_linter.
         features_idx <- sample(seq_len(n_features), n_features, replace = FALSE)
         for (k in features_idx) {
           xk <- as.vector(x[idx, k])
-          phi <- sum(w[idx] * xk * (r[idx] - x[idx, -k] %*% eta[-k, i])) -
+          phi <- mean(w[idx] * xk * (r[idx] - x[idx, -k] %*% eta[-k, i])) -
             mu[k] - nu_sum[k, i] + alpha * xi_sum[k, i]
-          psi <- sum(w[idx] * xk^2) + alpha * n_groups
+          psi <- mean(w[idx] * xk^2) + alpha * n_groups
           eta[k, i] <- soft_threshold(phi, psi, penalty, lambda1, gamma)
         }
         if (max(abs(eta_old - eta[, i])) <= control$eps) break

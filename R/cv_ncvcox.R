@@ -35,18 +35,14 @@ cv_ncvcox <- function(
   set.seed(seed)
   penalty <- match.arg(penalty)
 
-  data_ <- preprocess_data(formula, data, offset)
-  x <- data_$x
-  time <- data_$time
-  status <- data_$status
-  offset_ <- data_$offset
-
   # Properties of the data
-  n_samples <- nrow(x)
+  x <- model.matrix(formula, data)
+  x <- x[, -1] # Remove the intercept column
+  n_samples <- nrow(data)
   n_features <- ncol(x)
 
   # Check the offset argument
-  if (missing(offset)) offset <- rep(0, nrow(x))
+  if (missing(offset)) offset <- rep(0, n_samples)
 
   # Check the lambda_min_ratio argument
   if (is.null(lambda_min_ratio)) {
@@ -57,15 +53,11 @@ cv_ncvcox <- function(
   if (missing(control)) control <- survtrans_control(...)
 
   # Determmine the lambda sequence
-  temp <- calc_weights_residuals(offset = offset_, time = time, status = status)
-  weights <- temp$weights
-  residuals <- temp$residuals
-  zw0 <- (offset_ + residuals) * weights
-  lambda_max <- max(abs(colMeans(sweep(x, MARGIN = 1, zw0, `*`))))
+  lambda_max <- calc_lambda_max(formula, data, offset)
   lambda_min <- lambda_max * lambda_min_ratio
   lambdas <- exp(seq(log(lambda_max), log(lambda_min), length.out = nlambdas))
 
-  idx <- sample(1:nfolds, nrow(x), replace = TRUE)
+  idx <- sample(1:nfolds, n_samples, replace = TRUE)
 
   coef_init <- rep(0, n_features)
   criterions <- matrix(0, nrow = nlambdas, ncol = nfolds)

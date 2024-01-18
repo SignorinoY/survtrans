@@ -4,7 +4,7 @@
 \alias{survtrans_control}
 \title{Ancillary arguments for controlling survtrans fitting}
 \usage{
-survtrans_control(eps = 1e-06, maxit = 500, patience = 10)
+survtrans_control(eps = 1e-06, maxit = 500, patience = 5, verbose = FALSE)
 }
 \arguments{
 \item{eps}{the convergence criteria for the CCD algorithm. Default is 1e-6.}
@@ -13,7 +13,10 @@ survtrans_control(eps = 1e-06, maxit = 500, patience = 10)
 Default is 500.}
 
 \item{patience}{the number of iterations without improvement before
-stopping the CCD algorithm. Default is 10.}
+stopping the CCD algorithm. Default is 5.}
+
+\item{verbose}{a logical value indicating whether to print messages
+during the fitting process. Default is \code{FALSE}.}
 }
 \description{
 Ancillary arguments for controlling survtrans fitting

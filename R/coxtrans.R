@@ -13,7 +13,7 @@
 #' @param gamma a non-negative value specifying the penalty parameter. The
 #' default is 3.7 for SCAD and 3.0 for MCP.
 #' @param rho a value in (2, 10) specifying the expansion factor of the
-#' augmented Lagrangian's penalty parameter. The default is 1.1.
+#' augmented Lagrangian's penalty parameter. The default is 2.0.
 #' @param init a numeric vector specifying the initial value of the
 #' coefficients. The default is a zero vector.
 #' @param control Object of class \link{survtrans_control} containing
@@ -25,10 +25,9 @@
 #' @examples
 #' library(survtrans)
 #' formula <- Surv(time, status) ~ . - group - id
-#' group <- as.factor(sim2$group)
 #' fit <- coxtrans(
-#'   formula, sim2, group,
-#'   lambda1 = 0.05, lambda2 = 0.05, penalty = "SCAD"
+#'   formula, sim2, as.factor(sim2$group),
+#'   lambda1 = 1.5, lambda2 = 2.3, penalty = "SCAD"
 #' )
 #' fit$eta
 coxtrans <- function( # nolint: cyclocomp_linter.
@@ -38,15 +37,16 @@ coxtrans <- function( # nolint: cyclocomp_linter.
       SCAD = 3.7,
       MCP = 3,
       1
-    ), rho = 1.1, init, control, ...) {
-  group_ <- group
+    ), rho = 2.0, init, control, ...) {
   # Load the data
-  data_ <- preprocess_data(formula, data, group = group_)
-  x <- data_$x
+  data_ <- data
+  group_ <- group
+  data <- preprocess_data(formula, data_, group = group_)
+  x <- data$x
   x_scale <- attr(x, "scale")
-  time <- data_$time
-  status <- data_$status
-  group <- data_$group
+  time <- data$time
+  status <- data$status
+  group <- data$group
 
   # Properties of the data
   n_samples <- nrow(x)
@@ -79,25 +79,14 @@ coxtrans <- function( # nolint: cyclocomp_linter.
   # Initialize the return fit object
   fit <- list(
     penalty = penalty, lambda1 = lambda1, lambda2 = lambda2, gamma = gamma,
-    rho = rho, formula = formula, call = match.call()
+    rho = rho, formula = formula, call = match.call(),
+    group_levels = group_levels
   )
   class(fit) <- "coxtrans"
 
-  # Initialize the coefficients
-  record <- list(
-    convergence = FALSE, n_iterations = 0, n_iterations_no_improvement = 0,
-    best_loss = Inf, best_coef = init, coef = init
-  )
-
-  alpha <- 1
-
-  weights <- rep(0, n_samples)
-  residuals <- rep(0, n_samples)
-  xi_sum <- matrix(0, nrow = n_features, ncol = n_groups)
-  nu_sum <- matrix(0, nrow = n_features, ncol = n_groups)
-
   # Extract the coefficients from init vector
   coefficients <- matrix(init, nrow = n_features)
+  coefficients <- sweep(coefficients, 1, x_scale, `*`)
   eta <- coefficients[, 1:n_groups, drop = FALSE]
   beta <- coefficients[, n_groups + 1]
   xi <- coefficients[
@@ -109,8 +98,32 @@ coxtrans <- function( # nolint: cyclocomp_linter.
     , (n_groups * (n_groups + 1) / 2 + 3):n_parameters,
     drop = FALSE
   ]
+  alpha <- 1
+
+  # Initialize the coefficients
+  coef_ <- cbind(eta, beta, xi)
+  record <- list(
+    convergence = FALSE, n_iterations = 0, n_iterations_no_improvement = 0,
+    best_loss = Inf, coef = coef_, null_deviance = null_deviance
+  )
+  weights <- rep(0, n_samples)
+  residuals <- rep(0, n_samples)
 
   repeat {
+    # Update the coefficients of constraints on eta
+    xi_sum <- matrix(0, nrow = n_features, ncol = n_groups)
+    nu_sum <- matrix(0, nrow = n_features, ncol = n_groups)
+    for (i in 1:n_groups) {
+      for (j in 1:n_groups) {
+        if (i >= j) next
+        pos <- get_position(i, j, n_groups)
+        xi_sum[, i] <- xi_sum[, i] + xi[, pos]
+        xi_sum[, j] <- xi_sum[, j] - xi[, pos]
+        nu_sum[, i] <- nu_sum[, i] + nu[, pos]
+        nu_sum[, j] <- nu_sum[, j] - nu[, pos]
+      }
+    }
+
     # Calculate the weights and residuals
     offset <- x %*% beta
     for (i in 1:n_groups) {
@@ -136,13 +149,17 @@ coxtrans <- function( # nolint: cyclocomp_linter.
     w <- weights
     for (i in 1:n_groups) {
       idx <- which(group == group_levels[i])
-      features_idx <- 1:n_features
-      for (k in features_idx) {
-        xk <- as.vector(x[idx, k])
-        phi <- mean(w[idx] * xk * (r[idx] - x[idx, -k] %*% eta[-k, i])) -
-          mu[k] - nu_sum[k, i] + alpha * xi_sum[k, i]
-        psi <- mean(w[idx] * xk^2) + alpha * n_groups
-        eta[k, i] <- soft_threshold(phi, psi, penalty, lambda1, gamma)
+      for (iter in 1:control$maxit) {
+        eta_old <- eta[, i]
+        features_idx <- sample(seq_len(n_features), n_features, replace = FALSE)
+        for (k in features_idx) {
+          xk <- as.vector(x[idx, k])
+          phi <- sum(w[idx] * xk * (r[idx] - x[idx, -k] %*% eta[-k, i])) -
+            mu[k] - nu_sum[k, i] + alpha * xi_sum[k, i]
+          psi <- sum(w[idx] * xk^2) + alpha * n_groups
+          eta[k, i] <- soft_threshold(phi, psi, penalty, lambda1, gamma)
+        }
+        if (max(abs(eta_old - eta[, i])) <= control$eps) break
       }
     }
 
@@ -170,47 +187,28 @@ coxtrans <- function( # nolint: cyclocomp_linter.
       }
     }
 
-    # Update the coefficients of constraints on eta
-    xi_sum <- matrix(0, nrow = n_features, ncol = n_groups)
-    nu_sum <- matrix(0, nrow = n_features, ncol = n_groups)
-    for (i in 1:n_groups) {
-      for (j in 1:n_groups) {
-        if (i >= j) next
-        pos <- get_position(i, j, n_groups)
-        xi_sum[, i] <- xi_sum[, i] + xi[, pos]
-        xi_sum[, j] <- xi_sum[, j] - xi[, pos]
-        nu_sum[, i] <- nu_sum[, i] + nu[, pos]
-        nu_sum[, j] <- nu_sum[, j] - nu[, pos]
-      }
-    }
-
-    if (record$n_iterations_no_improvement) {
-      alpha <- alpha * rho
+    if (record$n_iterations_no_improvement || iter == control$maxit) {
+      alpha <- min(alpha * rho, n_samples)
     }
 
     # Check the convergence
-    fit$eta <- eta
-    fit$beta <- beta
-    log_lik <- logLik(fit, data, group_)
+    fit$eta <- sweep(eta, 2, x_scale, `/`)
+    fit$beta <- beta / x_scale
+    loss <- -logLik(fit, data_, group_)
 
-    coef_ <- cbind(eta, beta, xi, mu, nu)
+    coef_ <- cbind(eta, beta, xi)
     coefficients <- coef_
     record <- check_convergence(
-      coef = coef_, loss = -log_lik, last_record = record, control = control
+      coef = coef_, loss = loss, last_record = record, control = control
     )
-    if (log_lik / null_deviance < 0.01) {
-      record$convergence <- TRUE
-    }
     if (record$convergence) break
   }
 
   # Unstandardize the coefficients
-  coef <- sweep(record$best_coef, MARGIN = 1, x_scale, `/`)
-  eta <- record$best_coef[, 1:n_groups]
-  beta <- record$best_coef[, n_groups + 1]
-  xi <- record$best_coef[, (n_groups + 2):(n_groups * (n_groups + 1) / 2 + 1)]
-  mu <- record$best_coef[, n_groups * (n_groups + 1) / 2 + 2]
-  nu <- record$best_coef[, (n_groups * (n_groups + 1) / 2 + 3):n_parameters]
+  coef_final <- sweep(coef_, 1, x_scale, `/`)
+  eta <- coef_final[, 1:n_groups]
+  beta <- coef_final[, n_groups + 1]
+  xi <- coef_final[, (n_groups + 2):(n_groups * (n_groups + 1) / 2 + 1)]
 
   # Recognize the group assignment
   eta_processed <- matrix(0, nrow = n_features, ncol = n_groups)
@@ -241,14 +239,17 @@ coxtrans <- function( # nolint: cyclocomp_linter.
   eta_processed[abs(eta_processed) < control$eps] <- 0
   beta <- beta + eta_bar
 
+  coef <- cbind(eta, beta, xi, mu, nu)
+  coef <- sweep(coef, 1, x_scale, `/`)
+  coef <- as.vector(coef)
   # Return the fit
   fit <- list(
-    coefficients = coef,
-    beta = beta, eta = eta_processed, eta_group = eta_group,
-    xi = xi, mu = mu, nu = nu,
-    logLik = -record$best_loss, message = record$message,
-    penalty = penalty, lambda1 = lambda1, gamma = gamma,
-    iter = record$n_iterations, formula = formula, call = match.call()
+    coefficients = coef, logLik = -loss,
+    beta = beta, eta = eta_processed, eta_group = eta_group, xi = xi,
+    mu = mu, nu = nu, alpha = alpha, group_levels = group_levels,
+    penalty = penalty, lambda1 = lambda1, lambda2 = lambda2, gamma = gamma,
+    rho = rho, formula = formula, call = match.call(),
+    iter = record$n_iterations, message = record$message
   )
   class(fit) <- "coxtrans"
   return(fit)

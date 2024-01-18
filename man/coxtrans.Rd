@@ -12,7 +12,7 @@ coxtrans(
   lambda2 = 0,
   penalty = c("lasso", "MCP", "SCAD"),
   gamma = switch(penalty, SCAD = 3.7, MCP = 3, 1),
-  rho = 1.1,
+  rho = 2,
   init,
   control,
   ...
@@ -40,7 +40,7 @@ The default is "lasso". Other options are "MCP" and "SCAD".}
 default is 3.7 for SCAD and 3.0 for MCP.}
 
 \item{rho}{a value in (2, 10) specifying the expansion factor of the
-augmented Lagrangian's penalty parameter. The default is 1.1.}
+augmented Lagrangian's penalty parameter. The default is 2.0.}
 
 \item{init}{a numeric vector specifying the initial value of the
 coefficients. The default is a zero vector.}
@@ -60,10 +60,9 @@ Transfer Learning of Multi-source for Cox proportional hazards model
 \examples{
 library(survtrans)
 formula <- Surv(time, status) ~ . - group - id
-group <- as.factor(sim2$group)
 fit <- coxtrans(
-  formula, sim2, group,
-  lambda1 = 0.05, lambda2 = 0.05, penalty = "SCAD"
+  formula, sim2, as.factor(sim2$group),
+  lambda1 = 1.5, lambda2 = 2.3, penalty = "SCAD"
 )
 fit$eta
 }

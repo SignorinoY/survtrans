@@ -10,7 +10,7 @@ get_position <- function(i_vec, j_vec, s) { # nolint: cyclocomp_linter.
     j <- j_vec[k]
     if (is.na(i) || is.na(j) || i > s || j > s || i == j) {
       next
-    } else  if (i > j) {
+    } else if (i > j) {
       pos[k] <- get_position(j, i, s)
     } else {
       if (i == 1) {

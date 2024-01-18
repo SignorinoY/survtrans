@@ -3,8 +3,10 @@ check_convergence <- function(coef, loss, last_record, control) {
   n_iterations <- last_record$n_iterations
   n_iterations_no_improvement <- last_record$n_iterations_no_improvement
   best_loss <- last_record$best_loss
-  best_coef <- last_record$best_coef
   last_coef <- last_record$coef
+  null_deviance <- last_record$null_deviance
+
+  n_iterations <- n_iterations + 1
 
   if (n_iterations >= control$maxit) {
     message <- paste0(
@@ -23,7 +25,6 @@ check_convergence <- function(coef, loss, last_record, control) {
     n_iterations_no_improvement <- n_iterations_no_improvement + 1
   } else {
     best_loss <- loss
-    best_coef <- coef
     n_iterations_no_improvement <- 0
   }
 
@@ -35,10 +36,26 @@ check_convergence <- function(coef, loss, last_record, control) {
     convergence <- TRUE
   }
 
+  if (-loss / null_deviance < 0.01) {
+    message <- paste0(
+      "The log-likelihood is too small (", loss / null_deviance,
+      "). Stopping the algorithm."
+    )
+    convergence <- TRUE
+  }
+
+  if (control$verbose) {
+    cat(
+      "Iteration ", n_iterations, ": loss = ", loss,
+      ifelse(n_iterations_no_improvement, "*", ""), "\n",
+      sep = ""
+    )
+  }
+
   list(
-    convergence = convergence, n_iterations = n_iterations + 1,
+    convergence = convergence, n_iterations = n_iterations,
     n_iterations_no_improvement = n_iterations_no_improvement,
-    best_loss = best_loss, best_coef = best_coef, coef = coef,
-    message = message
+    best_loss = best_loss, coef = coef,
+    message = message, null_deviance = null_deviance
   )
 }

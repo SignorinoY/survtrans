@@ -62,7 +62,7 @@ library(survtrans)
 formula <- Surv(time, status) ~ . - group - id
 fit <- coxtrans(
   formula, sim2, as.factor(sim2$group),
-  lambda1 = 1.5, lambda2 = 2.3, penalty = "SCAD"
+  lambda1 = 0.05, lambda2 = 0.04, penalty = "SCAD"
 )
 fit$eta
 }

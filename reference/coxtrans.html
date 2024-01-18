@@ -62,7 +62,7 @@
 <span>  lambda2 <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  penalty <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"lasso"</span>, <span class="st">"MCP"</span>, <span class="st">"SCAD"</span><span class="op">)</span>,</span>
 <span>  gamma <span class="op">=</span> <span class="kw"><a href="https://rdrr.io/r/base/switch.html" class="external-link">switch</a></span><span class="op">(</span><span class="va">penalty</span>, SCAD <span class="op">=</span> <span class="fl">3.7</span>, MCP <span class="op">=</span> <span class="fl">3</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  rho <span class="op">=</span> <span class="fl">1.1</span>,</span>
+<span>  rho <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  <span class="va">init</span>,</span>
 <span>  <span class="va">control</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -107,7 +107,7 @@ default is 3.7 for SCAD and 3.0 for MCP.</p></dd>
 
 <dt>rho</dt>
 <dd><p>a value in (2, 10) specifying the expansion factor of the
-augmented Lagrangian's penalty parameter. The default is 1.1.</p></dd>
+augmented Lagrangian's penalty parameter. The default is 2.0.</p></dd>
 
 
 <dt>init</dt>
@@ -136,34 +136,33 @@ control parameters for the fitting algorithm. Default is
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/SignorinoY/survtrans" class="external-link">survtrans</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">formula</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">.</span> <span class="op">-</span> <span class="va">group</span> <span class="op">-</span> <span class="va">id</span></span></span>
-<span class="r-in"><span><span class="va">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">sim2</span><span class="op">$</span><span class="va">group</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">coxtrans</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">formula</span>, <span class="va">sim2</span>, <span class="va">group</span>,</span></span>
-<span class="r-in"><span>  lambda1 <span class="op">=</span> <span class="fl">0.05</span>, lambda2 <span class="op">=</span> <span class="fl">0.05</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span></span>
+<span class="r-in"><span>  <span class="va">formula</span>, <span class="va">sim2</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">sim2</span><span class="op">$</span><span class="va">group</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  lambda1 <span class="op">=</span> <span class="fl">1.5</span>, lambda2 <span class="op">=</span> <span class="fl">2.3</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">fit</span><span class="op">$</span><span class="va">eta</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             [,1]      [,2]       [,3]      [,4]       [,5]      [,6]       [,7]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1,]  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] -1.0727924 0.9791543 -1.0727924 0.9791543 -1.0727924 0.9791543 -1.0727924</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] -0.9675492 0.7243923 -0.9675492 0.9298319 -0.9675492 0.9298319 -0.9675492</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [3,]  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,] -0.9647432 0.9647432 -0.9647432 0.9647432 -0.9647432 0.9647432 -0.9647432</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,] -0.9222465 0.9222465 -0.9222465 0.9222465 -0.9222465 0.9222465 -0.9222465</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [5,]  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] -1.1040774 1.1115840 -1.1040774 1.1115840 -1.1040774 1.1115840 -1.1040774</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] -1.0701284 1.1300476 -1.0701284 1.1554057 -1.0701284 1.1125424 -1.0701284</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [7,]  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] -1.1382866 1.1382866 -1.1382866 1.1382866 -1.1382866 1.1382866 -1.1382866</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] -1.0194944 1.0167992 -1.0194944 1.0167992 -1.0060186 1.0167992 -1.0194944</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [9,]  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] -1.0297638 1.0297638 -1.0297638 1.0297638 -1.0297638 1.0297638 -1.0297638</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] -0.9361254 0.9677463 -0.9875180 0.9677463 -0.9875180 0.9677463 -0.9400519</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            [,8]       [,9]     [,10]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] 0.0000000  0.0000000 0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] 0.9791543 -1.0727924 1.4473449</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] 0.9298319 -0.9675492 1.3238582</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [3,] 0.0000000  0.0000000 0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,] 0.9647432 -0.9647432 0.9647432</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,] 0.9222465 -0.9222465 0.9222465</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [5,] 0.0000000  0.0000000 0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] 1.0740506 -1.1040774 1.1115840</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] 0.7785174 -1.0701284 1.1741291</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [7,] 0.0000000  0.0000000 0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] 1.1382866 -1.1382866 1.1382866</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] 1.0167992 -1.0194944 1.0167992</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [9,] 0.0000000  0.0000000 0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] 1.0297638 -1.0297638 1.0297638</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] 0.9677463 -0.9875180 0.9677463</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

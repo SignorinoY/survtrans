@@ -90,31 +90,37 @@
 <span><span class="va">formula</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">.</span> <span class="op">-</span> <span class="va">group</span> <span class="op">-</span> <span class="va">id</span></span>
 <span><span class="va">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">sim2</span><span class="op">$</span><span class="va">group</span><span class="op">)</span></span>
 <span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/coxtrans.html">coxtrans</a></span><span class="op">(</span></span>
-<span>  <span class="va">formula</span>, <span class="va">sim2</span>, <span class="va">group</span>, lambda1 <span class="op">=</span> <span class="fl">0.05</span>, lambda2 <span class="op">=</span> <span class="fl">0.05</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span>
+<span>  <span class="va">formula</span>, <span class="va">sim2</span>, <span class="va">group</span>,</span>
+<span>  lambda1 <span class="op">=</span> <span class="fl">1.5</span>, lambda2 <span class="op">=</span> <span class="fl">2.3</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/sweep.html" class="external-link">sweep</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">eta</span>, <span class="fl">1</span>, <span class="va">fit</span><span class="op">$</span><span class="va">beta</span>, <span class="st">"+"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;           [,1]      [,2]       [,3]      [,4]       [,5]      [,6]       [,7]</span></span>
-<span><span class="co">#&gt; X1   1.1054434 1.1054434  1.1054434 1.1054434  1.1054434 1.1054434  1.1054434</span></span>
-<span><span class="co">#&gt; X2  -1.1539259 0.8995398 -1.1539259 0.8995398 -1.1539259 0.8995398 -1.1539259</span></span>
-<span><span class="co">#&gt; X3   1.0519998 1.0519998  1.0519998 1.0519998  1.0519998 1.0519998  1.0519998</span></span>
-<span><span class="co">#&gt; X4  -0.9805338 0.9504827 -0.9805338 0.9504827 -0.9805338 0.9504827 -0.9805338</span></span>
-<span><span class="co">#&gt; X5   1.0742583 1.0742583  1.0742583 1.0742583  1.0742583 1.0742583  1.0742583</span></span>
-<span><span class="co">#&gt; X6  -1.1291167 1.0882749 -1.1291167 1.0882749 -1.1291167 1.0882749 -1.1291167</span></span>
-<span><span class="co">#&gt; X7   1.0460208 1.0460208  1.0460208 1.0460208  1.0460208 1.0460208  1.0460208</span></span>
-<span><span class="co">#&gt; X8  -1.1278733 1.1502917 -1.1278733 1.1502917 -1.1278733 1.1502917 -1.1278733</span></span>
-<span><span class="co">#&gt; X9   1.0382267 1.0382267  1.0382267 1.0382267  1.0382267 1.0382267  1.0382267</span></span>
-<span><span class="co">#&gt; X10 -0.9650904 1.0959670 -0.9650904 1.0959670 -0.9650904 1.0959670 -0.9650904</span></span>
-<span><span class="co">#&gt;          [,8]       [,9]     [,10]</span></span>
-<span><span class="co">#&gt; X1  1.1054434  1.1054434 1.1054434</span></span>
-<span><span class="co">#&gt; X2  0.8995398 -1.1539259 1.3680706</span></span>
-<span><span class="co">#&gt; X3  1.0519998  1.0519998 1.0519998</span></span>
-<span><span class="co">#&gt; X4  0.9504827 -0.9805338 0.9504827</span></span>
-<span><span class="co">#&gt; X5  1.0742583  1.0742583 1.0742583</span></span>
-<span><span class="co">#&gt; X6  1.0506468 -1.1291167 1.0882749</span></span>
-<span><span class="co">#&gt; X7  1.0460208  1.0460208 1.0460208</span></span>
-<span><span class="co">#&gt; X8  1.1502917 -1.1278733 1.1502917</span></span>
-<span><span class="co">#&gt; X9  1.0382267  1.0382267 1.0382267</span></span>
-<span><span class="co">#&gt; X10 1.0959670 -0.9650904 1.0959670</span></span></code></pre></div>
+<span><span class="va">fit</span><span class="op">$</span><span class="va">beta</span></span>
+<span><span class="co">#&gt;           X1           X2           X3           X4           X5           X6 </span></span>
+<span><span class="co">#&gt;  1.068926675 -0.070782656  0.999758668 -0.010462963  1.013309359 -0.015555877 </span></span>
+<span><span class="co">#&gt;           X7           X8           X9          X10 </span></span>
+<span><span class="co">#&gt;  0.976674501  0.007754971  0.956394184  0.071373254</span></span>
+<span><span class="va">fit</span><span class="op">$</span><span class="va">eta</span></span>
+<span><span class="co">#&gt;             [,1]      [,2]       [,3]      [,4]       [,5]      [,6]       [,7]</span></span>
+<span><span class="co">#&gt;  [1,]  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt;  [2,] -0.9675492 0.7243922 -0.9675492 0.9298319 -0.9675492 0.9298319 -0.9675492</span></span>
+<span><span class="co">#&gt;  [3,]  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt;  [4,] -0.9222465 0.9222465 -0.9222465 0.9222465 -0.9222465 0.9222465 -0.9222465</span></span>
+<span><span class="co">#&gt;  [5,]  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt;  [6,] -1.0701284 1.1300476 -1.0701284 1.1554057 -1.0701284 1.1125424 -1.0701284</span></span>
+<span><span class="co">#&gt;  [7,]  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt;  [8,] -1.0194944 1.0167992 -1.0194944 1.0167992 -1.0060187 1.0167992 -1.0194944</span></span>
+<span><span class="co">#&gt;  [9,]  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; [10,] -0.9361254 0.9677463 -0.9875180 0.9677463 -0.9875180 0.9677463 -0.9400519</span></span>
+<span><span class="co">#&gt;            [,8]       [,9]     [,10]</span></span>
+<span><span class="co">#&gt;  [1,] 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt;  [2,] 0.9298319 -0.9675492 1.3238582</span></span>
+<span><span class="co">#&gt;  [3,] 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt;  [4,] 0.9222465 -0.9222465 0.9222465</span></span>
+<span><span class="co">#&gt;  [5,] 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt;  [6,] 0.7785175 -1.0701284 1.1741291</span></span>
+<span><span class="co">#&gt;  [7,] 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt;  [8,] 1.0167992 -1.0194944 1.0167992</span></span>
+<span><span class="co">#&gt;  [9,] 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; [10,] 0.9677463 -0.9875180 0.9677463</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>

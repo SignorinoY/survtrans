@@ -214,11 +214,10 @@ coxtrans <- function( # nolint: cyclocomp_linter.
     if (record$convergence) break
   }
 
-  # Unstandardize the coefficients
-  coef_final <- sweep(coef_, 1, x_scale, `/`)
-  eta <- coef_final[, 1:n_groups]
-  beta <- coef_final[, n_groups + 1]
-  xi <- coef_final[, (n_groups + 2):(n_groups * (n_groups + 1) / 2 + 1)]
+  # Extract the coefficients
+  eta <- coef_[, 1:n_groups]
+  beta <- coef_[, n_groups + 1]
+  xi <- coef_[, (n_groups + 2):(n_groups * (n_groups + 1) / 2 + 1)]
 
   # Recognize the group assignment
   eta_processed <- matrix(0, nrow = n_features, ncol = n_groups)
@@ -245,17 +244,38 @@ coxtrans <- function( # nolint: cyclocomp_linter.
   }
 
   eta_bar <- rowMeans(eta_processed)
-  eta_processed <- sweep(eta_processed, 1, eta_bar, "-")
-  eta_processed[abs(eta_processed) < control$eps] <- 0
+  eta <- sweep(eta_processed, 1, eta_bar, "-")
+  eta[abs(eta) < control$eps] <- 0
   beta <- beta + eta_bar
 
+  # Refit the beta with the final eta
+  offset <- x %*% beta
+  for (i in 1:n_groups) {
+    idx <- which(group == group_levels[i])
+    offset[idx] <- offset[idx] + x[idx, ] %*% eta[, i]
+  }
+  for (k in 1:n_groups) {
+    idx <- which(group == group_levels[k])
+    wls <- calc_weights_residuals(
+      offset = offset[idx], time = time[idx], status = status[idx]
+    )
+    weights[idx] <- wls$weights
+    residuals[idx] <- wls$residuals
+  }
+  r <- residuals + x %*% beta
+  beta <- solve(t(x) %*% (weights * x)) %*% t(x) %*% (weights * r)
+
+  # Unscale the coefficients
   coef <- cbind(eta, beta, xi, mu, nu)
   coef <- sweep(coef, 1, x_scale, `/`)
+  eta <- coef[, 1:n_groups]
+  beta <- coef[, n_groups + 1]
   coef <- as.vector(coef)
+
   # Return the fit
   fit <- list(
     coefficients = coef, logLik = -loss,
-    beta = beta, eta = eta_processed, eta_group = eta_group, xi = xi,
+    beta = beta, eta = eta, eta_group = eta_group, xi = xi,
     mu = mu, nu = nu, alpha = alpha, group_levels = group_levels,
     penalty = penalty, lambda1 = lambda1, lambda2 = lambda2, gamma = gamma,
     rho = rho, formula = formula, call = match.call(),

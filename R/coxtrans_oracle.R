@@ -162,7 +162,7 @@ coxtrans_oracle <- function( # nolint: cyclocomp_linter.
 
   n_iterations_no_improvement <- 0
   for (iter in 1:control$maxit) {
-    res <- optim(param_old, fn, gr, method = "L-BFGS-B")
+    res <- optim(param_old, fn, gr, method = "BFGS")
     if (max(abs(res$par - param_old)) < control$eps) break
     param_old <- res$par
     coefs <- matrix(res$par, nrow = n_features)

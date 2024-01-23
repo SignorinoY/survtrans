@@ -6,6 +6,8 @@
 #' @param group a factor specifying the group of each sample.
 #' @param sparse_idx a logical matrix specifying the sparse parameters, where
 #' each row corresponds to a feature and each column corresponds to a group.
+#' @param group_idx a logical matrix specifying the group parameters, where
+#' each row corresponds to a feature and each column corresponds to a group.
 #' @param rho a value in (2, 10) specifying the expansion factor of the
 #' augmented Lagrangian's penalty parameter. The default is 2.0.
 #' @param init a numeric vector specifying the initial value of the
@@ -15,17 +17,25 @@
 #' \code{survtrans_control(...)}.
 #' @param ... Other arguments passed to \code{\link{survtrans_control}}.
 #' @return a coxtrans object.
-#' 
 #' @export
 #' @examples
 #' formula <- Surv(time, status) ~ . - group - id
 #' sparse_idx <- matrix(
-#'   rep(rep(c(FALSE, TRUE), each = 10), 5), ncol = 10, byrow = TRUE
+#'   rep(rep(c(FALSE, TRUE), each = 10), 5),
+#'   ncol = 10, byrow = TRUE
 #' )
-#' fit <- coxtrans_oracle(formula, sim2, as.factor(sim2$group), sparse_idx)
+#' group_idx <- matrix(
+#'   rep(c(rep(1, 10), rep(c(1, 2), 5)), 5),
+#'   ncol = 10, byrow = TRUE
+#' )
+#' fit <- coxtrans_oracle(
+#'   formula, sim2, as.factor(sim2$group), sparse_idx, group_idx
+#' )
 #' fit$eta
-coxtrans_oracle <- function( # nolint: cyclocomp_linter.
-    formula, data, group, sparse_idx, rho = 2.0, init, control, ...) {
+coxtrans_oracle <- function(
+    # nolint: cyclocomp_linter.
+    formula, data, group, sparse_idx, group_idx, rho = 2.0, init,
+    control, ...) {
   # Load the data
   data_ <- data
   group_ <- group
@@ -42,6 +52,14 @@ coxtrans_oracle <- function( # nolint: cyclocomp_linter.
   n_groups <- length(unique(group))
   group_levels <- levels(group)
   n_parameters <- n_groups + 1
+
+  # Check the sparse_idx argument
+  if (missing(sparse_idx)) {
+    sparse_idx <- matrix(TRUE, nrow = n_features, ncol = n_groups)
+  }
+  if (missing(group_idx)) {
+    group_idx <- matrix(rep(1:n_groups, each = n_features), ncol = n_groups)
+  }
 
   # Check the init argument
   if (!missing(init) && length(init) > 0) {
@@ -123,6 +141,14 @@ coxtrans_oracle <- function( # nolint: cyclocomp_linter.
     grad_eta <- grad_eta + mu + rowSums(eta) * alpha
     # Mask the sparse parameters
     grad_eta[sparse_idx == 0] <- 0
+    # Mask the group parameters
+    for (k in 1:n_features) {
+      values <- unique(group_idx[k, ])
+      for (j in values) {
+        idx <- group_idx[k, ] == j
+        grad_eta[k, idx] <- sum(grad_eta[k, idx])
+      }
+    }
 
     grad <- cbind(grad_eta, grad_beta)
     grad <- as.vector(grad)

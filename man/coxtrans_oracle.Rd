@@ -4,7 +4,17 @@
 \alias{coxtrans_oracle}
 \title{Transfer Learning of Multi-source for Cox proportional hazards model (Oracle)}
 \usage{
-coxtrans_oracle(formula, data, group, sparse_idx, rho = 2, init, control, ...)
+coxtrans_oracle(
+  formula,
+  data,
+  group,
+  sparse_idx,
+  group_idx,
+  rho = 2,
+  init,
+  control,
+  ...
+)
 }
 \arguments{
 \item{formula}{a formula expression as for regression models, of the form
@@ -16,6 +26,9 @@ returned by the \code{\link{Surv}} function.}
 \item{group}{a factor specifying the group of each sample.}
 
 \item{sparse_idx}{a logical matrix specifying the sparse parameters, where
+each row corresponds to a feature and each column corresponds to a group.}
+
+\item{group_idx}{a logical matrix specifying the group parameters, where
 each row corresponds to a feature and each column corresponds to a group.}
 
 \item{rho}{a value in (2, 10) specifying the expansion factor of the
@@ -39,8 +52,15 @@ Transfer Learning of Multi-source for Cox proportional hazards model (Oracle)
 \examples{
 formula <- Surv(time, status) ~ . - group - id
 sparse_idx <- matrix(
-  rep(rep(c(FALSE, TRUE), each = 10), 5), ncol = 10, byrow = TRUE
+  rep(rep(c(FALSE, TRUE), each = 10), 5),
+  ncol = 10, byrow = TRUE
 )
-fit <- coxtrans_oracle(formula, sim2, as.factor(sim2$group), sparse_idx)
+group_idx <- matrix(
+  rep(c(rep(1, 10), rep(c(1, 2), 5)), 5),
+  ncol = 10, byrow = TRUE
+)
+fit <- coxtrans_oracle(
+  formula, sim2, as.factor(sim2$group), sparse_idx, group_idx
+)
 fit$eta
 }

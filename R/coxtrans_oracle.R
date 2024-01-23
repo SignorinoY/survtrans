@@ -32,8 +32,7 @@
 #'   formula, sim2, as.factor(sim2$group), sparse_idx, group_idx
 #' )
 #' fit$eta
-coxtrans_oracle <- function(
-    # nolint: cyclocomp_linter.
+coxtrans_oracle <- function( # nolint: cyclocomp_linter.
     formula, data, group, sparse_idx, group_idx, rho = 2.0, init,
     control, ...) {
   # Load the data
@@ -161,6 +160,7 @@ coxtrans_oracle <- function(
   param_old <- init
   fn_best <- fn(param_old)
 
+  n_iterations_no_improvement <- 0
   for (iter in 1:control$maxit) {
     res <- optim(param_old, fn, gr, method = "L-BFGS-B")
     if (max(abs(res$par - param_old)) < control$eps) break
@@ -171,6 +171,10 @@ coxtrans_oracle <- function(
       fn_best <- res$value
     } else {
       alpha <- min(alpha * rho, n_samples)
+      n_iterations_no_improvement <- n_iterations_no_improvement + 1
+    }
+    if (n_iterations_no_improvement >= control$patience) {
+      break
     }
   }
   eta <- coefs[, 1:n_groups]

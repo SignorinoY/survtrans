@@ -14,6 +14,7 @@
 #' @importFrom stats model.frame
 #' @importFrom stats model.matrix
 #' @importFrom stats model.response
+#' @importFrom stats optim
 #' @importFrom stats predict
 #' @importFrom survival Surv
 #' @importFrom survode survode

@@ -6,7 +6,11 @@ calc_weights_residuals <- function(offset, time, status) {
 
   # Update risk set
   risk_set <- cumsum(haz)
-  risk_set <- ave(risk_set, time, FUN = max)
+  for (i in n_samples:2) {
+    if (time[i] == time[i - 1]) {
+      risk_set[i - 1] <- risk_set[i]
+    }
+  }
 
   # Update weights and residuals
   weights <- rep(0.0, n_samples)

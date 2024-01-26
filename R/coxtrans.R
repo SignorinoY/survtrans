@@ -38,6 +38,8 @@ coxtrans <- function( # nolint: cyclocomp_linter.
       MCP = 3,
       1
     ), rho = 2.0, init, control, ...) {
+  set.seed(0)
+
   # Load the data
   data_ <- data
   group_ <- group
@@ -53,11 +55,12 @@ coxtrans <- function( # nolint: cyclocomp_linter.
   n_features <- ncol(x)
   n_groups <- length(unique(group))
   group_levels <- levels(group)
+  group_idxs <- lapply(group_levels, function(x) which(group == x))
   n_parameters <- n_groups^2 + 2
 
   risk_set_size <- ave(rep(1, n_samples), group, FUN = cumsum)
   for (k in 1:n_groups) {
-    idx <- which(group == group_levels[k])
+    idx <- group_idxs[[k]]
     risk_set_size[idx] <- ave(risk_set_size[idx], time[idx], FUN = max)
   }
   null_deviance <- -sum(status * log(risk_set_size))
@@ -76,41 +79,59 @@ coxtrans <- function( # nolint: cyclocomp_linter.
   # Check the control argument
   if (missing(control)) control <- survtrans_control(...)
 
-  # Initialize the return fit object
-  fit <- list(
-    penalty = penalty, lambda1 = lambda1, lambda2 = lambda2, gamma = gamma,
-    rho = rho, formula = formula, call = match.call(),
-    group_levels = group_levels
-  )
-  class(fit) <- "coxtrans"
-
   # Extract the coefficients from init vector
-  coefficients <- matrix(init, nrow = n_features)
-  coefficients <- sweep(coefficients, 1, x_scale, `*`)
-  eta <- coefficients[, 1:n_groups, drop = FALSE]
-  beta <- coefficients[, n_groups + 1]
-  xi <- coefficients[
-    , (n_groups + 2):(n_groups * (n_groups + 1) / 2 + 1),
-    drop = FALSE
-  ]
-  mu <- coefficients[, n_groups * (n_groups + 1) / 2 + 2, drop = FALSE]
-  nu <- coefficients[
-    , (n_groups * (n_groups + 1) / 2 + 3):n_parameters,
-    drop = FALSE
-  ]
-  alpha <- 1
+  coef <- matrix(init, nrow = n_features)
+  coef <- sweep(coef, 1, x_scale, `*`)
+  eta <- coef[, 1:n_groups, drop = FALSE]
+  beta <- coef[, n_groups + 1]
+  xi <- coef[, (n_groups + 2):(n_groups * (n_groups + 1) / 2 + 1), drop = FALSE]
+  mu <- coef[, n_groups * (n_groups + 1) / 2 + 2, drop = FALSE]
+  nu <- coef[, (n_groups * (n_groups + 1) / 2 + 3):n_parameters, drop = FALSE]
 
   # Initialize the coefficients
-  coef_ <- cbind(eta, beta, xi)
   record <- list(
-    convergence = FALSE, n_iterations = 0, n_iterations_no_improvement = 0,
-    best_loss = Inf, coef = coef_, null_deviance = null_deviance
+    convergence = FALSE, n_iterations = 0, null_deviance = null_deviance,
+    maxit = control$maxit, eps = control$eps
   )
-  weights <- rep(0, n_samples)
-  residuals <- rep(0, n_samples)
+  w <- numeric(n_samples)
+  r <- numeric(n_samples)
+  offset <- numeric(n_samples)
+  alpha <- 1
+
+  # Pre-calculate the quantities
   x2 <- x^2
 
   repeat {
+    # Calculate the offset
+    for (k in 1:n_groups) {
+      idx <- group_idxs[[k]]
+      offset[idx] <- x[idx, ] %*% (eta[, k] + beta)
+    }
+
+    # Calculate the loss
+    hazard <- exp(offset)
+    risk_set <- ave(hazard, group, FUN = cumsum)
+    # Warning: The max operator is undone by ave
+    loss <- -sum(status * (offset - log(risk_set)))
+
+    # Check the convergence
+    record <- check_convergence(cbind(eta, beta), loss, record)
+    if (record$convergence) break
+
+    # Calculate the weights and residuals
+    for (k in 1:n_groups) {
+      idx <- group_idxs[[k]]
+      wls <- calc_weights_residuals(
+        offset = offset[idx], time = time[idx], status = status[idx]
+      )
+      w[idx] <- wls$weights
+      r[idx] <- wls$residuals
+    }
+
+    # Update beta by weighted least squares
+    xw <- x * w
+    beta <- beta + solve(t(xw) %*% x, t(xw) %*% r)
+
     # Update the coefficients of constraints on eta
     xi_sum <- matrix(0, nrow = n_features, ncol = n_groups)
     nu_sum <- matrix(0, nrow = n_features, ncol = n_groups)
@@ -125,45 +146,30 @@ coxtrans <- function( # nolint: cyclocomp_linter.
       }
     }
 
-    # Calculate the weights and residuals
-    offset <- x %*% beta
-    for (i in 1:n_groups) {
-      idx <- which(group == group_levels[i])
-      offset[idx] <- offset[idx] + x[idx, ] %*% eta[, i]
-    }
-    for (k in 1:n_groups) {
-      idx <- which(group == group_levels[k])
-      wls <- calc_weights_residuals(
-        offset = offset[idx], time = time[idx], status = status[idx]
-      )
-      weights[idx] <- wls$weights
-      residuals[idx] <- wls$residuals
-    }
-
-    # Update beta by weighted least squares
-    r <- residuals + x %*% beta
-    beta <- solve(t(x) %*% (weights * x)) %*% t(x) %*% (weights * r)
-
     # Update eta by cyclic coordinate descent
-    r <- residuals + offset - x %*% beta
-    w <- weights
-    for (i in 1:n_groups) {
-      idx <- which(group == group_levels[i])
-      r_ <- r[idx]
+    r <- r + offset - x %*% beta
+    sub_convergence <- TRUE
+    for (k in 1:n_groups) {
+      idx <- group_idxs[[k]]
       x_ <- x[idx, , drop = FALSE]
+      r_ <- r[idx] - x_ %*% eta[, k]
       xw_ <- x_ * w[idx]
-      psi <- colMeans(w[idx] * x2[idx, , drop = FALSE]) + alpha * n_groups
+      xwx_ <- colMeans(w[idx] * x2[idx, , drop = FALSE])
+      psi <- xwx_ + alpha * n_groups
+      candidate_set <- seq_len(n_features)
       for (iter in 1:control$maxit) {
-        eta_old <- eta[, i]
-        features_idx <- sample(seq_len(n_features), n_features, replace = FALSE)
-        for (k in features_idx) {
-          r_tilde <- r_ - x_[, -k] %*% eta[-k, i]
-          phi <- mean(xw_[, k] * r_tilde) -
-            mu[k] - nu_sum[k, i] + alpha * xi_sum[k, i]
-          eta[k, i] <- soft_threshold(phi, psi[k], penalty, lambda1, gamma)
+        eta_old <- eta[, k]
+        features_idx <- sample(candidate_set, length(candidate_set), FALSE)
+        for (j in features_idx) {
+          phi <- mean(xw_[, j] * r_) + xwx_[j] * eta[j, k] -
+            mu[j] - nu_sum[j, k] + alpha * xi_sum[j, k]
+          eta[j, k] <- penalty_solution(phi, psi[j], penalty, lambda1, gamma)
+          r_ <- r_ - x_[, j] * (eta[j, k] - eta_old[j])
         }
-        if (max(abs(eta_old - eta[, i])) <= control$eps) break
+        candidate_set <- which(eta[, k] != 0)
+        if (max(abs(eta_old - eta[, k])) <= control$eps) break
       }
+      if (iter == control$maxit) sub_convergence <- FALSE
     }
 
     # Update xi
@@ -173,7 +179,7 @@ coxtrans <- function( # nolint: cyclocomp_linter.
         pos <- get_position(i, j, n_groups)
         zeta <- eta[, i] - eta[, j] + nu[, pos] / alpha
         for (k in 1:n_features) {
-          xi[k, pos] <- soft_threshold(
+          xi[k, pos] <- penalty_solution(
             zeta[k], 1, penalty, lambda2 / alpha, gamma
           )
         }
@@ -190,34 +196,11 @@ coxtrans <- function( # nolint: cyclocomp_linter.
       }
     }
 
-    if (record$n_iterations_no_improvement || iter == control$maxit) {
+    # Update alpha
+    if (!sub_convergence) {
       alpha <- min(alpha * rho, n_samples)
     }
-
-    # Check the convergence
-    offset <- x %*% beta
-    for (i in 1:n_groups) {
-      idx <- which(group == group_levels[i])
-      offset[idx] <- offset[idx] + x[idx, ] %*% eta[, i]
-    }
-    hazard <- exp(offset)
-    risk_set <- ave(hazard, group, FUN = cumsum)
-    # Warning: The max operator is undone by ave
-    loss <- -sum(status * (offset - log(risk_set)))
-
-
-    coef_ <- cbind(eta, beta, xi)
-    coefficients <- coef_
-    record <- check_convergence(
-      coef = coef_, loss = loss, last_record = record, control = control
-    )
-    if (record$convergence) break
   }
-
-  # Extract the coefficients
-  eta <- coef_[, 1:n_groups]
-  beta <- coef_[, n_groups + 1]
-  xi <- coef_[, (n_groups + 2):(n_groups * (n_groups + 1) / 2 + 1)]
 
   # Recognize the group assignment
   eta_processed <- matrix(0, nrow = n_features, ncol = n_groups)
@@ -249,21 +232,20 @@ coxtrans <- function( # nolint: cyclocomp_linter.
   beta <- beta + eta_bar
 
   # Refit the beta with the final eta
-  offset <- x %*% beta
-  for (i in 1:n_groups) {
-    idx <- which(group == group_levels[i])
-    offset[idx] <- offset[idx] + x[idx, ] %*% eta[, i]
+  for (k in 1:n_groups) {
+    idx <- group_idxs[[k]]
+    offset[idx] <- x[idx, ] %*% (eta[, k] + beta)
   }
   for (k in 1:n_groups) {
-    idx <- which(group == group_levels[k])
+    idx <- group_idxs[[k]]
     wls <- calc_weights_residuals(
       offset = offset[idx], time = time[idx], status = status[idx]
     )
-    weights[idx] <- wls$weights
-    residuals[idx] <- wls$residuals
+    w[idx] <- wls$weights
+    r[idx] <- wls$residuals
   }
-  r <- residuals + x %*% beta
-  beta <- solve(t(x) %*% (weights * x)) %*% t(x) %*% (weights * r)
+  xw <- x * w
+  beta <- beta + solve(t(xw) %*% x, t(xw) %*% r)
 
   # Unscale the coefficients
   coef <- cbind(eta, beta, xi, mu, nu)

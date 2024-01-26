@@ -68,7 +68,7 @@ ncvcox <- function(
     for (j in 1:n_features) {
       v <- mean(weights * x[, j]**2)
       z <- mean(x[, j] * weights * residuals) + coef[j] * v
-      coef[j] <- soft_threshold(z, v, penalty, lambda, gamma)
+      coef[j] <- penalty_solution(z, v, penalty, lambda, gamma)
     }
 
     # check for convergence

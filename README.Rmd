@@ -45,7 +45,6 @@ fit <- coxtrans(
 )
 fit$beta
 fit$eta
-fit$eta_group
 ```
 
 ## Code of Conduct

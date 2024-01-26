@@ -66,7 +66,7 @@ odetrans <- function(
     for (j in 1:nvar) {
       xr <- mean(x[, j] * w * (z - x[, -j] %*% eta[-j]))
       v <- mean(w * x[, j]**2)
-      eta[j] <- soft_threshold(xr, v, penalty, lambda, gamma)
+      eta[j] <- penalty_solution(xr, v, penalty, lambda, gamma)
     }
     if (max(abs(eta - eta_old)) <= control$eps || iter >= control$maxit) break
   }

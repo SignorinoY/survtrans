@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="index.html">survtrans</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -86,40 +86,41 @@
 <span><span class="co">#&gt; 载入需要的程辑包：progress</span></span>
 <span><span class="co">#&gt; 载入需要的程辑包：survode</span></span>
 <span><span class="co">#&gt; 载入需要的程辑包：survival</span></span>
-<span><span class="co">## basic example code</span></span>
+<span></span>
 <span><span class="va">formula</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">.</span> <span class="op">-</span> <span class="va">group</span> <span class="op">-</span> <span class="va">id</span></span>
+<span><span class="va">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">sim2</span><span class="op">$</span><span class="va">group</span><span class="op">)</span></span>
 <span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/coxtrans.html">coxtrans</a></span><span class="op">(</span></span>
-<span>  <span class="va">formula</span>, <span class="va">sim2</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">sim2</span><span class="op">$</span><span class="va">group</span><span class="op">)</span>,</span>
+<span>  <span class="va">formula</span>, <span class="va">sim2</span>, <span class="va">group</span>,</span>
 <span>  lambda1 <span class="op">=</span> <span class="fl">0.05</span>, lambda2 <span class="op">=</span> <span class="fl">0.04</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">fit</span><span class="op">$</span><span class="va">beta</span></span>
 <span><span class="co">#&gt;           X1           X2           X3           X4           X5           X6 </span></span>
-<span><span class="co">#&gt;  1.136309066 -0.078983198  1.064655571 -0.023896843  1.081362168 -0.019828737 </span></span>
+<span><span class="co">#&gt;  1.132417993 -0.078666859  1.061045884 -0.023441560  1.077448342 -0.019760892 </span></span>
 <span><span class="co">#&gt;           X7           X8           X9          X10 </span></span>
-<span><span class="co">#&gt;  1.042616197  0.004921702  1.026778180  0.069432737</span></span>
+<span><span class="co">#&gt;  1.038908842  0.004856086  1.022937462  0.069508666</span></span>
 <span><span class="va">fit</span><span class="op">$</span><span class="va">eta</span></span>
 <span><span class="co">#&gt;          [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]</span></span>
 <span><span class="co">#&gt; X1   0.000000 0.0000000  0.000000 0.0000000  0.000000 0.0000000  0.000000</span></span>
-<span><span class="co">#&gt; X2  -1.047124 0.9320227 -1.047124 0.9594568 -1.047124 0.9594568 -1.047124</span></span>
+<span><span class="co">#&gt; X2  -1.042569 0.9282354 -1.042569 0.9551599 -1.042569 0.9551599 -1.042569</span></span>
 <span><span class="co">#&gt; X3   0.000000 0.0000000  0.000000 0.0000000  0.000000 0.0000000  0.000000</span></span>
-<span><span class="co">#&gt; X4  -1.005795 1.0057954 -1.005795 1.0057954 -1.005795 1.0057954 -1.005795</span></span>
+<span><span class="co">#&gt; X4  -1.001112 1.0011124 -1.001112 1.0011124 -1.001112 1.0011124 -1.001112</span></span>
 <span><span class="co">#&gt; X5   0.000000 0.0000000  0.000000 0.0000000  0.000000 0.0000000  0.000000</span></span>
-<span><span class="co">#&gt; X6  -1.162305 1.2390800 -1.162305 1.2390800 -1.162305 1.2390800 -1.162305</span></span>
+<span><span class="co">#&gt; X6  -1.157034 1.2336007 -1.157034 1.2336007 -1.157034 1.2336007 -1.157034</span></span>
 <span><span class="co">#&gt; X7   0.000000 0.0000000  0.000000 0.0000000  0.000000 0.0000000  0.000000</span></span>
-<span><span class="co">#&gt; X8  -1.097043 1.0970427 -1.097043 1.0970427 -1.097043 1.0970427 -1.097043</span></span>
+<span><span class="co">#&gt; X8  -1.092529 1.0925289 -1.092529 1.0925289 -1.092529 1.0925289 -1.092529</span></span>
 <span><span class="co">#&gt; X9   0.000000 0.0000000  0.000000 0.0000000  0.000000 0.0000000  0.000000</span></span>
-<span><span class="co">#&gt; X10 -1.052618 1.0526185 -1.052618 1.0526185 -1.052618 1.0526185 -1.052618</span></span>
+<span><span class="co">#&gt; X10 -1.048001 1.0480012 -1.048001 1.0480012 -1.048001 1.0480012 -1.048001</span></span>
 <span><span class="co">#&gt;          [,8]      [,9]    [,10]</span></span>
 <span><span class="co">#&gt; X1  0.0000000  0.000000 0.000000</span></span>
-<span><span class="co">#&gt; X2  0.9594568 -1.047124 1.425227</span></span>
+<span><span class="co">#&gt; X2  0.9551599 -1.042569 1.419130</span></span>
 <span><span class="co">#&gt; X3  0.0000000  0.000000 0.000000</span></span>
-<span><span class="co">#&gt; X4  1.0057954 -1.005795 1.005795</span></span>
+<span><span class="co">#&gt; X4  1.0011124 -1.001112 1.001112</span></span>
 <span><span class="co">#&gt; X5  0.0000000  0.000000 0.000000</span></span>
-<span><span class="co">#&gt; X6  0.8552062 -1.162305 1.239080</span></span>
+<span><span class="co">#&gt; X6  0.8507663 -1.157034 1.233601</span></span>
 <span><span class="co">#&gt; X7  0.0000000  0.000000 0.000000</span></span>
-<span><span class="co">#&gt; X8  1.0970427 -1.097043 1.097043</span></span>
+<span><span class="co">#&gt; X8  1.0925289 -1.092529 1.092529</span></span>
 <span><span class="co">#&gt; X9  0.0000000  0.000000 0.000000</span></span>
-<span><span class="co">#&gt; X10 1.0526185 -1.052618 1.052618</span></span></code></pre></div>
+<span><span class="co">#&gt; X10 1.0480012 -1.048001 1.048001</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>

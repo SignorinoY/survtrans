@@ -91,36 +91,48 @@
 <span><span class="va">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">sim2</span><span class="op">$</span><span class="va">group</span><span class="op">)</span></span>
 <span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/coxtrans.html">coxtrans</a></span><span class="op">(</span></span>
 <span>  <span class="va">formula</span>, <span class="va">sim2</span>, <span class="va">group</span>,</span>
-<span>  lambda1 <span class="op">=</span> <span class="fl">0.05</span>, lambda2 <span class="op">=</span> <span class="fl">0.04</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span>
+<span>  lambda1 <span class="op">=</span> <span class="fl">0.05</span>, lambda2 <span class="op">=</span> <span class="fl">0.05</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">fit</span><span class="op">$</span><span class="va">beta</span></span>
-<span><span class="co">#&gt;           X1           X2           X3           X4           X5           X6 </span></span>
-<span><span class="co">#&gt;  1.132417993 -0.078666859  1.061045884 -0.023441560  1.077448342 -0.019760892 </span></span>
-<span><span class="co">#&gt;           X7           X8           X9          X10 </span></span>
-<span><span class="co">#&gt;  1.038908842  0.004856086  1.022937462  0.069508666</span></span>
+<span><span class="co">#&gt;          X1          X2          X3          X4          X5          X6 </span></span>
+<span><span class="co">#&gt;  1.12863917 -0.07776493  1.04677493 -0.01529523  1.06863495 -0.02513361 </span></span>
+<span><span class="co">#&gt;          X7          X8          X9         X10 </span></span>
+<span><span class="co">#&gt;  1.03489198  0.01074090  1.02218081  0.06640528</span></span>
 <span><span class="va">fit</span><span class="op">$</span><span class="va">eta</span></span>
 <span><span class="co">#&gt;          [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]</span></span>
 <span><span class="co">#&gt; X1   0.000000 0.0000000  0.000000 0.0000000  0.000000 0.0000000  0.000000</span></span>
-<span><span class="co">#&gt; X2  -1.042569 0.9282354 -1.042569 0.9551599 -1.042569 0.9551599 -1.042569</span></span>
+<span><span class="co">#&gt; X2  -1.038925 0.9482405 -1.038925 0.9482405 -1.038925 0.9482405 -1.038925</span></span>
 <span><span class="co">#&gt; X3   0.000000 0.0000000  0.000000 0.0000000  0.000000 0.0000000  0.000000</span></span>
-<span><span class="co">#&gt; X4  -1.001112 1.0011124 -1.001112 1.0011124 -1.001112 1.0011124 -1.001112</span></span>
+<span><span class="co">#&gt; X4  -1.005923 1.0059231 -1.005923 1.0059231 -1.005923 1.0059231 -1.005923</span></span>
 <span><span class="co">#&gt; X5   0.000000 0.0000000  0.000000 0.0000000  0.000000 0.0000000  0.000000</span></span>
-<span><span class="co">#&gt; X6  -1.157034 1.2336007 -1.157034 1.2336007 -1.157034 1.2336007 -1.157034</span></span>
+<span><span class="co">#&gt; X6  -1.146744 1.1544717 -1.146744 1.1544717 -1.146744 1.1544717 -1.146744</span></span>
 <span><span class="co">#&gt; X7   0.000000 0.0000000  0.000000 0.0000000  0.000000 0.0000000  0.000000</span></span>
-<span><span class="co">#&gt; X8  -1.092529 1.0925289 -1.092529 1.0925289 -1.092529 1.0925289 -1.092529</span></span>
+<span><span class="co">#&gt; X8  -1.094265 1.0942653 -1.094265 1.0942653 -1.094265 1.0942653 -1.094265</span></span>
 <span><span class="co">#&gt; X9   0.000000 0.0000000  0.000000 0.0000000  0.000000 0.0000000  0.000000</span></span>
-<span><span class="co">#&gt; X10 -1.048001 1.0480012 -1.048001 1.0480012 -1.048001 1.0480012 -1.048001</span></span>
+<span><span class="co">#&gt; X10 -1.039526 1.0395256 -1.039526 1.0395256 -1.039526 1.0395256 -1.039526</span></span>
 <span><span class="co">#&gt;          [,8]      [,9]    [,10]</span></span>
 <span><span class="co">#&gt; X1  0.0000000  0.000000 0.000000</span></span>
-<span><span class="co">#&gt; X2  0.9551599 -1.042569 1.419130</span></span>
+<span><span class="co">#&gt; X2  0.9482405 -1.038925 1.401665</span></span>
 <span><span class="co">#&gt; X3  0.0000000  0.000000 0.000000</span></span>
-<span><span class="co">#&gt; X4  1.0011124 -1.001112 1.001112</span></span>
+<span><span class="co">#&gt; X4  1.0059231 -1.005923 1.005923</span></span>
 <span><span class="co">#&gt; X5  0.0000000  0.000000 0.000000</span></span>
-<span><span class="co">#&gt; X6  0.8507663 -1.157034 1.233601</span></span>
+<span><span class="co">#&gt; X6  1.1158350 -1.146744 1.154472</span></span>
 <span><span class="co">#&gt; X7  0.0000000  0.000000 0.000000</span></span>
-<span><span class="co">#&gt; X8  1.0925289 -1.092529 1.092529</span></span>
+<span><span class="co">#&gt; X8  1.0942653 -1.094265 1.094265</span></span>
 <span><span class="co">#&gt; X9  0.0000000  0.000000 0.000000</span></span>
-<span><span class="co">#&gt; X10 1.0480012 -1.048001 1.048001</span></span></code></pre></div>
+<span><span class="co">#&gt; X10 1.0395256 -1.039526 1.039526</span></span>
+<span><span class="va">fit</span><span class="op">$</span><span class="va">eta_group</span></span>
+<span><span class="co">#&gt;       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]</span></span>
+<span><span class="co">#&gt;  [1,]    1    1    1    1    1    1    1    1    1     1</span></span>
+<span><span class="co">#&gt;  [2,]    1    2    1    2    1    2    1    2    1    10</span></span>
+<span><span class="co">#&gt;  [3,]    1    1    1    1    1    1    1    1    1     1</span></span>
+<span><span class="co">#&gt;  [4,]    1    2    1    2    1    2    1    2    1     2</span></span>
+<span><span class="co">#&gt;  [5,]    1    1    1    1    1    1    1    1    1     1</span></span>
+<span><span class="co">#&gt;  [6,]    1    2    1    2    1    2    1    8    1     2</span></span>
+<span><span class="co">#&gt;  [7,]    1    1    1    1    1    1    1    1    1     1</span></span>
+<span><span class="co">#&gt;  [8,]    1    2    1    2    1    2    1    2    1     2</span></span>
+<span><span class="co">#&gt;  [9,]    1    1    1    1    1    1    1    1    1     1</span></span>
+<span><span class="co">#&gt; [10,]    1    2    1    2    1    2    1    2    1     2</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>

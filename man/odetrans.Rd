@@ -31,7 +31,7 @@ default is 3.7 for SCAD and 3.0 for MCP.}
 default is 0.}
 
 \item{cbh_func}{a function specifying the cumulative baseline hazard. The
-default is NULL, which means the cumulative baseline hazard is estimateds
+default is NULL, which means the cumulative baseline hazard is estimated
 from the survode object fitted to the source data.}
 
 \item{init}{a numeric vector specifying the initial value of the

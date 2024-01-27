@@ -8,7 +8,7 @@
 #' @param gamma a non-negative value specifying the penalty parameter. The
 #'  default is 3.7 for SCAD and 3.0 for MCP.
 #' @param cbh_func a function specifying the cumulative baseline hazard. The
-#'  default is NULL, which means the cumulative baseline hazard is estimateds
+#'  default is NULL, which means the cumulative baseline hazard is estimated
 #'  from the survode object fitted to the source data.
 #' @param init a numeric vector specifying the initial value of the
 #'  coefficients. The default is a zero vector.

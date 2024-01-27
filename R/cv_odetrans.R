@@ -5,7 +5,7 @@
 #'  Possible values are \code{"lasso"}, \code{"MCP"} and \code{"SCAD"}.
 #' @param gamma a numeric value specifying the tuning parameter for MCP or SCAD.
 #' @param cbh_func a function specifying the cumulative baseline hazard. The
-#'  default is NULL, which means the cumulative baseline hazard is estimateds
+#'  default is NULL, which means the cumulative baseline hazard is estimated
 #'  from the survode object fitted to the source data.
 #' @param nfolds an integer specifying the number of folds.
 #' @param nlambdas an integer specifying the number of lambda values.

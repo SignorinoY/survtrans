@@ -29,7 +29,7 @@ Possible values are \code{"lasso"}, \code{"MCP"} and \code{"SCAD"}.}
 \item{gamma}{a numeric value specifying the tuning parameter for MCP or SCAD.}
 
 \item{cbh_func}{a function specifying the cumulative baseline hazard. The
-default is NULL, which means the cumulative baseline hazard is estimateds
+default is NULL, which means the cumulative baseline hazard is estimated
 from the survode object fitted to the source data.}
 
 \item{nfolds}{an integer specifying the number of folds.}

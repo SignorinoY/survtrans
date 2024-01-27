@@ -27,7 +27,7 @@ returned by the \code{\link{Surv}} function.}
 
 \item{group}{a factor specifying the group of each sample.}
 
-\item{lambda1}{a non-negative value specifying the sparisity penalty
+\item{lambda1}{a non-negative value specifying the sparse penalty
 parameter. The default is 0.}
 
 \item{lambda2}{a non-negative value specifying the group penalty

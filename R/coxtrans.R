@@ -4,7 +4,7 @@
 #' returned by the \code{\link{Surv}} function.
 #' @param data a data frame containing the variables in the model.
 #' @param group a factor specifying the group of each sample.
-#' @param lambda1 a non-negative value specifying the sparisity penalty
+#' @param lambda1 a non-negative value specifying the sparse penalty
 #' parameter. The default is 0.
 #' @param lambda2 a non-negative value specifying the group penalty
 #' parameter. The default is 0.

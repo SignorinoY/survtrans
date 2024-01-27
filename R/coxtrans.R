@@ -30,8 +30,7 @@
 #'   lambda1 = 0.05, lambda2 = 0.04, penalty = "SCAD"
 #' )
 #' fit$eta
-coxtrans <- function(
-    # nolint: cyclocomp_linter.
+coxtrans <- function( # nolint: cyclocomp_linter.
     formula, data, group, lambda1 = 0, lambda2 = 0,
     penalty = c("lasso", "MCP", "SCAD"),
     gamma = switch(penalty,
@@ -270,6 +269,5 @@ coxtrans <- function(
     rho = rho, formula = formula, call = match.call()
   )
   class(fit) <- "coxtrans"
-  fit$logLik <- logLik(fit, data_, group_)
   return(fit)
 }

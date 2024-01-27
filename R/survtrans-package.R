@@ -16,6 +16,7 @@
 #' @importFrom stats model.response
 #' @importFrom stats optim
 #' @importFrom stats predict
+#' @importFrom stats BIC
 #' @importFrom survival Surv
 #' @importFrom survode survode
 ## usethis namespace: end

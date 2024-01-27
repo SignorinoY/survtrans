@@ -1,6 +1,6 @@
 Package: survtrans
 Title: Transfer Learning for Survival Analysis
-Version: 0.0.0.9000
+Version: 1.0.0
 Authors@R: 
     person("Ziyang", "Gong", , "gongziyang@swufe.edu.cn", role = c("aut", "cre"))
 Description: What the package does (one paragraph).

@@ -53,7 +53,7 @@ cv_ncvcox <- function(
   if (missing(control)) control <- survtrans_control(...)
 
   # Determmine the lambda sequence
-  lambda_max <- calc_lambda_max(formula, data, offset)
+  lambda_max <- calc_lambda_max(formula, data, offset = offset)
   lambda_min <- lambda_max * lambda_min_ratio
   lambdas <- exp(seq(log(lambda_max), log(lambda_min), length.out = nlambdas))
 

@@ -16,7 +16,7 @@
 #'  control parameters for the fitting algorithm. Default is
 #'  \code{survtrans_control(...)}.
 #' @param ... Other arguments passed to \code{\link{survtrans_control}}.
-#' @return a cv_survtran object.
+#' @return a cv_odetrans object.
 #' @export
 #' @examples
 #' formula <- Surv(time, status) ~ . - group - id
@@ -103,6 +103,6 @@ cv_odetrans <- function(
     coefficients = coefficients, lambdas = lambdas, etas = etas,
     cvm = cvm, cvsd = cvsd, formula = form_src
   )
-  class(fit) <- "cv_survtran"
+  class(fit) <- "cv_odetrans"
   fit
 }

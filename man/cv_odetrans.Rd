@@ -48,7 +48,7 @@ control parameters for the fitting algorithm. Default is
 \item{...}{Other arguments passed to \code{\link{survtrans_control}}.}
 }
 \value{
-a cv_survtran object.
+a cv_odetrans object.
 }
 \description{
 Cross-validation for \code{survtran}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/coxtrans.R
 \name{coxtrans}
 \alias{coxtrans}
-\title{Transfer Learning of Multi-source for Cox proportional hazards model}
+\title{Multi-source Cox proportional hazards model with sparse and group penalties}
 \usage{
 coxtrans(
   formula,
@@ -55,7 +55,7 @@ control parameters for the fitting algorithm. Default is
 a coxtrans object.
 }
 \description{
-Transfer Learning of Multi-source for Cox proportional hazards model
+Multi-source Cox proportional hazards model with sparse and group penalties
 }
 \examples{
 library(survtrans)

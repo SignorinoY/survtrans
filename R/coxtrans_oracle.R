@@ -31,8 +31,7 @@
 #' )
 #' fit$eta
 coxtrans_oracle <- function( # nolint: cyclocomp_linter.
-    formula, data, group, sparse_idx, group_idx, rho = 2.0, init,
-    control, ...) {
+    formula, data, group, sparse_idx, group_idx, init, control, ...) {
   # Load the data
   data_ <- data
   group_ <- group
@@ -146,30 +145,10 @@ coxtrans_oracle <- function( # nolint: cyclocomp_linter.
     return(grad)
   }
 
-  param_old <- init
-  fn_best <- fn(param_old)
-
-  n_iterations_no_improvement <- 0
-  for (iter in 1:control$maxit) {
-    res <- optim(param_old, fn, gr, method = "BFGS")
-    if (max(abs(res$par - param_old)) < control$eps) break
-    param_old <- res$par
-    coefs <- matrix(res$par, nrow = n_features)
-    if (fn_best < res$value) {
-      fn_best <- res$value
-    } else {
-      n_iterations_no_improvement <- n_iterations_no_improvement + 1
-    }
-    if (n_iterations_no_improvement >= control$patience) {
-      break
-    }
-  }
+  res <- optim(init, fn, gr, method = "BFGS")
+  coefs <- matrix(res$par, nrow = n_features)
   eta <- coefs[, 1:n_groups]
   beta <- coefs[, n_parameters]
-  eta_bar <- rowMeans(eta)
-  eta <- sweep(eta, 1, eta_bar, "-")
-  eta[abs(eta) < control$eps] <- 0
-  beta <- beta + eta_bar
 
   # Unscale the coefficients
   coef <- cbind(eta, beta)
@@ -180,7 +159,7 @@ coxtrans_oracle <- function( # nolint: cyclocomp_linter.
 
   # Return the fit
   fit <- list(
-    coefficients = coef, logLik = -res$value, iter = iter,
+    coefficients = coef, logLik = -res$value,
     beta = beta, eta = eta, formula = formula, call = match.call()
   )
   class(fit) <- "coxtrans"

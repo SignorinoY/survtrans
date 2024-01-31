@@ -10,7 +10,6 @@ coxtrans_oracle(
   group,
   sparse_idx,
   group_idx,
-  rho = 2,
   init,
   control,
   ...

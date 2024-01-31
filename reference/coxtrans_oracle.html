@@ -60,7 +60,6 @@
 <span>  <span class="va">group</span>,</span>
 <span>  <span class="va">sparse_idx</span>,</span>
 <span>  <span class="va">group_idx</span>,</span>
-<span>  rho <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  <span class="va">init</span>,</span>
 <span>  <span class="va">control</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -130,28 +129,28 @@ control parameters for the fitting algorithm. Default is
 <span class="r-in"><span>  <span class="va">formula</span>, <span class="va">sim2</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">sim2</span><span class="op">$</span><span class="va">group</span><span class="op">)</span>, <span class="va">sparse_idx</span>, <span class="va">group_idx</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">fit</span><span class="op">$</span><span class="va">eta</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,]  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] -1.0358696 1.0358696 -1.0358696 1.0358696 -1.0358696 1.0358696 -1.0358696</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,]  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,] -0.9999789 0.9999789 -0.9999789 0.9999789 -0.9999789 0.9999789 -0.9999789</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,]  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] -1.1385843 1.1385843 -1.1385843 1.1385843 -1.1385843 1.1385843 -1.1385843</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,]  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] -1.0989145 1.0989145 -1.0989145 1.0989145 -1.0989145 1.0989145 -1.0989145</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,]  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] -1.0340168 1.0340168 -1.0340168 1.0340168 -1.0340168 1.0340168 -1.0340168</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] 0.0000000  0.0000000 0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] 1.0358696 -1.0358696 1.0358696</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,] 0.0000000  0.0000000 0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,] 0.9999789 -0.9999789 0.9999789</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,] 0.0000000  0.0000000 0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] 1.1385843 -1.1385843 1.1385843</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,] 0.0000000  0.0000000 0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] 1.0989145 -1.0989145 1.0989145</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,] 0.0000000  0.0000000 0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] 1.0340168 -1.0340168 1.0340168</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,]  0.000000 0.0000000  0.000000 0.0000000  0.000000 0.0000000  0.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] -1.061681 1.0100669 -1.061681 1.0100669 -1.061681 1.0100669 -1.061681</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,]  0.000000 0.0000000  0.000000 0.0000000  0.000000 0.0000000  0.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,] -1.005356 0.9945785 -1.005356 0.9945785 -1.005356 0.9945785 -1.005356</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,]  0.000000 0.0000000  0.000000 0.0000000  0.000000 0.0000000  0.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] -1.148100 1.1290791 -1.148100 1.1290791 -1.148100 1.1290791 -1.148100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,]  0.000000 0.0000000  0.000000 0.0000000  0.000000 0.0000000  0.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] -1.092632 1.1051906 -1.092632 1.1051906 -1.092632 1.1051906 -1.092632</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,]  0.000000 0.0000000  0.000000 0.0000000  0.000000 0.0000000  0.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] -1.012462 1.0555703 -1.012462 1.0555703 -1.012462 1.0555703 -1.012462</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] 0.0000000  0.000000 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] 1.0100669 -1.061681 1.0100669</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,] 0.0000000  0.000000 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,] 0.9945785 -1.005356 0.9945785</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,] 0.0000000  0.000000 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] 1.1290791 -1.148100 1.1290791</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,] 0.0000000  0.000000 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] 1.1051906 -1.092632 1.1051906</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,] 0.0000000  0.000000 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] 1.0555703 -1.012462 1.0555703</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

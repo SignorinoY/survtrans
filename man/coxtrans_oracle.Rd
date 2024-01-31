@@ -8,6 +8,7 @@ coxtrans_oracle(
   formula,
   data,
   group,
+  target,
   sparse_idx,
   group_idx,
   init,
@@ -23,6 +24,8 @@ returned by the \code{\link{Surv}} function.}
 \item{data}{a data frame containing the variables in the model.}
 
 \item{group}{a factor specifying the group of each sample.}
+
+\item{target}{a factor specifying the target group.}
 
 \item{sparse_idx}{a logical matrix specifying the sparse parameters, where
 each row corresponds to a feature and each column corresponds to a group.}
@@ -47,16 +50,37 @@ Transfer Learning of Multi-source for Cox proportional hazards model (Oracle)
 }
 \examples{
 formula <- Surv(time, status) ~ . - group - id
-sparse_idx <- matrix(
-  rep(rep(c(FALSE, TRUE), each = 10), 5),
-  ncol = 10, byrow = TRUE
-)
+sparse_idx <- matrix(FALSE, nrow = 10, ncol = 9)
+for (i in 1:9) {
+  if (i \%\% 2 == 1) sparse_idx[, i] <- rep(c(FALSE, TRUE), 5)
+}
 group_idx <- matrix(
   rep(c(rep(1, 10), rep(c(1, 2), 5)), 5),
   ncol = 10, byrow = TRUE
 )
+group_idx <- group_idx[, -1]
+
+# Sparse
 fit <- coxtrans_oracle(
-  formula, sim2, as.factor(sim2$group), sparse_idx, group_idx
+  formula, sim2, as.factor(sim2$group), target = 11,
+  sparse_idx = sparse_idx
 )
+fit$beta
+fit$eta
+
+# Group
+fit <- coxtrans_oracle(
+  formula, sim2, as.factor(sim2$group), target = 11,
+  group_idx = group_idx
+)
+fit$beta
+fit$eta
+
+# Sparse and group
+fit <- coxtrans_oracle(
+  formula, sim2, as.factor(sim2$group), target = 11,
+  sparse_idx = sparse_idx, group_idx = group_idx
+)
+fit$beta
 fit$eta
 }

@@ -1,39 +1,60 @@
 #' Transfer Learning of Multi-source for Cox proportional hazards model (Oracle)
+#'   without constraints
 #' @param formula a formula expression as for regression models, of the form
 #' \code{response ~ predictors}. The response must be a survival object as
 #' returned by the \code{\link{Surv}} function.
 #' @param data a data frame containing the variables in the model.
 #' @param group a factor specifying the group of each sample.
+#' @param target a factor specifying the target group.
 #' @param sparse_idx a logical matrix specifying the sparse parameters, where
 #' each row corresponds to a feature and each column corresponds to a group.
 #' @param group_idx a logical matrix specifying the group parameters, where
 #' each row corresponds to a feature and each column corresponds to a group.
-#' @param rho a value in (2, 10) specifying the expansion factor of the
-#' augmented Lagrangian's penalty parameter. The default is 2.0.
 #' @param init a numeric vector specifying the initial value of the
 #' coefficients. The default is a zero vector.
 #' @param control Object of class \link{survtrans_control} containing
 #' control parameters for the fitting algorithm. Default is
 #' \code{survtrans_control(...)}.
 #' @param ... Other arguments passed to \code{\link{survtrans_control}}.
-#' @return a coxtrans object.
+#' @return a coxtl_oracle object.
 #' @export
 #' @examples
 #' formula <- Surv(time, status) ~ . - group - id
-#' sparse_idx <- matrix(
-#'   rep(rep(c(FALSE, TRUE), each = 10), 5),
-#'   ncol = 10, byrow = TRUE
-#' )
+#' sparse_idx <- matrix(FALSE, nrow = 10, ncol = 9)
+#' for (i in 1:9) {
+#'   if (i %% 2 == 1) sparse_idx[, i] <- rep(c(FALSE, TRUE), 5)
+#' }
 #' group_idx <- matrix(
 #'   rep(c(rep(1, 10), rep(c(1, 2), 5)), 5),
 #'   ncol = 10, byrow = TRUE
 #' )
-#' fit <- coxtrans_oracle(
-#'   formula, sim2, as.factor(sim2$group), sparse_idx, group_idx
+#' group_idx <- group_idx[, -1]
+#'
+#' # Sparse
+#' fit <- coxtl_oracle(
+#'   formula, sim2, as.factor(sim2$group), target = 11,
+#'   sparse_idx = sparse_idx
 #' )
+#' fit$beta
 #' fit$eta
-coxtrans_oracle <- function( # nolint: cyclocomp_linter.
-    formula, data, group, sparse_idx, group_idx, rho = 2.0, init,
+#'
+#' # Group
+#' fit <- coxtl_oracle(
+#'   formula, sim2, as.factor(sim2$group), target = 11,
+#'   group_idx = group_idx
+#' )
+#' fit$beta
+#' fit$eta
+#'
+#' # Sparse and group
+#' fit <- coxtl_oracle(
+#'   formula, sim2, as.factor(sim2$group), target = 11,
+#'   sparse_idx = sparse_idx, group_idx = group_idx
+#' )
+#' fit$beta
+#' fit$eta
+coxtl_oracle <- function( # nolint: cyclocomp_linter.
+    formula, data, group, target, sparse_idx, group_idx, init,
     control, ...) {
   # Load the data
   data_ <- data
@@ -50,23 +71,25 @@ coxtrans_oracle <- function( # nolint: cyclocomp_linter.
   n_features <- ncol(x)
   n_groups <- length(unique(group))
   group_levels <- levels(group)
-  n_parameters <- n_groups + 1
+  group_levels_drop <- group_levels[group_levels != target]
 
   # Check the sparse_idx argument
   if (missing(sparse_idx)) {
-    sparse_idx <- matrix(TRUE, nrow = n_features, ncol = n_groups)
+    sparse_idx <- matrix(TRUE, nrow = n_features, ncol = n_groups - 1)
   }
   if (missing(group_idx)) {
-    group_idx <- matrix(rep(1:n_groups, each = n_features), ncol = n_groups)
+    group_idx <- matrix(
+      rep(1:(n_groups - 1), each = n_features), ncol = n_groups - 1
+    )
   }
 
   # Check the init argument
   if (!missing(init) && length(init) > 0) {
-    if (length(init) != n_features * n_parameters) {
+    if (length(init) != n_features * n_groups) {
       stop("Wrong length for inital values")
     }
   } else {
-    init <- rep(0, n_features * n_parameters)
+    init <- rep(0, n_features * n_groups)
   }
 
   # Check the control argument
@@ -75,13 +98,13 @@ coxtrans_oracle <- function( # nolint: cyclocomp_linter.
   fn <- function(param) {
     # Extract the parameters
     coefs <- matrix(param, nrow = n_features)
-    eta <- coefs[, 1:n_groups]
-    beta <- coefs[, n_parameters]
+    eta <- coefs[, 1:(n_groups - 1)]
+    beta <- coefs[, n_groups]
 
     # Calculate the log-likelihood
     theta <- x %*% beta
-    for (k in 1:n_groups) {
-      idx <- group == group_levels[k]
+    for (k in 1:(n_groups - 1)) {
+      idx <- group == group_levels_drop[k]
       theta[idx] <- theta[idx] + x[idx, ] %*% eta[, k]
     }
     theta_max <- max(theta)
@@ -94,24 +117,18 @@ coxtrans_oracle <- function( # nolint: cyclocomp_linter.
     }
     log_risk <- log(risk_set) + theta_max
     log_lik <- sum(status * (theta - log_risk))
-
-    # Calculate the augmented term
-    constr <- rowSums(eta)
-    aug <- sum(constr * mu) + sum(rowSums(eta)^2) * alpha / 2
-
-    -log_lik + aug
+    -log_lik
   }
 
   gr <- function(param) {
     # Extract the parameters
     coefs <- matrix(param, nrow = n_features)
-    eta <- coefs[, 1:n_groups]
-    beta <- coefs[, n_parameters]
-
+    eta <- coefs[, 1:(n_groups - 1)]
+    beta <- coefs[, n_groups]
 
     theta <- x %*% beta
-    for (k in 1:n_groups) {
-      idx <- group == group_levels[k]
+    for (k in 1:(n_groups - 1)) {
+      idx <- group == group_levels_drop[k]
       theta[idx] <- theta[idx] + x[idx, ] %*% eta[, k]
     }
     theta_max <- max(theta)
@@ -131,15 +148,12 @@ coxtrans_oracle <- function( # nolint: cyclocomp_linter.
     risk_set_ratio <- sweep(risk_set_x, 1, risk_set, "/")
     grads <- sweep(x - risk_set_ratio, 1, status, "*")
 
-    grad_beta <- -colSums(grads)
-    grad_eta <- matrix(0, nrow = n_features, ncol = n_groups)
-    for (k in 1:n_groups) {
+    grad_beta <- - colSums(grads)
+    grad_eta <- matrix(0, nrow = n_features, ncol = n_groups - 1)
+    for (k in 1:(n_groups - 1)) {
       idx <- group == group_levels[k]
       grad_eta[, k] <- -colSums(grads[idx, ])
     }
-    grad_eta <- grad_eta + mu + rowSums(eta) * alpha
-    # Mask the sparse parameters
-    grad_eta[sparse_idx == 0] <- 0
     # Mask the group parameters
     for (k in 1:n_features) {
       values <- unique(group_idx[k, ])
@@ -148,55 +162,30 @@ coxtrans_oracle <- function( # nolint: cyclocomp_linter.
         grad_eta[k, idx] <- sum(grad_eta[k, idx])
       }
     }
+    # Mask the sparse parameters
+    grad_eta[sparse_idx == 0] <- 0
 
     grad <- cbind(grad_eta, grad_beta)
     grad <- as.vector(grad)
     return(grad)
   }
-
-
-  alpha <- 1
-  mu <- rep(0, n_features)
-  param_old <- init
-  fn_best <- fn(param_old)
-
-  n_iterations_no_improvement <- 0
-  for (iter in 1:control$maxit) {
-    res <- optim(param_old, fn, gr, method = "BFGS")
-    if (max(abs(res$par - param_old)) < control$eps) break
-    param_old <- res$par
-    coefs <- matrix(res$par, nrow = n_features)
-    mu <- mu + alpha * rowSums(coefs[, 1:n_groups])
-    if (fn_best < res$value) {
-      fn_best <- res$value
-    } else {
-      alpha <- min(alpha * rho, n_samples)
-      n_iterations_no_improvement <- n_iterations_no_improvement + 1
-    }
-    if (n_iterations_no_improvement >= control$patience) {
-      break
-    }
-  }
-  eta <- coefs[, 1:n_groups]
-  beta <- coefs[, n_parameters]
-  eta_bar <- rowMeans(eta)
-  eta <- sweep(eta, 1, eta_bar, "-")
-  eta[abs(eta) < control$eps] <- 0
-  beta <- beta + eta_bar
+  res <- optim(init, fn, gr, method = "CG")
+  coefs <- matrix(res$par, nrow = n_features)
+  eta <- coefs[, 1:(n_groups - 1)]
+  beta <- coefs[, n_groups]
 
   # Unscale the coefficients
-  coef <- cbind(eta, beta, mu)
+  coef <- cbind(eta, beta)
   coef <- sweep(coef, 1, x_scale, "/")
-  eta <- coef[, 1:n_groups]
-  beta <- coef[, n_parameters]
+  eta <- coef[, 1:(n_groups - 1)]
+  beta <- coef[, n_groups]
   coef <- as.vector(coef)
 
   # Return the fit
   fit <- list(
-    coefficients = coef, logLik = -res$value, iter = iter,
-    beta = beta, eta = eta, mu = mu,
-    rho = rho, formula = formula, call = match.call()
+    coefficients = coef, logLik = -res$value,
+    beta = beta, eta = eta, formula = formula, call = match.call()
   )
-  class(fit) <- "coxtrans"
+  class(fit) <- "coxtl_oracle"
   return(fit)
 }

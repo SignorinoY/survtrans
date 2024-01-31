@@ -8,8 +8,6 @@
 #' each row corresponds to a feature and each column corresponds to a group.
 #' @param group_idx a logical matrix specifying the group parameters, where
 #' each row corresponds to a feature and each column corresponds to a group.
-#' @param rho a value in (2, 10) specifying the expansion factor of the
-#' augmented Lagrangian's penalty parameter. The default is 2.0.
 #' @param init a numeric vector specifying the initial value of the
 #' coefficients. The default is a zero vector.
 #' @param control Object of class \link{survtrans_control} containing
@@ -94,12 +92,7 @@ coxtrans_oracle <- function( # nolint: cyclocomp_linter.
     }
     log_risk <- log(risk_set) + theta_max
     log_lik <- sum(status * (theta - log_risk))
-
-    # Calculate the augmented term
-    constr <- rowSums(eta)
-    aug <- sum(constr * mu) + sum(rowSums(eta)^2) * alpha / 2
-
-    -log_lik + aug
+    -log_lik
   }
 
   gr <- function(param) {
@@ -137,7 +130,6 @@ coxtrans_oracle <- function( # nolint: cyclocomp_linter.
       idx <- group == group_levels[k]
       grad_eta[, k] <- -colSums(grads[idx, ])
     }
-    grad_eta <- grad_eta + mu + rowSums(eta) * alpha
     # Mask the sparse parameters
     grad_eta[sparse_idx == 0] <- 0
     # Mask the group parameters
@@ -154,9 +146,6 @@ coxtrans_oracle <- function( # nolint: cyclocomp_linter.
     return(grad)
   }
 
-
-  alpha <- 1
-  mu <- rep(0, n_features)
   param_old <- init
   fn_best <- fn(param_old)
 
@@ -166,11 +155,9 @@ coxtrans_oracle <- function( # nolint: cyclocomp_linter.
     if (max(abs(res$par - param_old)) < control$eps) break
     param_old <- res$par
     coefs <- matrix(res$par, nrow = n_features)
-    mu <- mu + alpha * rowSums(coefs[, 1:n_groups])
     if (fn_best < res$value) {
       fn_best <- res$value
     } else {
-      alpha <- min(alpha * rho, n_samples)
       n_iterations_no_improvement <- n_iterations_no_improvement + 1
     }
     if (n_iterations_no_improvement >= control$patience) {
@@ -185,7 +172,7 @@ coxtrans_oracle <- function( # nolint: cyclocomp_linter.
   beta <- beta + eta_bar
 
   # Unscale the coefficients
-  coef <- cbind(eta, beta, mu)
+  coef <- cbind(eta, beta)
   coef <- sweep(coef, 1, x_scale, "/")
   eta <- coef[, 1:n_groups]
   beta <- coef[, n_parameters]
@@ -194,8 +181,7 @@ coxtrans_oracle <- function( # nolint: cyclocomp_linter.
   # Return the fit
   fit <- list(
     coefficients = coef, logLik = -res$value, iter = iter,
-    beta = beta, eta = eta, mu = mu,
-    rho = rho, formula = formula, call = match.call()
+    beta = beta, eta = eta, formula = formula, call = match.call()
   )
   class(fit) <- "coxtrans"
   return(fit)

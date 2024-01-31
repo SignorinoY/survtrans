@@ -31,9 +31,6 @@ each row corresponds to a feature and each column corresponds to a group.}
 \item{group_idx}{a logical matrix specifying the group parameters, where
 each row corresponds to a feature and each column corresponds to a group.}
 
-\item{rho}{a value in (2, 10) specifying the expansion factor of the
-augmented Lagrangian's penalty parameter. The default is 2.0.}
-
 \item{init}{a numeric vector specifying the initial value of the
 coefficients. The default is a zero vector.}
 

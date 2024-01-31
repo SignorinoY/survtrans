@@ -64,7 +64,7 @@ group_idx <- group_idx[, -1]
 
 # Sparse
 fit <- coxtl_oracle(
-  formula, sim2, as.factor(sim2$group), target = 11,
+  formula, sim2, as.factor(sim2$group), target = 10,
   sparse_idx = sparse_idx
 )
 fit$beta
@@ -72,7 +72,7 @@ fit$eta
 
 # Group
 fit <- coxtl_oracle(
-  formula, sim2, as.factor(sim2$group), target = 11,
+  formula, sim2, as.factor(sim2$group), target = 10,
   group_idx = group_idx
 )
 fit$beta
@@ -80,7 +80,7 @@ fit$eta
 
 # Sparse and group
 fit <- coxtl_oracle(
-  formula, sim2, as.factor(sim2$group), target = 11,
+  formula, sim2, as.factor(sim2$group), target = 10,
   sparse_idx = sparse_idx, group_idx = group_idx
 )
 fit$beta

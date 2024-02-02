@@ -89,6 +89,42 @@
 <span></span>
 <span><span class="va">formula</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">.</span> <span class="op">-</span> <span class="va">group</span> <span class="op">-</span> <span class="va">id</span></span>
 <span><span class="va">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">sim2</span><span class="op">$</span><span class="va">group</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Transfer learning</span></span>
+<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/coxtl.html">coxtl</a></span><span class="op">(</span></span>
+<span>  <span class="va">formula</span>, <span class="va">sim2</span>,</span>
+<span>  <span class="va">group</span>, target <span class="op">=</span> <span class="fl">10</span>, lambda <span class="op">=</span> <span class="fl">0.15</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">fit</span><span class="op">$</span><span class="va">beta</span></span>
+<span><span class="co">#&gt;        X1        X2        X3        X4        X5        X6        X7        X8 </span></span>
+<span><span class="co">#&gt; 1.1485819 0.9914212 1.0675040 0.9912339 1.0577806 1.1452113 1.0443883 1.1246573 </span></span>
+<span><span class="co">#&gt;        X9       X10 </span></span>
+<span><span class="co">#&gt; 1.0124941 1.1112788</span></span>
+<span><span class="va">fit</span><span class="op">$</span><span class="va">eta</span></span>
+<span><span class="co">#&gt;          [,1]       [,2]      [,3] [,4]      [,5] [,6]      [,7]        [,8]</span></span>
+<span><span class="co">#&gt; X1   0.000000  0.0000000  0.000000    0  0.000000    0  0.000000  0.00000000</span></span>
+<span><span class="co">#&gt; X2  -2.193076 -0.1065746 -2.221245    0 -2.081839    0 -1.947329  0.00000000</span></span>
+<span><span class="co">#&gt; X3   0.000000  0.0000000  0.000000    0  0.000000    0  0.000000  0.00000000</span></span>
+<span><span class="co">#&gt; X4  -2.146633  0.0000000 -2.029066    0 -1.937629    0 -1.775079  0.00000000</span></span>
+<span><span class="co">#&gt; X5   0.000000  0.0000000  0.000000    0  0.000000    0  0.000000  0.00000000</span></span>
+<span><span class="co">#&gt; X6  -2.275226  0.0000000 -2.262730    0 -2.378676    0 -2.262433 -0.10226388</span></span>
+<span><span class="co">#&gt; X7   0.000000  0.0000000  0.000000    0  0.000000    0  0.000000 -0.01420525</span></span>
+<span><span class="co">#&gt; X8  -2.313740  0.0000000 -2.203845    0 -1.980452    0 -2.204240  0.00000000</span></span>
+<span><span class="co">#&gt; X9   0.000000  0.0000000  0.000000    0  0.000000    0  0.000000  0.00000000</span></span>
+<span><span class="co">#&gt; X10 -1.880444  0.0000000 -2.201272    0 -2.176774    0 -1.891838  0.00000000</span></span>
+<span><span class="co">#&gt;          [,9]</span></span>
+<span><span class="co">#&gt; X1   0.000000</span></span>
+<span><span class="co">#&gt; X2  -2.168322</span></span>
+<span><span class="co">#&gt; X3   0.000000</span></span>
+<span><span class="co">#&gt; X4  -2.110493</span></span>
+<span><span class="co">#&gt; X5   0.000000</span></span>
+<span><span class="co">#&gt; X6  -2.335686</span></span>
+<span><span class="co">#&gt; X7   0.000000</span></span>
+<span><span class="co">#&gt; X8  -2.316359</span></span>
+<span><span class="co">#&gt; X9   0.000000</span></span>
+<span><span class="co">#&gt; X10 -2.195146</span></span>
+<span></span>
+<span><span class="co">## Multi-task learning</span></span>
 <span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/coxtrans.html">coxtrans</a></span><span class="op">(</span></span>
 <span>  <span class="va">formula</span>, <span class="va">sim2</span>, <span class="va">group</span>,</span>
 <span>  lambda1 <span class="op">=</span> <span class="fl">0.05</span>, lambda2 <span class="op">=</span> <span class="fl">0.05</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span>

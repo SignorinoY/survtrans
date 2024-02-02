@@ -2,7 +2,7 @@
 % Please edit documentation in R/coxtrans_oracle.R
 \name{coxtrans_oracle}
 \alias{coxtrans_oracle}
-\title{Transfer Learning of Multi-source for Cox proportional hazards model (Oracle)}
+\title{Multi-task Learning of Cox proportional hazards model (Oracle)}
 \usage{
 coxtrans_oracle(
   formula,
@@ -47,7 +47,7 @@ control parameters for the fitting algorithm. Default is
 a coxtrans object.
 }
 \description{
-Transfer Learning of Multi-source for Cox proportional hazards model (Oracle)
+Multi-task Learning of Cox proportional hazards model (Oracle)
 }
 \examples{
 formula <- Surv(time, status) ~ . - group - id

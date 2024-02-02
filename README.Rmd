@@ -40,6 +40,16 @@ library(survtrans)
 
 formula <- Surv(time, status) ~ . - group - id
 group <- as.factor(sim2$group)
+
+## Transfer learning
+fit <- coxtl(
+  formula, sim2,
+  group, target = 10, lambda = 0.15, penalty = "SCAD"
+)
+fit$beta
+fit$eta
+
+## Multi-task learning
 fit <- coxtrans(
   formula, sim2, group,
   lambda1 = 0.05, lambda2 = 0.05, penalty = "SCAD"

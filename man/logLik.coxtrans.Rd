@@ -2,7 +2,7 @@
 % Please edit documentation in R/logLik.coxtrans.R
 \name{logLik.coxtrans}
 \alias{logLik.coxtrans}
-\title{Log-likelihood of a Multi-source Cox proportional hazards model}
+\title{Log-likelihood of a Multi-task Learning for Cox proportional hazards model}
 \usage{
 \method{logLik}{coxtrans}(object, data, group, ...)
 }
@@ -19,5 +19,5 @@
 the log-likelihood of the model.
 }
 \description{
-Log-likelihood of a Multi-source Cox proportional hazards model
+Log-likelihood of a Multi-task Learning for Cox proportional hazards model
 }

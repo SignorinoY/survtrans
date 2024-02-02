@@ -1,4 +1,4 @@
-#' Multi-source Cox proportional hazards model with sparse and group penalties
+#' Multi-task Learning for Cox proportional hazards model
 #' @param formula a formula expression as for regression models, of the form
 #' \code{response ~ predictors}. The response must be a survival object as
 #' returned by the \code{\link{Surv}} function.

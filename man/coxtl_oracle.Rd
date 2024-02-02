@@ -2,7 +2,7 @@
 % Please edit documentation in R/coxtl_oracle.R
 \name{coxtl_oracle}
 \alias{coxtl_oracle}
-\title{Transfer Learning of Multi-source for Cox proportional hazards model (Oracle)
+\title{Transfer Learning for Cox proportional hazards model (Oracle)
 without constraints}
 \usage{
 coxtl_oracle(
@@ -47,7 +47,7 @@ control parameters for the fitting algorithm. Default is
 a coxtl_oracle object.
 }
 \description{
-Transfer Learning of Multi-source for Cox proportional hazards model (Oracle)
+Transfer Learning for Cox proportional hazards model (Oracle)
 without constraints
 }
 \examples{

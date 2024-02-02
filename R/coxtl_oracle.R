@@ -1,4 +1,4 @@
-#' Transfer Learning of Multi-source for Cox proportional hazards model (Oracle)
+#' Transfer Learning for Cox proportional hazards model (Oracle)
 #'   without constraints
 #' @param formula a formula expression as for regression models, of the form
 #' \code{response ~ predictors}. The response must be a survival object as
@@ -71,7 +71,7 @@ coxtl_oracle <- function( # nolint: cyclocomp_linter.
   n_features <- ncol(x)
   n_groups <- length(unique(group))
   group_levels <- levels(group)
-  group_levels_drop <- group_levels[group_levels != target]
+  group_levels_source <- group_levels[group_levels != target]
 
   # Check the sparse_idx argument
   if (missing(sparse_idx)) {
@@ -104,7 +104,7 @@ coxtl_oracle <- function( # nolint: cyclocomp_linter.
     # Calculate the log-likelihood
     theta <- x %*% beta
     for (k in 1:(n_groups - 1)) {
-      idx <- group == group_levels_drop[k]
+      idx <- group == group_levels_source[k]
       theta[idx] <- theta[idx] + x[idx, ] %*% eta[, k]
     }
     theta_max <- max(theta)
@@ -128,7 +128,7 @@ coxtl_oracle <- function( # nolint: cyclocomp_linter.
 
     theta <- x %*% beta
     for (k in 1:(n_groups - 1)) {
-      idx <- group == group_levels_drop[k]
+      idx <- group == group_levels_source[k]
       theta[idx] <- theta[idx] + x[idx, ] %*% eta[, k]
     }
     theta_max <- max(theta)

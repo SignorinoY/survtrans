@@ -1,4 +1,4 @@
-#' Transfer Learning of Multi-source for Cox proportional hazards model (Oracle)
+#' Multi-task Learning of Cox proportional hazards model (Oracle)
 #' @param formula a formula expression as for regression models, of the form
 #' \code{response ~ predictors}. The response must be a survival object as
 #' returned by the \code{\link{Surv}} function.

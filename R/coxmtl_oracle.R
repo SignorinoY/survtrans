@@ -16,7 +16,7 @@
 #' control parameters for the fitting algorithm. Default is
 #' \code{survtrans_control(...)}.
 #' @param ... Other arguments passed to \code{\link{survtrans_control}}.
-#' @return a coxtrans object.
+#' @return a coxmtl object.
 #' @export
 #' @examples
 #' formula <- Surv(time, status) ~ . - group - id
@@ -28,11 +28,11 @@
 #'   rep(c(rep(1, 10), rep(c(1, 2), 5)), 5),
 #'   ncol = 10, byrow = TRUE
 #' )
-#' fit <- coxtrans_oracle(
+#' fit <- coxmtl_oracle(
 #'   formula, sim2, as.factor(sim2$group), sparse_idx, group_idx
 #' )
 #' fit$eta
-coxtrans_oracle <- function( # nolint: cyclocomp_linter.
+coxmtl_oracle <- function( # nolint: cyclocomp_linter.
     formula, data, group, sparse_idx, group_idx, rho = 2.0, init,
     control, ...) {
   # Load the data
@@ -197,6 +197,6 @@ coxtrans_oracle <- function( # nolint: cyclocomp_linter.
     beta = beta, eta = eta, mu = mu,
     rho = rho, formula = formula, call = match.call()
   )
-  class(fit) <- "coxtrans"
+  class(fit) <- "coxmtl"
   return(fit)
 }

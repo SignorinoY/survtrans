@@ -1,5 +1,5 @@
 #' BIC for Multi-source Cox proportional hazards model
-#' @param object a coxtrans object.
+#' @param object a coxmtl object.
 #' @param data a data frame containing the variables in the model, which
 #' should be the same as the data used to fit the model.
 #' @param group a factor specifying the group of each sample, which
@@ -7,7 +7,7 @@
 #' @param ... Unused.
 #' @return the BIC of the model.
 #' @export
-BIC.coxtrans <- function( # nolint: object_name_linter.
+BIC.coxmtl <- function( # nolint: object_name_linter.
     object, data, group, ...) {
   loglik <- logLik(object, data, group)
 

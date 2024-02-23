@@ -2,7 +2,7 @@
 % Please edit documentation in R/cv_ncvcox.R
 \name{cv_ncvcox}
 \alias{cv_ncvcox}
-\title{Cross-validation for \code{coxtrans}}
+\title{Cross-validation for \code{ncvcox}}
 \usage{
 cv_ncvcox(
   formula,
@@ -52,7 +52,7 @@ control parameters for the fitting algorithm. Default is
 a cv_ncvcox object.
 }
 \description{
-Cross-validation for \code{coxtrans}
+Cross-validation for \code{ncvcox}
 }
 \examples{
 library(survtrans)

@@ -70,7 +70,7 @@ fit$eta
 #> X10 -2.195146
 
 ## Multi-task learning
-fit <- coxtrans(
+fit <- coxmtl(
   formula, sim2, group,
   lambda1 = 0.05, lambda2 = 0.05, penalty = "SCAD"
 )

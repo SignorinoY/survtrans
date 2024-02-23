@@ -50,7 +50,7 @@ fit$beta
 fit$eta
 
 ## Multi-task learning
-fit <- coxtrans(
+fit <- coxmtl(
   formula, sim2, group,
   lambda1 = 0.05, lambda2 = 0.05, penalty = "SCAD"
 )

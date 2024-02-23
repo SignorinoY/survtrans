@@ -20,17 +20,17 @@
 #' control parameters for the fitting algorithm. Default is
 #' \code{survtrans_control(...)}.
 #' @param ... Other arguments passed to \code{\link{survtrans_control}}.
-#' @return a coxtrans object.
+#' @return a coxmtl object.
 #' @export
 #' @examples
 #' library(survtrans)
 #' formula <- Surv(time, status) ~ . - group - id
-#' fit <- coxtrans(
+#' fit <- coxmtl(
 #'   formula, sim2, as.factor(sim2$group),
 #'   lambda1 = 0.05, lambda2 = 0.04, penalty = "SCAD"
 #' )
 #' fit$eta
-coxtrans <- function( # nolint: cyclocomp_linter.
+coxmtl <- function( # nolint: cyclocomp_linter.
     formula, data, group, lambda1 = 0, lambda2 = 0,
     penalty = c("lasso", "MCP", "SCAD"),
     gamma = switch(penalty,
@@ -268,6 +268,6 @@ coxtrans <- function( # nolint: cyclocomp_linter.
     penalty = penalty, lambda1 = lambda1, lambda2 = lambda2, gamma = gamma,
     rho = rho, formula = formula, call = match.call()
   )
-  class(fit) <- "coxtrans"
+  class(fit) <- "coxmtl"
   return(fit)
 }

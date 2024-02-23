@@ -2,7 +2,7 @@
 title: "The Generation of Simulated Survival Data"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{coxtrans-algorithm}
+  %\VignetteIndexEntry{coxmtl-algorithm}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

@@ -1,11 +1,11 @@
 #' Log-likelihood of a Multi-task Learning for Cox proportional hazards model
-#' @param object a coxtrans object.
+#' @param object a coxmtl object.
 #' @param data a data frame containing the variables in the model.
 #' @param group a factor specifying the group of each sample.
 #' @param ... Unused.
 #' @return the log-likelihood of the model.
 #' @export
-logLik.coxtrans <- function(object, data, group, ...) {
+logLik.coxmtl <- function(object, data, group, ...) {
   data <- preprocess_data(object$formula, data, group = group)
   x <- data$x
   x_scale <- attr(x, "scale")

@@ -1,4 +1,4 @@
-#' Cross-validation for \code{coxtrans}
+#' Cross-validation for \code{ncvcox}
 #' @param formula a formula expression as for regression models, of the form
 #' \code{response ~ predictors}. The response must be a survival object as
 #' returned by the \code{\link{Surv}} function.

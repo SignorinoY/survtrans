@@ -9,9 +9,11 @@ coxtl(
   data,
   group,
   target,
-  lambda = 0,
+  lambda1 = 0,
+  lambda2 = 0,
   penalty = c("lasso", "MCP", "SCAD"),
   gamma = switch(penalty, SCAD = 3.7, MCP = 3, 1),
+  rho = 2,
   init,
   control,
   ...
@@ -28,7 +30,10 @@ returned by the \code{\link{Surv}} function.}
 
 \item{target}{a factor specifying the target group.}
 
-\item{lambda}{a non-negative value specifying the sparse penalty
+\item{lambda1}{a non-negative value specifying the sparse penalty
+parameter. The default is 0.}
+
+\item{lambda2}{a non-negative value specifying the group penalty
 parameter. The default is 0.}
 
 \item{penalty}{a character string specifying the penalty function.
@@ -36,6 +41,9 @@ The default is "lasso". Other options are "MCP" and "SCAD".}
 
 \item{gamma}{a non-negative value specifying the penalty parameter. The
 default is 3.7 for SCAD and 3.0 for MCP.}
+
+\item{rho}{a value in (2, 10) specifying the expansion factor of the
+augmented Lagrangian's penalty parameter. The default is 2.0.}
 
 \item{init}{a numeric vector specifying the initial value of the
 coefficients. The default is a zero vector.}
@@ -57,7 +65,7 @@ library(survtrans)
 formula <- Surv(time, status) ~ . - group - id
 fit <- coxtl(
   formula, sim2, as.factor(sim2$group), 10,
-  lambda = 0.04, penalty = "SCAD"
+  lambda1 = 0.05, lambda2 = 0.04, penalty = "SCAD"
 )
 fit$eta
 }

@@ -38,8 +38,6 @@ coxmtl <- function( # nolint: cyclocomp_linter.
       MCP = 3,
       1
     ), rho = 2.0, init, control, ...) {
-  set.seed(0)
-
   # Load the data
   data_ <- data
   group_ <- group
@@ -103,23 +101,23 @@ coxmtl <- function( # nolint: cyclocomp_linter.
   )
   w <- numeric(n_samples)
   r <- numeric(n_samples)
-  offset <- numeric(n_samples)
+  theta <- numeric(n_samples)
   alpha <- 1
 
   # Pre-calculate the quantities
   x2 <- x^2
 
   repeat {
-    # Calculate the offset
+    # Calculate the theta
     for (k in 1:n_groups) {
       idx <- group_idxs[[k]]
-      offset[idx] <- x[idx, ] %*% (eta[, k] + beta)
+      theta[idx] <- x[idx, ] %*% (eta[, k] + beta)
     }
 
     # Calculate the loss
-    hazard <- exp(offset)
+    hazard <- exp(theta)
     risk_set <- ave(hazard, group, FUN = cumsum)
-    loss <- -sum(status * (offset - log(risk_set)))
+    loss <- -sum(status * (theta - log(risk_set)))
 
     # Check the convergence
     record <- check_convergence(cbind(eta, beta), loss, record)
@@ -129,7 +127,7 @@ coxmtl <- function( # nolint: cyclocomp_linter.
     for (k in 1:n_groups) {
       idx <- group_idxs[[k]]
       wls <- calc_weights_residuals(
-        offset = offset[idx], time = time[idx], status = status[idx]
+        offset = theta[idx], time = time[idx], status = status[idx]
       )
       w[idx] <- wls$weights
       r[idx] <- wls$residuals
@@ -154,7 +152,7 @@ coxmtl <- function( # nolint: cyclocomp_linter.
     }
 
     # Update eta by cyclic coordinate descent
-    r <- r + offset - x %*% beta
+    r <- r + theta - x %*% beta
     sub_convergence <- TRUE
     for (k in 1:n_groups) {
       idx <- group_idxs[[k]]
@@ -240,12 +238,12 @@ coxmtl <- function( # nolint: cyclocomp_linter.
   # Refit the beta with the final eta
   for (k in 1:n_groups) {
     idx <- group_idxs[[k]]
-    offset[idx] <- x[idx, ] %*% (eta[, k] + beta)
+    theta[idx] <- x[idx, ] %*% (eta[, k] + beta)
   }
   for (k in 1:n_groups) {
     idx <- group_idxs[[k]]
     wls <- calc_weights_residuals(
-      offset = offset[idx], time = time[idx], status = status[idx]
+      offset = theta[idx], time = time[idx], status = status[idx]
     )
     w[idx] <- wls$weights
     r[idx] <- wls$residuals

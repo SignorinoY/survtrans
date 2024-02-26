@@ -14,7 +14,14 @@ BIC.coxtl <- function( # nolint: object_name_linter.
 
   n_samples <- nrow(data)
   n_features <- nrow(eta)
-  n_parameters <- n_features + sum(eta != 0)
+
+  n_parameters <- n_features
+  for (j in 1:n_features) {
+    nonzeros <- eta[j, eta[j, ] != 0]
+    if (length(nonzeros) > 0) {
+      n_parameters <- n_parameters + length(unique(nonzeros))
+    }
+  }
 
   return(-2 * loglik + n_parameters * log(n_samples))
 }

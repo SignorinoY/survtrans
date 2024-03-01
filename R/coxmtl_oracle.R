@@ -86,7 +86,6 @@ coxmtl_oracle <- function( # nolint: cyclocomp_linter.
     }
     theta_max <- max(theta)
     hazard <- exp(theta - theta_max)
-    hazard <- exp(theta - theta_max)
     risk_set <- ave(hazard, group, FUN = cumsum)
     for (k in 1:n_groups) {
       ind <- group == group_levels[k]

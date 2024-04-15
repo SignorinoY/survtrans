@@ -64,8 +64,9 @@ Transfer Learning for Cox proportional hazards model
 library(survtrans)
 formula <- Surv(time, status) ~ . - group - id
 fit <- coxtl(
-  formula, sim2, as.factor(sim2$group), 10,
+  formula, sim2, as.factor(sim2$group), 1,
   lambda1 = 0.05, lambda2 = 0.04, penalty = "SCAD"
 )
 fit$eta
+BIC(fit, sim2, as.factor(sim2$group))
 }

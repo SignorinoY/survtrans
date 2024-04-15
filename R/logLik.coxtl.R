@@ -14,7 +14,7 @@ logLik.coxtl <- function(object, data, group, ...) {
   group <- data$group
 
   group_levels <- object$group_levels
-  group_levels_source <- group_levels[group_levels != object$target]
+  group_levels_drop <- group_levels[group_levels != object$target]
   n_groups <- length(group_levels)
 
   beta <- object$beta
@@ -24,7 +24,7 @@ logLik.coxtl <- function(object, data, group, ...) {
 
   theta <- x %*% beta
   for (k in 1:(n_groups - 1)) {
-    idx <- group == group_levels_source[k]
+    idx <- group == group_levels_drop[k]
     theta[idx] <- theta[idx] + x[idx, ] %*% eta[, k]
   }
   hazard <- exp(theta)

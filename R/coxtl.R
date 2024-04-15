@@ -54,6 +54,7 @@ coxtl <- function( # nolint: cyclocomp_linter.
   n_features <- ncol(x)
   n_groups <- length(unique(group))
   group_levels <- levels(group)
+  group_levels_drop <- group_levels[group_levels != target]
 
   # Calculate the null deviance
   risk_set_size <- ave(rep(1, n_samples), group, FUN = cumsum)
@@ -108,9 +109,8 @@ coxtl <- function( # nolint: cyclocomp_linter.
   repeat {
     # Calculate the theta
     theta <- x %*% beta
-    for (k in 1:n_groups) {
-      if (group_levels[k] == target) next
-      idx <- group == group_levels[k]
+    for (k in 1:(n_groups - 1)) {
+      idx <- group == group_levels_drop[k]
       theta[idx] <- theta[idx] + x[idx, ] %*% eta[, k]
     }
 
@@ -156,9 +156,8 @@ coxtl <- function( # nolint: cyclocomp_linter.
     # Update eta by cyclic coordinate descent
     r <- r + theta - x %*% beta
     sub_convergence <- TRUE
-    for (k in 1:n_groups) {
-      if (group_levels[k] == target) next
-      idx <- group == group_levels[k]
+    for (k in 1:(n_groups - 1)) {
+      idx <- group == group_levels_drop[k]
       x_ <- x[idx, , drop = FALSE]
       r_ <- r[idx] - x_ %*% eta[, k]
       xw_ <- x_ * w[idx]

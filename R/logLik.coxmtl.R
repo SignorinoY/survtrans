@@ -26,13 +26,13 @@ logLik.coxmtl <- function(object, data, group, ...) {
     ind <- group == group_levels[k]
     offset[ind] <- offset[ind] + x[ind, ] %*% eta[, k]
   }
-  hazard <- exp(offset)
+  hazard <- exp(offset - max(offset))
   risk_set <- ave(hazard, group, FUN = cumsum)
   for (k in 1:n_groups) {
     ind <- group == group_levels[k]
     risk_set[ind] <- ave(risk_set[ind], time[ind], FUN = max)
   }
 
-  loglik <- sum(status * (offset - log(risk_set)))
+  loglik <- sum(status * (offset - log(risk_set) - max(offset)))
   return(loglik)
 }

@@ -27,13 +27,13 @@ logLik.coxtl <- function(object, data, group, ...) {
     idx <- group == group_levels_drop[k]
     theta[idx] <- theta[idx] + x[idx, ] %*% eta[, k]
   }
-  hazard <- exp(theta)
+  hazard <- exp(theta - max(theta))
   risk_set <- ave(hazard, group, FUN = cumsum)
   for (k in 1:n_groups) {
     ind <- group == group_levels[k]
     risk_set[ind] <- ave(risk_set[ind], time[ind], FUN = max)
   }
 
-  loglik <- sum(status * (theta - log(risk_set)))
+  loglik <- sum(status * (theta - log(risk_set) - max(theta)))
   return(loglik)
 }

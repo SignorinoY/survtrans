@@ -102,9 +102,9 @@ coxtl <- function( # nolint: cyclocomp_linter.
     }
 
     # Calculate the loss
-    hazard <- exp(theta)
+    hazard <- exp(theta - max(theta))
     risk_set <- ave(hazard, group, FUN = cumsum)
-    loss <- -sum(status * (theta - log(risk_set)))
+    loss <- -sum(status * (theta - log(risk_set) - max(theta)))
 
     # Check the convergence
     record <- check_convergence(cbind(eta, beta), loss, record)

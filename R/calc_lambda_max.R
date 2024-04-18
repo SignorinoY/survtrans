@@ -30,7 +30,11 @@ calc_lambda_max <- function(formula, data, group, offset) {
   for (i in 1:n_groups) {
     idx <- which(group == group_levels[i])
     wls <- calc_weights_residuals(offset[idx], time[idx], status[idx])
-    xwr <- colMeans(sweep(x[idx, ], 1, wls$residuals * wls$weights, `*`))
+    if (length(idx) > 1) {
+      xwr <- colMeans(sweep(x[idx, ], 1, wls$residuals * wls$weights, `*`))
+    } else {
+      xwr <- 0
+    }
     lambda_max <- max(lambda_max, max(abs(xwr)))
   }
   return(lambda_max)

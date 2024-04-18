@@ -1,6 +1,6 @@
 calc_weights_residuals <- function(offset, time, status) {
   n_samples <- length(time)
-
+  if (n_samples == 1) return(list(weights = 0, residuals = 0))
   # Update hazard
   haz <- exp(offset)
 
@@ -40,5 +40,6 @@ calc_weights_residuals <- function(offset, time, status) {
       i <- i - 1
     }
   }
+  residuals[is.na(residuals)] <- 0
   return(list(weights = weights, residuals = residuals))
 }

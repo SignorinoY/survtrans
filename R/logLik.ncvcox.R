@@ -25,7 +25,7 @@ logLik.ncvcox <- function(object, data, offset, ...) {
   haz <- exp(eta - max(eta))
   risk_set <- cumsum(haz)
   risk_set <- ave(risk_set, time, FUN = max)
-  log_lik <- sum(status * (eta - log(risk_set) - max(eta)))
 
+  log_lik <- sum(status * (eta - log(risk_set) - max(eta)))
   return(log_lik)
 }

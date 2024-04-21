@@ -90,39 +90,80 @@
 <span><span class="va">formula</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">.</span> <span class="op">-</span> <span class="va">group</span> <span class="op">-</span> <span class="va">id</span></span>
 <span><span class="va">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">sim2</span><span class="op">$</span><span class="va">group</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co">## Subgroup analysis</span></span>
+<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/coxsg.html">coxsg</a></span><span class="op">(</span></span>
+<span>  <span class="va">formula</span>, <span class="va">sim2</span>, <span class="va">group</span>,</span>
+<span>  lambda1 <span class="op">=</span> <span class="fl">0.01</span>, lambda2 <span class="op">=</span> <span class="fl">0.04</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">fit</span><span class="op">$</span><span class="va">coefficients</span></span>
+<span><span class="co">#&gt;             [,1]      [,2]       [,3]      [,4]       [,5]      [,6]       [,7]</span></span>
+<span><span class="co">#&gt;  [1,]  1.1274702 1.1274702  1.1274702 1.1274702  1.1274702 1.1274702  1.1274702</span></span>
+<span><span class="co">#&gt;  [2,] -1.1173734 0.6839128 -1.1173734 0.9391331 -1.1173734 0.9391331 -1.1173734</span></span>
+<span><span class="co">#&gt;  [3,]  1.0543207 1.0543207  1.0543207 1.0543207  1.0543207 1.0543207  1.0543207</span></span>
+<span><span class="co">#&gt;  [4,] -1.0205652 0.9811481 -1.0205652 0.9811481 -1.0205652 0.9811481 -1.0205652</span></span>
+<span><span class="co">#&gt;  [5,]  1.0735964 1.0735964  1.0735964 1.0735964  1.0735964 1.0735964  1.0735964</span></span>
+<span><span class="co">#&gt;  [6,] -1.1720947 1.2113891 -1.1720947 1.2113891 -1.1720947 1.2113891 -1.1720947</span></span>
+<span><span class="co">#&gt;  [7,]  1.0347843 1.0347843  1.0347843 1.0347843  1.0347843 1.0347843  1.0347843</span></span>
+<span><span class="co">#&gt;  [8,] -1.0831462 1.0975867 -1.0831462 1.0975867 -1.0831462 1.0975867 -1.0831462</span></span>
+<span><span class="co">#&gt;  [9,]  1.0157478 1.0157478  1.0157478 1.0157478  1.0157478 1.0157478  1.0157478</span></span>
+<span><span class="co">#&gt; [10,] -0.9748057 1.1164159 -0.9748057 1.1164159 -0.9748057 1.1164159 -0.9748057</span></span>
+<span><span class="co">#&gt;            [,8]       [,9]     [,10]</span></span>
+<span><span class="co">#&gt;  [1,] 1.1274702  1.1274702 1.1274702</span></span>
+<span><span class="co">#&gt;  [2,] 0.9391331 -1.1173734 1.3358839</span></span>
+<span><span class="co">#&gt;  [3,] 1.0543207  1.0543207 1.0543207</span></span>
+<span><span class="co">#&gt;  [4,] 0.9811481 -1.0205652 0.9811481</span></span>
+<span><span class="co">#&gt;  [5,] 1.0735964  1.0735964 1.0735964</span></span>
+<span><span class="co">#&gt;  [6,] 0.8386014 -1.1720947 1.2113891</span></span>
+<span><span class="co">#&gt;  [7,] 1.0347843  1.0347843 1.0347843</span></span>
+<span><span class="co">#&gt;  [8,] 1.0975867 -1.0831462 1.0975867</span></span>
+<span><span class="co">#&gt;  [9,] 1.0157478  1.0157478 1.0157478</span></span>
+<span><span class="co">#&gt; [10,] 1.1164159 -0.9748057 1.1164159</span></span>
+<span><span class="va">fit</span><span class="op">$</span><span class="va">coefficients_group</span></span>
+<span><span class="co">#&gt;       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]</span></span>
+<span><span class="co">#&gt;  [1,]    1    1    1    1    1    1    1    1    1     1</span></span>
+<span><span class="co">#&gt;  [2,]    1    2    1    4    1    4    1    4    1    10</span></span>
+<span><span class="co">#&gt;  [3,]    1    1    1    1    1    1    1    1    1     1</span></span>
+<span><span class="co">#&gt;  [4,]    1    2    1    2    1    2    1    2    1     2</span></span>
+<span><span class="co">#&gt;  [5,]    1    1    1    1    1    1    1    1    1     1</span></span>
+<span><span class="co">#&gt;  [6,]    1    2    1    2    1    2    1    8    1     2</span></span>
+<span><span class="co">#&gt;  [7,]    1    1    1    1    1    1    1    1    1     1</span></span>
+<span><span class="co">#&gt;  [8,]    1    2    1    2    1    2    1    2    1     2</span></span>
+<span><span class="co">#&gt;  [9,]    1    1    1    1    1    1    1    1    1     1</span></span>
+<span><span class="co">#&gt; [10,]    1    2    1    2    1    2    1    2    1     2</span></span>
+<span></span>
 <span><span class="co">## Transfer learning</span></span>
 <span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/coxtl.html">coxtl</a></span><span class="op">(</span></span>
-<span>  <span class="va">formula</span>, <span class="va">sim2</span>,</span>
-<span>  <span class="va">group</span>, target <span class="op">=</span> <span class="fl">10</span>, lambda <span class="op">=</span> <span class="fl">0.15</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span>
+<span>  <span class="va">formula</span>, <span class="va">sim2</span>, <span class="va">group</span>,</span>
+<span>  target <span class="op">=</span> <span class="fl">10</span>, lambda <span class="op">=</span> <span class="fl">0.15</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">fit</span><span class="op">$</span><span class="va">beta</span></span>
 <span><span class="co">#&gt;        X1        X2        X3        X4        X5        X6        X7        X8 </span></span>
-<span><span class="co">#&gt; 1.1486489 0.9915027 1.0675651 0.9913045 1.0578434 1.1453034 1.0444529 1.1247399 </span></span>
+<span><span class="co">#&gt; 1.1485804 0.9914191 1.0675029 0.9912343 1.0577791 1.1452097 1.0443876 1.1246549 </span></span>
 <span><span class="co">#&gt;        X9       X10 </span></span>
-<span><span class="co">#&gt; 1.0125562 1.1113500</span></span>
+<span><span class="co">#&gt; 1.0124937 1.1112770</span></span>
 <span><span class="va">fit</span><span class="op">$</span><span class="va">eta</span></span>
 <span><span class="co">#&gt;          [,1]       [,2]      [,3] [,4]      [,5] [,6]      [,7]        [,8]</span></span>
 <span><span class="co">#&gt; X1   0.000000  0.0000000  0.000000    0  0.000000    0  0.000000  0.00000000</span></span>
-<span><span class="co">#&gt; X2  -2.193221 -0.1066108 -2.221407    0 -2.081978    0 -1.947448  0.00000000</span></span>
+<span><span class="co">#&gt; X2  -2.193074 -0.1065734 -2.221248    0 -2.081840    0 -1.947332  0.00000000</span></span>
 <span><span class="co">#&gt; X3   0.000000  0.0000000  0.000000    0  0.000000    0  0.000000  0.00000000</span></span>
-<span><span class="co">#&gt; X4  -2.146755  0.0000000 -2.029180    0 -1.937742    0 -1.775180  0.00000000</span></span>
+<span><span class="co">#&gt; X4  -2.146632  0.0000000 -2.029064    0 -1.937600    0 -1.775080  0.00000000</span></span>
 <span><span class="co">#&gt; X5   0.000000  0.0000000  0.000000    0  0.000000    0  0.000000  0.00000000</span></span>
-<span><span class="co">#&gt; X6  -2.275381  0.0000000 -2.262884    0 -2.378828    0 -2.262594 -0.10228831</span></span>
-<span><span class="co">#&gt; X7   0.000000  0.0000000  0.000000    0  0.000000    0  0.000000 -0.01422607</span></span>
-<span><span class="co">#&gt; X8  -2.313881  0.0000000 -2.203983    0 -1.980547    0 -2.204376  0.00000000</span></span>
+<span><span class="co">#&gt; X6  -2.275227  0.0000000 -2.262726    0 -2.378657    0 -2.262429 -0.10226283</span></span>
+<span><span class="co">#&gt; X7   0.000000  0.0000000  0.000000    0  0.000000    0  0.000000 -0.01420596</span></span>
+<span><span class="co">#&gt; X8  -2.313734  0.0000000 -2.203842    0 -1.980439    0 -2.204237  0.00000000</span></span>
 <span><span class="co">#&gt; X9   0.000000  0.0000000  0.000000    0  0.000000    0  0.000000  0.00000000</span></span>
-<span><span class="co">#&gt; X10 -1.880562  0.0000000 -2.201407    0 -2.176891    0 -1.891947  0.00000000</span></span>
+<span><span class="co">#&gt; X10 -1.880433  0.0000000 -2.201270    0 -2.176766    0 -1.891825  0.00000000</span></span>
 <span><span class="co">#&gt;          [,9]</span></span>
 <span><span class="co">#&gt; X1   0.000000</span></span>
-<span><span class="co">#&gt; X2  -2.168445</span></span>
+<span><span class="co">#&gt; X2  -2.168323</span></span>
 <span><span class="co">#&gt; X3   0.000000</span></span>
-<span><span class="co">#&gt; X4  -2.110634</span></span>
+<span><span class="co">#&gt; X4  -2.110491</span></span>
 <span><span class="co">#&gt; X5   0.000000</span></span>
-<span><span class="co">#&gt; X6  -2.335862</span></span>
+<span><span class="co">#&gt; X6  -2.335686</span></span>
 <span><span class="co">#&gt; X7   0.000000</span></span>
-<span><span class="co">#&gt; X8  -2.316495</span></span>
+<span><span class="co">#&gt; X8  -2.316353</span></span>
 <span><span class="co">#&gt; X9   0.000000</span></span>
-<span><span class="co">#&gt; X10 -2.195261</span></span>
+<span><span class="co">#&gt; X10 -2.195137</span></span>
 <span></span>
 <span><span class="co">## Multi-task learning</span></span>
 <span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/coxmtl.html">coxmtl</a></span><span class="op">(</span></span>
@@ -131,32 +172,32 @@
 <span><span class="op">)</span></span>
 <span><span class="va">fit</span><span class="op">$</span><span class="va">beta</span></span>
 <span><span class="co">#&gt;          X1          X2          X3          X4          X5          X6 </span></span>
-<span><span class="co">#&gt;  1.12863892 -0.07776499  1.04677451 -0.01529526  1.06863484 -0.02513366 </span></span>
+<span><span class="co">#&gt;  1.12857807 -0.07775987  1.04671840 -0.01528864  1.06857362 -0.02513218 </span></span>
 <span><span class="co">#&gt;          X7          X8          X9         X10 </span></span>
-<span><span class="co">#&gt;  1.03489194  0.01074095  1.02218088  0.06640524</span></span>
+<span><span class="co">#&gt;  1.03483359  0.01073961  1.02211998  0.06640703</span></span>
 <span><span class="va">fit</span><span class="op">$</span><span class="va">eta</span></span>
 <span><span class="co">#&gt;          [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]</span></span>
 <span><span class="co">#&gt; X1   0.000000 0.0000000  0.000000 0.0000000  0.000000 0.0000000  0.000000</span></span>
-<span><span class="co">#&gt; X2  -1.038925 0.9482406 -1.038925 0.9482406 -1.038925 0.9482406 -1.038925</span></span>
+<span><span class="co">#&gt; X2  -1.038854 0.9481756 -1.038854 0.9481756 -1.038854 0.9481756 -1.038854</span></span>
 <span><span class="co">#&gt; X3   0.000000 0.0000000  0.000000 0.0000000  0.000000 0.0000000  0.000000</span></span>
-<span><span class="co">#&gt; X4  -1.005925 1.0059247 -1.005925 1.0059247 -1.005925 1.0059247 -1.005925</span></span>
+<span><span class="co">#&gt; X4  -1.005849 1.0058492 -1.005849 1.0058492 -1.005849 1.0058492 -1.005849</span></span>
 <span><span class="co">#&gt; X5   0.000000 0.0000000  0.000000 0.0000000  0.000000 0.0000000  0.000000</span></span>
-<span><span class="co">#&gt; X6  -1.146744 1.1544706 -1.146744 1.1544706 -1.146744 1.1544706 -1.146744</span></span>
+<span><span class="co">#&gt; X6  -1.146661 1.1543874 -1.146661 1.1543874 -1.146661 1.1543874 -1.146661</span></span>
 <span><span class="co">#&gt; X7   0.000000 0.0000000  0.000000 0.0000000  0.000000 0.0000000  0.000000</span></span>
-<span><span class="co">#&gt; X8  -1.094264 1.0942642 -1.094264 1.0942642 -1.094264 1.0942642 -1.094264</span></span>
+<span><span class="co">#&gt; X8  -1.094194 1.0941942 -1.094194 1.0941942 -1.094194 1.0941942 -1.094194</span></span>
 <span><span class="co">#&gt; X9   0.000000 0.0000000  0.000000 0.0000000  0.000000 0.0000000  0.000000</span></span>
-<span><span class="co">#&gt; X10 -1.039525 1.0395246 -1.039525 1.0395246 -1.039525 1.0395246 -1.039525</span></span>
+<span><span class="co">#&gt; X10 -1.039453 1.0394525 -1.039453 1.0394525 -1.039453 1.0394525 -1.039453</span></span>
 <span><span class="co">#&gt;          [,8]      [,9]    [,10]</span></span>
 <span><span class="co">#&gt; X1  0.0000000  0.000000 0.000000</span></span>
-<span><span class="co">#&gt; X2  0.9482406 -1.038925 1.401665</span></span>
+<span><span class="co">#&gt; X2  0.9481756 -1.038854 1.401567</span></span>
 <span><span class="co">#&gt; X3  0.0000000  0.000000 0.000000</span></span>
-<span><span class="co">#&gt; X4  1.0059247 -1.005925 1.005925</span></span>
+<span><span class="co">#&gt; X4  1.0058492 -1.005849 1.005849</span></span>
 <span><span class="co">#&gt; X5  0.0000000  0.000000 0.000000</span></span>
-<span><span class="co">#&gt; X6  1.1158391 -1.146744 1.154471</span></span>
+<span><span class="co">#&gt; X6  1.1157558 -1.146661 1.154387</span></span>
 <span><span class="co">#&gt; X7  0.0000000  0.000000 0.000000</span></span>
-<span><span class="co">#&gt; X8  1.0942642 -1.094264 1.094264</span></span>
+<span><span class="co">#&gt; X8  1.0941942 -1.094194 1.094194</span></span>
 <span><span class="co">#&gt; X9  0.0000000  0.000000 0.000000</span></span>
-<span><span class="co">#&gt; X10 1.0395246 -1.039525 1.039525</span></span>
+<span><span class="co">#&gt; X10 1.0394525 -1.039453 1.039453</span></span>
 <span><span class="va">fit</span><span class="op">$</span><span class="va">eta_group</span></span>
 <span><span class="co">#&gt;       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]</span></span>
 <span><span class="co">#&gt;  [1,]    1    1    1    1    1    1    1    1    1     1</span></span>

@@ -2,8 +2,7 @@
 #' @param object a ncvcox object.
 #' @param data a data frame containing the variables in the model, which
 #' should be the same as the data used to fit the model.
-#' @param group a factor specifying the group of each sample, which
-#' should be the same as the group used to fit the model.
+#' @param offset a numeric vector specifying the offset for each sample.
 #' @param ... Unused.
 #' @return the BIC of the model.
 #' @export

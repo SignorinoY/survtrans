@@ -27,7 +27,7 @@
 #' formula <- Surv(time, status) ~ . - group - id
 #' fit <- coxsg(
 #'   formula, sim2, as.factor(sim2$group),
-#'   lambda1 = 0.05, lambda2 = 0.04, penalty = "SCAD"
+#'   lambda1 = 0.01, lambda2 = 0.04, penalty = "SCAD"
 #' )
 #' fit$coefficients
 #' BIC(fit, sim2, as.factor(sim2$group))

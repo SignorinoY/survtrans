@@ -43,8 +43,8 @@ group <- as.factor(sim2$group)
 
 ## Transfer learning
 fit <- coxtl(
-  formula, sim2,
-  group, target = 10, lambda = 0.15, penalty = "SCAD"
+  formula, sim2, group,
+  target = 10, lambda = 0.15, penalty = "SCAD"
 )
 fit$beta
 fit$eta

@@ -1,6 +1,9 @@
-calc_weights_residuals <- function(offset, time, status) {
+calc_weights_residuals <- function( # nolint: cyclocomp_linter.
+    offset, time, status) {
   n_samples <- length(time)
-  if (n_samples == 1) return(list(weights = 0, residuals = 0))
+  if (n_samples == 1) {
+    return(list(weights = 0, residuals = 0))
+  }
   # Update hazard
   haz <- exp(offset)
 

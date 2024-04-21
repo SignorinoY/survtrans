@@ -32,24 +32,24 @@
 #'
 #' # Sparse
 #' fit <- coxtl_oracle(
-#'   formula, sim2, as.factor(sim2$group), target = 10,
-#'   sparse_idx = sparse_idx
+#'   formula, sim2, as.factor(sim2$group),
+#'   target = 10, sparse_idx = sparse_idx
 #' )
 #' fit$beta
 #' fit$eta
 #'
 #' # Group
 #' fit <- coxtl_oracle(
-#'   formula, sim2, as.factor(sim2$group), target = 10,
-#'   group_idx = group_idx
+#'   formula, sim2, as.factor(sim2$group),
+#'   target = 10, group_idx = group_idx
 #' )
 #' fit$beta
 #' fit$eta
 #'
 #' # Sparse and group
 #' fit <- coxtl_oracle(
-#'   formula, sim2, as.factor(sim2$group), target = 10,
-#'   sparse_idx = sparse_idx, group_idx = group_idx
+#'   formula, sim2, as.factor(sim2$group),
+#'   target = 10, sparse_idx = sparse_idx, group_idx = group_idx
 #' )
 #' fit$beta
 #' fit$eta
@@ -79,7 +79,8 @@ coxtl_oracle <- function( # nolint: cyclocomp_linter.
   }
   if (missing(group_idx)) {
     group_idx <- matrix(
-      rep(1:(n_groups - 1), each = n_features), ncol = n_groups - 1
+      rep(1:(n_groups - 1), each = n_features),
+      ncol = n_groups - 1
     )
   }
 
@@ -147,7 +148,7 @@ coxtl_oracle <- function( # nolint: cyclocomp_linter.
     risk_set_ratio <- sweep(risk_set_x, 1, risk_set, "/")
     grads <- sweep(x - risk_set_ratio, 1, status, "*")
 
-    grad_beta <- - colSums(grads)
+    grad_beta <- -colSums(grads)
     grad_eta <- matrix(0, nrow = n_features, ncol = n_groups - 1)
     for (k in 1:(n_groups - 1)) {
       idx <- group == group_levels[k]

@@ -28,7 +28,13 @@
     <loc>/reference/BIC.coxmtl.html</loc>
   </url>
   <url>
+    <loc>/reference/BIC.coxsg.html</loc>
+  </url>
+  <url>
     <loc>/reference/BIC.coxtl.html</loc>
+  </url>
+  <url>
+    <loc>/reference/BIC.ncvcox.html</loc>
   </url>
   <url>
     <loc>/reference/calc_lambda_max.html</loc>
@@ -38,6 +44,9 @@
   </url>
   <url>
     <loc>/reference/coxmtl_oracle.html</loc>
+  </url>
+  <url>
+    <loc>/reference/coxsg.html</loc>
   </url>
   <url>
     <loc>/reference/coxsg_oracle.html</loc>

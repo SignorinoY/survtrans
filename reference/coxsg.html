@@ -138,33 +138,33 @@ control parameters for the fitting algorithm. Default is
 <span class="r-in"><span><span class="va">formula</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">.</span> <span class="op">-</span> <span class="va">group</span> <span class="op">-</span> <span class="va">id</span></span></span>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">coxsg</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">formula</span>, <span class="va">sim2</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">sim2</span><span class="op">$</span><span class="va">group</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  lambda1 <span class="op">=</span> <span class="fl">0.05</span>, lambda2 <span class="op">=</span> <span class="fl">0.04</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span></span>
+<span class="r-in"><span>  lambda1 <span class="op">=</span> <span class="fl">0.01</span>, lambda2 <span class="op">=</span> <span class="fl">0.04</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">fit</span><span class="op">$</span><span class="va">coefficients</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             [,1]      [,2]       [,3]      [,4]       [,5]      [,6]       [,7]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,]  1.1273788 1.1273788  1.1273788 1.1273788  1.1273788 1.1273788  1.1273788</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] -1.1172869 0.6838477 -1.1172869 0.9390615 -1.1172869 0.9390615 -1.1172869</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,]  1.0542330 1.0542330  1.0542330 1.0542330  1.0542330 1.0542330  1.0542330</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,] -1.0204741 0.9810701 -1.0204741 0.9810701 -1.0204741 0.9810701 -1.0204741</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,]  1.0735058 1.0735058  1.0735058 1.0735058  1.0735058 1.0735058  1.0735058</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] -1.1719963 1.2112921 -1.1719963 1.2112921 -1.1719963 1.2112921 -1.1719963</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,]  1.0346984 1.0346984  1.0346984 1.0346984  1.0346984 1.0346984  1.0346984</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] -1.0830650 1.0975034 -1.0830650 1.0975034 -1.0830650 1.0975034 -1.0830650</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,]  1.0156611 1.0156611  1.0156611 1.0156611  1.0156611 1.0156611  1.0156611</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] -0.9747224 1.1163301 -0.9747224 1.1163301 -0.9747224 1.1163301 -0.9747224</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,]  1.1276295 1.1276295  1.1276295 1.1276295  1.1276295 1.1276295  1.1276295</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] -1.1175238 0.6840311 -1.1175238 0.9392574 -1.1175238 0.9392574 -1.1175238</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,]  1.0544731 1.0544731  1.0544731 1.0544731  1.0544731 1.0544731  1.0544731</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,] -1.0207287 0.9812903 -1.0207287 0.9812903 -1.0207287 0.9812903 -1.0207287</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,]  1.0737596 1.0737596  1.0737596 1.0737596  1.0737596 1.0737596  1.0737596</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] -1.1722672 1.2115636 -1.1722672 1.2115636 -1.1722672 1.2115636 -1.1722672</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,]  1.0349383 1.0349383  1.0349383 1.0349383  1.0349383 1.0349383  1.0349383</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] -1.0832952 1.0977426 -1.0832952 1.0977426 -1.0832952 1.0977426 -1.0832952</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,]  1.0158987 1.0158987  1.0158987 1.0158987  1.0158987 1.0158987  1.0158987</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] -0.9749533 1.1165711 -0.9749533 1.1165711 -0.9749533 1.1165711 -0.9749533</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            [,8]       [,9]     [,10]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] 1.1273788  1.1273788 1.1273788</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] 0.9390615 -1.1172869 1.3357737</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,] 1.0542330  1.0542330 1.0542330</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,] 0.9810701 -1.0204741 0.9810701</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,] 1.0735058  1.0735058 1.0735058</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] 0.8385254 -1.1719963 1.2112921</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,] 1.0346984  1.0346984 1.0346984</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] 1.0975034 -1.0830650 1.0975034</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,] 1.0156611  1.0156611 1.0156611</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] 1.1163301 -0.9747224 1.1163301</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] 1.1276295  1.1276295 1.1276295</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] 0.9392574 -1.1175238 1.3360794</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,] 1.0544731  1.0544731 1.0544731</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,] 0.9812903 -1.0207287 0.9812903</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,] 1.0737596  1.0737596 1.0737596</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] 0.8387336 -1.1722672 1.2115636</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,] 1.0349383  1.0349383 1.0349383</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] 1.0977426 -1.0832952 1.0977426</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,] 1.0158987  1.0158987 1.0158987</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] 1.1165711 -0.9749533 1.1165711</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/AIC.html" class="external-link">BIC</a></span><span class="op">(</span><span class="va">fit</span>, <span class="va">sim2</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">sim2</span><span class="op">$</span><span class="va">group</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4394.978</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4394.974</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

@@ -20,13 +20,13 @@ BIC.coxmtl <- function( # nolint: object_name_linter.
   n_groups <- ncol(eta)
 
   loglik <- logLik(object, data, group)
-  n_parameters <- n_features
+  n_parameters <- 0
   for (j in 1:n_features) {
     nonzeros <- eta[j, eta[j, ] != 0]
     if (length(nonzeros) > 0) {
       n_parameters <- n_parameters + length(unique(nonzeros))
     }
   }
-  c <- ifelse(type == "trad", 1, log(log(n_features * (n_groups + 1))))
+  c <- ifelse(type == "trad", 1, log(log(n_features * n_groups)))
   return(-2 * loglik + c * n_parameters * log(n_samples))
 }

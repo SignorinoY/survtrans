@@ -4,7 +4,7 @@
 \alias{BIC.coxtl}
 \title{BIC of Transfer Learning for Cox proportional hazards model}
 \usage{
-\method{BIC}{coxtl}(object, data, group, ...)
+\method{BIC}{coxtl}(object, data, group, type = c("trad", "mod"), ...)
 }
 \arguments{
 \item{object}{a coxtl object.}
@@ -14,6 +14,10 @@ should be the same as the data used to fit the model.}
 
 \item{group}{a factor specifying the group of each sample, which
 should be the same as the group used to fit the model.}
+
+\item{type}{a character string specifying the type of BIC to compute.
+The default is "trad", corresponding to C_{n}=1. The other option is
+"mod", corresponding to C_{n}=log(log(d)).}
 
 \item{...}{Unused.}
 }

@@ -57,10 +57,11 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ncvcox</span><span class="op">(</span></span>
 <span>  <span class="va">formula</span>,</span>
 <span>  <span class="va">data</span>,</span>
+<span>  <span class="va">group</span>,</span>
 <span>  <span class="va">offset</span>,</span>
+<span>  lambda <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  penalty <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"lasso"</span>, <span class="st">"MCP"</span>, <span class="st">"SCAD"</span><span class="op">)</span>,</span>
 <span>  gamma <span class="op">=</span> <span class="kw"><a href="https://rdrr.io/r/base/switch.html" class="external-link">switch</a></span><span class="op">(</span><span class="va">penalty</span>, SCAD <span class="op">=</span> <span class="fl">3.7</span>, MCP <span class="op">=</span> <span class="fl">3</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  <span class="va">init</span>,</span>
 <span>  <span class="va">control</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -79,23 +80,27 @@ returned by the <code><a href="https://rdrr.io/pkg/survival/man/Surv.html" class
 <dd><p>a data frame containing the variables in the model.</p></dd>
 
 
+<dt>group</dt>
+<dd><p>a factor specifying the group of each sample.</p></dd>
+
+
 <dt>offset</dt>
-<dd><p>a numeric vector specifying the offset.</p></dd>
-
-
-<dt>penalty</dt>
-<dd><p>a character string specifying the penalty function.
-The default is "lasso". Other options are "MCP" and "SCAD".</p></dd>
-
-
-<dt>gamma</dt>
-<dd><p>a non-negative value specifying the penalty parameter. The
-default is 3.7 for SCAD and 3.0 for MCP.</p></dd>
+<dd><p>a numeric vector specifying the offset..</p></dd>
 
 
 <dt>lambda</dt>
 <dd><p>a non-negative value specifying the penalty parameter. The
 default is 0.</p></dd>
+
+
+<dt>penalty</dt>
+<dd><p>a character string specifying the penalty function.
+The default is "lasso". Other options are "MCP" and "SCAD"</p></dd>
+
+
+<dt>gamma</dt>
+<dd><p>a non-negative value specifying the penalty parameter. The
+default is 3.7 for SCAD and 3.0 for MCP.</p></dd>
 
 
 <dt>init</dt>

@@ -7,6 +7,7 @@
 cv_ncvcox(
   formula,
   data,
+  group,
   offset,
   penalty = c("lasso", "MCP", "SCAD"),
   gamma = switch(penalty, SCAD = 3.7, MCP = 3, 1),
@@ -25,7 +26,9 @@ returned by the \code{\link{Surv}} function.}
 
 \item{data}{a data frame containing the variables in the model.}
 
-\item{offset}{a numeric vector specifying the offset.}
+\item{group}{a factor specifying the group of each sample.}
+
+\item{offset}{a numeric vector specifying the offset..}
 
 \item{penalty}{a character string specifying the penalty function.
 The default is "lasso". Other options are "MCP" and "SCAD".}

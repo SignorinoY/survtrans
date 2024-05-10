@@ -7,10 +7,11 @@
 ncvcox(
   formula,
   data,
+  group,
   offset,
+  lambda = 0,
   penalty = c("lasso", "MCP", "SCAD"),
   gamma = switch(penalty, SCAD = 3.7, MCP = 3, 1),
-  lambda = 0,
   init,
   control,
   ...
@@ -23,16 +24,18 @@ returned by the \code{\link{Surv}} function.}
 
 \item{data}{a data frame containing the variables in the model.}
 
-\item{offset}{a numeric vector specifying the offset.}
+\item{group}{a factor specifying the group of each sample.}
 
-\item{penalty}{a character string specifying the penalty function.
-The default is "lasso". Other options are "MCP" and "SCAD".}
-
-\item{gamma}{a non-negative value specifying the penalty parameter. The
-default is 3.7 for SCAD and 3.0 for MCP.}
+\item{offset}{a numeric vector specifying the offset..}
 
 \item{lambda}{a non-negative value specifying the penalty parameter. The
 default is 0.}
+
+\item{penalty}{a character string specifying the penalty function.
+The default is "lasso". Other options are "MCP" and "SCAD"}
+
+\item{gamma}{a non-negative value specifying the penalty parameter. The
+default is 3.7 for SCAD and 3.0 for MCP.}
 
 \item{init}{a numeric vector specifying the initial value of the
 coefficients. The default is a zero vector.}

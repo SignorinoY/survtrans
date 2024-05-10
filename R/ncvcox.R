@@ -3,11 +3,12 @@
 #' \code{response ~ predictors}. The response must be a survival object as
 #' returned by the \code{\link{Surv}} function.
 #' @param data a data frame containing the variables in the model.
-#' @param offset a numeric vector specifying the offset.
-#' @param penalty a character string specifying the penalty function.
-#' The default is "lasso". Other options are "MCP" and "SCAD".
+#' @param group a factor specifying the group of each sample.
+#' @param offset a numeric vector specifying the offset..
 #' @param lambda a non-negative value specifying the penalty parameter. The
 #' default is 0.
+#' @param penalty a character string specifying the penalty function.
+#' The default is "lasso". Other options are "MCP" and "SCAD"
 #' @param gamma a non-negative value specifying the penalty parameter. The
 #' default is 3.7 for SCAD and 3.0 for MCP.
 #' @param init a numeric vector specifying the initial value of the
@@ -23,21 +24,40 @@
 #' formula <- Surv(time, status) ~ . - id
 #' fit <- ncvcox(formula, data = sim_sparse, lambda = 0.1, penalty = "SCAD")
 #' fit$coefficients
-ncvcox <- function(
-    formula, data, offset, penalty = c("lasso", "MCP", "SCAD"),
+ncvcox <- function( # nolint: cyclocomp_linter.
+    formula, data, group, offset, lambda = 0,
+    penalty = c("lasso", "MCP", "SCAD"),
     gamma = switch(penalty,
       SCAD = 3.7,
       MCP = 3,
       1
-    ), lambda = 0, init, control, ...) {
-  penalty <- match.arg(penalty)
-
-  data_ <- preprocess_data(formula, data, offset)
-  x <- data_$x
+    ), init, control, ...) {
+  # Load the data
+  data <- preprocess_data(formula, data, group, offset)
+  x <- data$x
   x_scale <- attr(x, "scale")
-  time <- data_$time
-  status <- data_$status
-  offset <- data_$offset
+  time <- data$time
+  status <- data$status
+  group <- data$group
+  offset <- data$offset
+
+  # Properties of the data
+  n_samples <- nrow(x)
+  n_features <- ncol(x)
+  n_groups <- length(unique(group))
+  group_levels <- levels(group)
+  group_idxs <- lapply(group_levels, function(x) which(group == x))
+
+  # Calculate the null deviance
+  risk_set_size <- ave(rep(1, n_samples), group, FUN = cumsum)
+  for (k in 1:n_groups) {
+    idx <- group_idxs[[k]]
+    risk_set_size[idx] <- ave(risk_set_size[idx], time[idx], FUN = max)
+  }
+  null_deviance <- -sum(status * log(risk_set_size))
+
+  # Check the penalty argument
+  penalty <- match.arg(penalty)
 
   # Check the init argument
   n_features <- ncol(x)
@@ -52,50 +72,60 @@ ncvcox <- function(
   # Check the control argument
   if (missing(control)) control <- survtrans_control(...)
 
-  # Initialize the coefficients
-  n_iterations <- 0
-  coef <- init
+
+  # Initialize the training process
+  record <- list(
+    convergence = FALSE, n_iterations = 0, null_deviance = null_deviance,
+    maxit = control$maxit, eps = control$eps
+  )
+  beta <- init
+  theta <- rep(0.0, n_samples)
+  w <- rep(1.0, n_samples)
+  r <- rep(0.0, n_samples)
+
   repeat {
-    n_iterations <- n_iterations + 1
-
-    # calculate the weights and residuals
-    temp <- calc_weights_residuals(x %*% coef + offset, time, status)
-    weights <- temp$weights
-    residuals <- temp$residuals
-
-    # update the coefficients
-    coef_old <- coef
-    for (j in 1:n_features) {
-      v <- mean(weights * x[, j]**2)
-      z <- mean(x[, j] * weights * residuals) + coef[j] * v
-      coef[j] <- penalty_solution(z, v, penalty, lambda, gamma)
+    # Calculate the theta
+    for (k in 1:n_groups) {
+      idx <- group_idxs[[k]]
+      theta[idx] <- x[idx, ] %*% beta + offset[idx]
     }
 
-    # check for convergence
-    if (n_iterations >= control$maxit) {
-      warning("Maximum number of iterations reached")
-      break
+    # Calculate the loss
+    hazard <- exp(theta)
+    risk_set <- ave(hazard, group, FUN = cumsum)
+    loss <- -sum(status * (theta - log(risk_set)))
+
+    # Check the convergence
+    record <- check_convergence(beta, loss, record)
+    if (record$convergence) break
+
+    # Calculate the weights and residuals
+    for (k in 1:n_groups) {
+      idx <- group_idxs[[k]]
+      wls <- calc_weights_residuals(
+        offset = theta[idx], time = time[idx], status = status[idx]
+      )
+      w[idx] <- wls$weights
+      r[idx] <- wls$residuals
     }
-    if (max(abs(coef - coef_old)) <= control$eps) {
-      break
+
+    # Update beta by cyclic coordinate descent
+    features_idx <- sample(seq_len(n_features), n_features, FALSE)
+    for (j in features_idx) {
+      v <- mean(w * x[, j]**2)
+      z <- mean(x[, j] * w * r) + beta[j] * v
+      beta[j] <- penalty_solution(z, v, penalty, lambda, gamma)
     }
   }
 
-  # Calculate the log-likelihood
-  eta <- x %*% coef + offset
-  haz <- exp(eta)
-  risk_set <- cumsum(haz)
-  risk_set <- ave(risk_set, time, FUN = max)
-  log_lik <- sum(status * (eta - log(risk_set)))
-
   # Unstandardize the coefficients
-  coef <- coef / x_scale
+  beta <- beta / x_scale
 
   # Return the fit
   fit <- list(
-    logLik = log_lik, coefficients = coef,
+    logLik = -loss, coefficients = beta,
     penalty = penalty, lambda = lambda, gamma = gamma,
-    iter = n_iterations, formula = formula, call = match.call()
+    iter = record$n_iterations, formula = formula, call = match.call()
   )
   class(fit) <- "ncvcox"
   return(fit)

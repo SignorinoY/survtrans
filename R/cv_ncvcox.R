@@ -3,7 +3,8 @@
 #' \code{response ~ predictors}. The response must be a survival object as
 #' returned by the \code{\link{Surv}} function.
 #' @param data a data frame containing the variables in the model.
-#' @param offset a numeric vector specifying the offset.
+#' @param group a factor specifying the group of each sample.
+#' @param offset a numeric vector specifying the offset..
 #' @param penalty a character string specifying the penalty function.
 #' The default is "lasso". Other options are "MCP" and "SCAD".
 #' @param gamma a non-negative value specifying the penalty parameter. The
@@ -24,8 +25,8 @@
 #' formula <- Surv(time, status) ~ . - id
 #' cv_fit <- cv_ncvcox(formula, sim_sparse, penalty = "SCAD")
 #' coef(cv_fit, "lambda.min")
-cv_ncvcox <- function(
-    formula, data, offset, penalty = c("lasso", "MCP", "SCAD"),
+cv_ncvcox <- function( # nolint: cyclocomp_linter.
+    formula, data, group, offset, penalty = c("lasso", "MCP", "SCAD"),
     gamma = switch(penalty,
       SCAD = 3.7,
       MCP = 3,
@@ -41,7 +42,8 @@ cv_ncvcox <- function(
   n_samples <- nrow(data)
   n_features <- ncol(x)
 
-  # Check the offset argument
+  # Check the group & offset argument
+  if (missing(group)) group <- rep(1, n_samples)
   if (missing(offset)) offset <- rep(0, n_samples)
 
   # Check the lambda_min_ratio argument
@@ -53,7 +55,7 @@ cv_ncvcox <- function(
   if (missing(control)) control <- survtrans_control(...)
 
   # Determmine the lambda sequence
-  lambda_max <- calc_lambda_max(formula, data, offset = offset)
+  lambda_max <- calc_lambda_max(formula, data, group, offset)
   lambda_min <- lambda_max * lambda_min_ratio
   lambdas <- exp(seq(log(lambda_max), log(lambda_min), length.out = nlambdas))
 
@@ -65,7 +67,8 @@ cv_ncvcox <- function(
   for (i in seq_along(lambdas)) {
     for (k in 1:nfolds) {
       fit <- ncvcox(
-        formula = formula, data = data[idx != k, ], offset = offset[idx != k],
+        formula = formula, data = data[idx != k, ],
+        group = group[idx != k], offset = offset[idx != k],
         lambda = lambdas[i], penalty = penalty, gamma = gamma, init = coef_init,
         control = control, ...
       )
@@ -76,9 +79,9 @@ cv_ncvcox <- function(
   }
   for (i in seq_along(lambdas)) {
     coefs[i, ] <- ncvcox(
-      formula = formula, data = data, offset = offset,
-      lambda = lambdas[i], penalty = penalty, gamma = gamma,
-      init = coefs[i, ], control = control, ...
+      formula, data, group, offset,
+      lambda = lambdas[i], penalty = penalty,
+      gamma = gamma, init = coefs[i, ], control = control, ...
     )$coefficients
   }
 

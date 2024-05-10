@@ -74,7 +74,7 @@ cv_ncvcox <- function( # nolint: cyclocomp_linter.
       )
       coef_init <- fit$coefficients
       coefs[i, ] <- coefs[i, ] + coef_init / nfolds
-      criterions[i, k] <- logLik(fit, data, offset) - fit$logLik
+      criterions[i, k] <- logLik(fit, data, group, offset) - fit$logLik
     }
   }
   for (i in seq_along(lambdas)) {

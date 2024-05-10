@@ -1,31 +1,40 @@
+#' Log-likelihood of Non-convex penalized Cox proportional hazards model
+#' @param object a ncvcox object.
+#' @param data a data frame containing the variables in the model.
+#' @param group a factor specifying the group of each sample.
+#' @param offset a numeric vector specifying the offset.
+#' @param ... Unused.
 #' @export
-logLik.ncvcox <- function(object, data, offset, ...) {
-  # load x from data
-  mf <- model.frame(object$formula, data)
-  y <- model.response(mf)
-  x <- model.matrix(object$formula, data)
-  x <- x[, -1] # Remove the intercept column
-
-  # Sort the data by time
-  time <- y[, 1]
-  status <- y[, 2]
-  sorted <- order(time, decreasing = TRUE)
-  time <- time[sorted]
-  status <- status[sorted]
-  x <- x[sorted, , drop = FALSE]
+logLik.ncvcox <- function(object, data, group, offset, ...) {
+  # Load the data
+  data <- preprocess_data(object$formula, data, group, offset)
+  x <- data$x
+  x_scale <- attr(x, "scale")
+  time <- data$time
+  status <- data$status
+  group <- data$group
+  offset <- data$offset
 
   # Properties of the data
+  group_levels <- object$group_levels
+  n_groups <- length(group_levels)
   n_samples <- nrow(x)
 
-  # Check the offset argument
-  if (missing(offset)) offset <- rep(0.0, n_samples)
-  offset <- offset[sorted]
+  beta <- object$coefficients
+  beta <- beta * x_scale
 
-  eta <- x %*% object$coefficients + offset
-  haz <- exp(eta - max(eta))
-  risk_set <- cumsum(haz)
-  risk_set <- ave(risk_set, time, FUN = max)
+  theta <- rep(0, n_samples)
+  for (k in 1:n_groups) {
+    idx <- group == group_levels[k]
+    theta[idx] <- x[idx, ] %*% beta + offset[idx]
+  }
 
-  log_lik <- sum(status * (eta - log(risk_set) - max(eta)))
+  hazard <- exp(theta)
+  risk_set <- ave(hazard, group, FUN = cumsum)
+  for (k in 1:n_groups) {
+    idx <- group == group_levels[k]
+    risk_set[idx] <- ave(risk_set[idx], time[idx], FUN = max)
+  }
+  log_lik <- sum(status * (theta - log(risk_set)))
   return(log_lik)
 }

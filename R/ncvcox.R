@@ -72,7 +72,6 @@ ncvcox <- function( # nolint: cyclocomp_linter.
   # Check the control argument
   if (missing(control)) control <- survtrans_control(...)
 
-
   # Initialize the training process
   record <- list(
     convergence = FALSE, n_iterations = 0, null_deviance = null_deviance,
@@ -93,6 +92,10 @@ ncvcox <- function( # nolint: cyclocomp_linter.
     # Calculate the loss
     hazard <- exp(theta)
     risk_set <- ave(hazard, group, FUN = cumsum)
+    for (k in 1:n_groups) {
+      idx <- group_idxs[[k]]
+      risk_set[idx] <- ave(risk_set[idx], time[idx], FUN = max)
+    }
     loss <- -sum(status * (theta - log(risk_set)))
 
     # Check the convergence
@@ -123,7 +126,7 @@ ncvcox <- function( # nolint: cyclocomp_linter.
 
   # Return the fit
   fit <- list(
-    logLik = -loss, coefficients = beta,
+    coefficients = beta, group_levels = group_levels, logLik = -loss,
     penalty = penalty, lambda = lambda, gamma = gamma,
     iter = record$n_iterations, formula = formula, call = match.call()
   )

@@ -57,4 +57,5 @@ library(survtrans)
 formula <- Surv(time, status) ~ . - id
 fit <- ncvcox(formula, data = sim_sparse, lambda = 0.1, penalty = "SCAD")
 fit$coefficients
+logLik(fit, data = sim_sparse)
 }

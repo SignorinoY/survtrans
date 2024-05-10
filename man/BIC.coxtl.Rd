@@ -16,8 +16,8 @@ should be the same as the data used to fit the model.}
 should be the same as the group used to fit the model.}
 
 \item{type}{a character string specifying the type of BIC to compute.
-The default is "trad", corresponding to C_{n}=1. The other option is
-"mod", corresponding to C_{n}=log(log(d)).}
+The default is "trad", corresponding to Cn=1. The other option is
+"mod", corresponding to Cn=log(log(d)).}
 
 \item{...}{Unused.}
 }

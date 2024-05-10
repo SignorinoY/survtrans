@@ -24,6 +24,12 @@
 #' formula <- Surv(time, status) ~ . - id
 #' fit <- ncvcox(formula, data = sim_sparse, lambda = 0.1, penalty = "SCAD")
 #' fit$coefficients
+#' offset <- 0.5 * sim_sparse$X1 + 0.5 * sim_sparse$X2
+#' fit <- ncvcox(
+#'   formula = formula, data = sim_sparse, offset = offset,
+#'   lambda = 0.1, penalty = "SCAD"
+#' )
+#' fit$coefficients
 ncvcox <- function( # nolint: cyclocomp_linter.
     formula, data, group, offset, lambda = 0,
     penalty = c("lasso", "MCP", "SCAD"),

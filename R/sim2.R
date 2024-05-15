@@ -1,28 +1,36 @@
-#' Simulated Group Survival Data: Heterogeneous Baseline Hazard Function and
-#' Heterogeneous Effects
+#' Simulated Group Survival Data: Multiple-source Transfer Learning
 #'
 #' A dataset containing 10 groups of survival data, where part of the effects
 #' and baseline hazards are heterogeneous. Each group contains 100 individuals.
 #' The survival time \eqn{T} of group \eqn{i} is generated according to the
 #' following models:
-#' \deqn{\lambda^{(i)}(t)=\lambda_{0}^{(i)}(t)\exp\left(x^\top(\beta+\eta^{(i)})
-#' \right),} where \eqn{\lambda_{0}^{(i)}(t)} represents the baseline hazard of
-#' group \eqn{i}, \eqn{\beta+\eta^{(i)}} represents the effects of group
-#' \eqn{i}, and \eqn{x} represents the covariates. The covariates
-#' \eqn{x=(x_{1},\ldots,x_{10})} are generated from a multivariate normal
-#' distribution with mean 0 and covariance matrix \eqn{\Sigma=I_{10}}. The
-#' baseline hazards are generated as follows:
-#' \deqn{\lambda_{0}^{(i)}(t)=\left\{\begin{array}{ll}t^2,&i=1,3,\dots,9,\\
-#' t,&i=2,4,\dots,10.\end{array}\right.}
-#' while the effects \eqn{\eta^{(i)}} are generated as follows:
-#' \deqn{\eta^{(i)}=\left\{\begin{array}{ll}(0,1,\ldots,0,1),&i=1,\dots,9,\\
-#' (0,-1,\ldots,0,-1),&i=2,\dots,10.\end{array}\right.}
-#' Additionally, \eqn{\beta=(1,0,\ldots,1,0)}. The maximum censoring time is
-#' fixed at 3, and the censoring rate is approximately 20%.
+#' \deqn{
+#'     \lambda^{(i)}(t)=\lambda_{0,i}(t)\exp\left(x^\top(\beta^{(i)})\right),
+#' }
+#' where \eqn{\lambda_{0,i}(t)} represents the baseline hazard of group i,
+#' \eqn{\beta^{(i)}} represents the effects of group i, and \eqn{x} represents
+#' the covariates. The covariates \eqn{x=(x_{1},\ldots,x_{20})} are generated
+#' from a multivariate normal distribution with mean 0 and covariance matrix
+#' \eqn{\Sigma=I_{20}}. The baseline hazard function
+#' \deqn{
+#'     \lambda_{0,i}(t)=\left\{\begin{array}{ll}
+#'         t^{2}, & i=1,3,5,7,9, \\
+#'         t,     & i=2,4,6,8,10.
+#'     \end{array}\right.
+#' }
+#' while the effects
+#' \deqn{
+#'     \beta^{(i)}=\left\{\begin{array}{ll}
+#'         (0.5,0.5,0.5,0.5,0,\ldots,0),   & i=1,3,5,7,9, \\
+#'         (-0.5,-0.5,0.5,0.5,0,\ldots,0), & i=2,4,6,8,10.
+#'     \end{array}\right.
+#' }
+#' The maximum censoring time is fixed at 2, and the censoring rate is
+#' approximately 20%.
 #'
 #' @name sim2
 #' @docType data
-#' @format A data frame with 1000 rows and 14 variables:
+#' @format A data frame with 1000 rows and 24 variables:
 #' \describe{
 #' \item{id}{Individual identifier, 1-1000.}
 #' \item{group}{Group indicator, 1-10.}
@@ -38,6 +46,16 @@
 #' \item{X8}{covariate 8.}
 #' \item{X9}{covariate 9.}
 #' \item{X10}{covariate 10.}
+#' \item{X11}{covariate 11.}
+#' \item{X12}{covariate 12.}
+#' \item{X13}{covariate 13.}
+#' \item{X14}{covariate 14.}
+#' \item{X15}{covariate 15.}
+#' \item{X16}{covariate 16.}
+#' \item{X17}{covariate 17.}
+#' \item{X18}{covariate 18.}
+#' \item{X19}{covariate 19.}
+#' \item{X20}{covariate 20.}
 #' }
 #' @source \url{../articles/simulate-data.html}
 NULL

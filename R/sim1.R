@@ -1,26 +1,37 @@
-#' Simulated Group Survival Data: Homogeneous Baseline Hazard Function and
-#' Heterogeneous Effects
+#' Simulated Group Survival Data: One-source Transfer Learning
 #'
 #' A dataset containing 2 groups of survival data, where the baseline hazards
 #' are homogeneous and the effects are heterogeneous. The first group, also
 #' called the source group, contains 900 individuals, while the second group,
 #' also called the target group, contains 100 individuals. The survival time
 #' of group \eqn{i} is generated according to the following models:
-#' \deqn{\lambda^{(i)}(t)=\lambda_{0}(t)\exp\left(x^\top(\beta+\eta^{(i)})
-#' \right),} where \eqn{\lambda_{0}(t)} represents the baseline hazard,
-#' \eqn{\beta+\eta^{(i)}} represents the effects of group \eqn{i}, and
-#' \eqn{x} represents the covariates. The covariates
-#' \eqn{x=(x_{1},\ldots,x_{10})} are generated from a multivariate normal
-#' distribution with mean 0 and covariance matrix \eqn{\Sigma=I_{10}}. The
-#' baseline hazard \eqn{\lambda_{0}(t)=t^2}, while the effects
-#' \deqn{\eta^{(i)}=\left\{\begin{array}{ll}(0,\ldots,0),&i=1,\\
-#' (0.5,0,\ldots,0),&i=2.\end{array}\right.}
-#' Additionally, \eqn{\beta=(1,\ldots,1)}. The maximum censoring time is fixed
-#' at 3, and the censoring rate is approximately 20%.
+#' \deqn{
+#'     \lambda^{(i)}(t)=\lambda_{0,i}(t)\exp\left(x^\top\beta^{(i)}\right),
+#' }
+#' where \eqn{\lambda_{0,i}(t)} represents the baseline hazard of group i,
+#' \eqn{\beta^{(i)}} represents the effects of group i, and \eqn{x} represents
+#' the covariates. The covariates \eqn{x=(x_{1},\ldots,x_{20})} are generated
+#' from a multivariate normal distribution with mean 0 and covariance matrix
+#' \eqn{\Sigma=I_{20}}. The baseline hazard function
+#' \deqn{
+#'     \lambda_{0,i}(t)=\left\{\begin{array}{ll}
+#'         t^{2}, & i=1, \\
+#'         t,     & i=2.
+#'     \end{array}\right.
+#' }
+#' while the effects
+#' \deqn{
+#'     \beta^{(i)}=\left\{\begin{array}{ll}
+#'         (0.5,0.5,0.5,0.5,0,\ldots,0),   & i=1, \\
+#'         (-0.5,-0.5,0.5,0.5,0,\ldots,0), & i=2.
+#'     \end{array}\right.
+#' }
+#' The maximum censoring time is fixed at 2, and the censoring rate is
+#' approximately 20%.
 #'
 #' @name sim1
 #' @docType data
-#' @format A data frame with 1000 rows and 14 variables:
+#' @format A data frame with 1000 rows and 24 variables:
 #' \describe{
 #' \item{id}{Individual identifier, 1-1000.}
 #' \item{group}{Group indicator, 1=Source, 2=Target.}
@@ -36,6 +47,16 @@
 #' \item{X8}{covariate 8.}
 #' \item{X9}{covariate 9.}
 #' \item{X10}{covariate 10.}
+#' \item{X11}{covariate 11.}
+#' \item{X12}{covariate 12.}
+#' \item{X13}{covariate 13.}
+#' \item{X14}{covariate 14.}
+#' \item{X15}{covariate 15.}
+#' \item{X16}{covariate 16.}
+#' \item{X17}{covariate 17.}
+#' \item{X18}{covariate 18.}
+#' \item{X19}{covariate 19.}
+#' \item{X20}{covariate 20.}
 #' }
 #' @source \url{../articles/simulate-data.html}
 NULL

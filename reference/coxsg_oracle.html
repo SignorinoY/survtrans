@@ -105,42 +105,6 @@ control parameters for the fitting algorithm. Default is
 <p>a coxmtl object.</p>
     </div>
 
-    <div class="section level2">
-    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">formula</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">.</span> <span class="op">-</span> <span class="va">group</span> <span class="op">-</span> <span class="va">id</span></span></span>
-<span class="r-in"><span><span class="va">sparse_idx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="cn">TRUE</span>, nrow <span class="op">=</span> <span class="fl">10</span>, ncol <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">group_idx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span>, <span class="fl">5</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  ncol <span class="op">=</span> <span class="fl">10</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">coxsg_oracle</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">formula</span>, <span class="va">sim2</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">sim2</span><span class="op">$</span><span class="va">group</span><span class="op">)</span>, <span class="va">sparse_idx</span>, <span class="va">group_idx</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">fit</span><span class="op">$</span><span class="va">eta</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,]  1.126254 1.1262537  1.126254 1.1262537  1.126254 1.1262537  1.126254</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] -1.113296 0.9583611 -1.113296 0.9583611 -1.113296 0.9583611 -1.113296</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,]  1.040350 1.0403499  1.040350 1.0403499  1.040350 1.0403499  1.040350</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,] -1.016038 0.9837973 -1.016038 0.9837973 -1.016038 0.9837973 -1.016038</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,]  1.054591 1.0545913  1.054591 1.0545913  1.054591 1.0545913  1.054591</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] -1.167168 1.1098840 -1.167168 1.1098840 -1.167168 1.1098840 -1.167168</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,]  1.028409 1.0284090  1.028409 1.0284090  1.028409 1.0284090  1.028409</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] -1.080058 1.1176773 -1.080058 1.1176773 -1.080058 1.1176773 -1.080058</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,]  1.011999 1.0119988  1.011999 1.0119988  1.011999 1.0119988  1.011999</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] -0.969177 1.0987509 -0.969177 1.0987509 -0.969177 1.0987509 -0.969177</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            [,8]      [,9]     [,10]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] 1.1262537  1.126254 1.1262537</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] 0.9583611 -1.113296 0.9583611</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,] 1.0403499  1.040350 1.0403499</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,] 0.9837973 -1.016038 0.9837973</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,] 1.0545913  1.054591 1.0545913</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] 1.1098840 -1.167168 1.1098840</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,] 1.0284090  1.028409 1.0284090</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] 1.1176773 -1.080058 1.1176773</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,] 1.0119988  1.011999 1.0119988</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] 1.0987509 -0.969177 1.0987509</span>
-</code></pre></div>
-    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 

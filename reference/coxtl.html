@@ -59,7 +59,8 @@
 <span>  <span class="va">data</span>,</span>
 <span>  <span class="va">group</span>,</span>
 <span>  <span class="va">target</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  lambda1 <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  lambda2 <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  penalty <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"lasso"</span>, <span class="st">"MCP"</span>, <span class="st">"SCAD"</span><span class="op">)</span>,</span>
 <span>  gamma <span class="op">=</span> <span class="kw"><a href="https://rdrr.io/r/base/switch.html" class="external-link">switch</a></span><span class="op">(</span><span class="va">penalty</span>, SCAD <span class="op">=</span> <span class="fl">3.7</span>, MCP <span class="op">=</span> <span class="fl">3</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>  <span class="va">init</span>,</span>
@@ -88,8 +89,13 @@ returned by the <code><a href="https://rdrr.io/pkg/survival/man/Surv.html" class
 <dd><p>a factor specifying the target group.</p></dd>
 
 
-<dt>lambda</dt>
+<dt>lambda1</dt>
 <dd><p>a non-negative value specifying the sparse penalty
+parameter. The default is 0.</p></dd>
+
+
+<dt>lambda2</dt>
+<dd><p>a non-negative value specifying the transfer penalty
 parameter. The default is 0.</p></dd>
 
 
@@ -129,35 +135,63 @@ control parameters for the fitting algorithm. Default is
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/SignorinoY/survtrans" class="external-link">survtrans</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">formula</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">.</span> <span class="op">-</span> <span class="va">group</span> <span class="op">-</span> <span class="va">id</span></span></span>
+<span class="r-in"><span><span class="va">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">sim2</span><span class="op">$</span><span class="va">group</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">coxtl</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">formula</span>, <span class="va">sim2</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">sim2</span><span class="op">$</span><span class="va">group</span><span class="op">)</span>, <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>  lambda <span class="op">=</span> <span class="fl">0.04</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span></span>
+<span class="r-in"><span>  <span class="va">formula</span>, <span class="va">sim2</span>, <span class="va">group</span>, <span class="fl">10</span>,</span></span>
+<span class="r-in"><span>  lambda1 <span class="op">=</span> <span class="fl">0.04</span>, lambda2 <span class="op">=</span> <span class="fl">0.11</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">fit</span><span class="op">$</span><span class="va">beta</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          X1          X2          X3          X4          X5          X6 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -0.67568489 -0.65782685  0.56804805  0.57814325  0.00000000  0.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          X7          X8          X9         X10         X11         X12 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.00000000  0.00000000  0.00000000  0.00000000  0.00000000  0.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         X13         X14         X15         X16         X17         X18 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.00000000  0.00000000  0.00000000  0.00000000  0.00000000  0.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         X19         X20 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.00000000 -0.03663008 </span>
 <span class="r-in"><span><span class="va">fit</span><span class="op">$</span><span class="va">eta</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]       [,2]         [,3]       [,4]      [,5]       [,6]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X1  -0.3435510  0.0000000 -0.286818090 -0.3015949  0.000000 0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X2   1.9356666  0.0000000  2.340332547  0.2212949  2.244240 0.29088148</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X3  -0.1888791  0.1717052  0.005359154  0.0000000 -0.173159 0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X4   2.2104673  0.0000000  2.075715545  0.0308652  2.097903 0.34180852</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X5   0.0000000  0.3185027 -0.035124834  0.0000000  0.000000 0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X6   2.3399151  0.0000000  2.643687604  0.0000000  2.394348 0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X7  -0.2047609  0.0000000 -0.019673930  0.0000000  0.000000 0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X8   2.1600286  0.0000000  2.549482940  0.3143767  2.412992 0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X9  -0.2493282  0.0000000  0.000000000  0.1899571  0.000000 0.04012931</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X10  1.8304117 -0.4441799  2.090546223 -0.3058677  1.952199 0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           [,7]        [,8]        [,9]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X1  -0.4455480  0.00000000 -0.35317217</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X2   2.2534310  0.00000000  2.72758967</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X3   0.0000000 -0.02620156  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X4   2.1909254  0.00000000  2.22240000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X5   0.0000000  0.13749785  0.03108746</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X6   2.0207841  0.00000000  2.68677186</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X7  -0.3489721  0.00000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X8   2.4625457  0.00000000  2.42898484</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X9  -0.3298715 -0.16220654  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X10  1.8256937 -0.42135311  1.86642263</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/AIC.html" class="external-link">BIC</a></span><span class="op">(</span><span class="va">fit</span>, <span class="va">sim2</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">sim2</span><span class="op">$</span><span class="va">group</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4661.522</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                1          2           3          4           5            6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X1   1.252363819 0.00000000  1.32323008 0.00000000  1.20173881  0.000000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X2   1.273017826 0.00000000  1.36629413 0.00000000  1.26008798  0.000000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X3   0.000000000 0.00000000  0.09990940 0.00000000  0.00000000  0.000000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X4   0.000000000 0.00000000  0.00000000 0.00000000  0.00000000  0.000000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X5   0.000000000 0.00000000  0.00000000 0.00000000  0.00000000  0.000000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X6   0.000000000 0.00000000  0.00000000 0.00000000  0.00000000  0.014743108</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X7   0.079470936 0.00000000  0.00000000 0.00000000  0.51620913  0.000000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X8   0.000000000 0.00000000  0.00000000 0.00000000  0.00000000  0.000000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X9   0.009971994 0.00000000  0.00000000 0.00000000  0.00000000  0.000000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X10 -0.304726306 0.00000000  0.00000000 0.00000000  0.00000000  0.000000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X11  0.000000000 0.02841018  0.00000000 0.00000000 -0.15008360  0.000000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X12 -0.228864450 0.00000000  0.00000000 0.04134083  0.00000000  0.047165032</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X13  0.000000000 0.00000000 -0.05844895 0.20813129  0.00000000  0.000000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X14  0.000000000 0.00000000  0.00000000 0.00000000  0.00000000  0.000000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X15  0.000000000 0.00000000  0.00000000 0.00000000  0.00000000 -0.039945168</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X16 -0.022801025 0.00000000  0.00000000 0.00000000  0.00000000  0.000000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X17  0.000000000 0.00000000  0.00000000 0.00000000  0.00000000  0.000000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X18  0.000000000 0.00000000  0.00000000 0.00000000 -0.07276302  0.000000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X19  0.000000000 0.00437404  0.00000000 0.00000000  0.00000000  0.000000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X20  0.000000000 0.00000000  0.00000000 0.00000000  0.00000000 -0.002144762</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               7           8           9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X1   1.18824455  0.00000000  1.26365039</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X2   0.94191040  0.00000000  1.28055258</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X3   0.07161105  0.00000000  0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X4   0.00000000  0.00000000  0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X5   0.00000000  0.00000000  0.09104244</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X6  -0.15744276  0.02101593  0.08195267</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X7   0.00000000  0.00000000  0.07982826</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X8   0.22047535  0.00000000 -0.04961931</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X9   0.01610856  0.02267129  0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X10  0.00000000  0.00000000 -0.02735625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X11  0.00000000  0.00000000  0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X12  0.00000000  0.00000000  0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X13  0.00000000  0.00000000  0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X14  0.00000000  0.00000000  0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X15  0.00000000 -0.09479820  0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X16  0.00000000  0.00000000  0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X17  0.00000000  0.00000000  0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X18  0.00000000  0.00000000 -0.04116830</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X19  0.00000000  0.00000000  0.00000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X20  0.00000000  0.00000000  0.00000000</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

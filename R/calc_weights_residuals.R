@@ -1,4 +1,4 @@
-calc_weights_residuals <- function( # nolint: cyclocomp_linter.
+calc_weights_residuals <- function(
     offset, time, status) {
   n_samples <- length(time)
   if (n_samples == 1) {

@@ -4,16 +4,26 @@
 \alias{survtrans_control}
 \title{Ancillary arguments for controlling survtrans fitting}
 \usage{
-survtrans_control(eps = 1e-04, maxit = 1000, patience = 5, verbose = FALSE)
+survtrans_control(
+  eps = 1e-04,
+  maxit = 1000,
+  inner.eps = 0.001,
+  inner.maxit = 100,
+  verbose = FALSE
+)
 }
 \arguments{
-\item{eps}{the convergence criteria for the CCD algorithm. Default is 1e-4.}
+\item{eps}{the convergence criteria for the proposed algorithm.
+Default is 1e-4.}
 
-\item{maxit}{the maximum number of iterations for the CCD algorithm.
+\item{maxit}{the maximum number of iterations for the proposed algorithm.
 Default is 1000.}
 
-\item{patience}{the number of iterations without improvement before
-stopping the CCD algorithm. Default is 5.}
+\item{inner.eps}{the convergence criteria for the inner loop of the CCD
+algorithm. Default is 1e-3.}
+
+\item{inner.maxit}{the maximum number of iterations for the inner loop
+of the CCD algorithm. Default is 100.}
 
 \item{verbose}{a logical value indicating whether to print messages
 during the fitting process. Default is \code{FALSE}.}

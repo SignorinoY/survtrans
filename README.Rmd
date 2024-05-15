@@ -35,36 +35,38 @@ devtools::install_github("SignorinoY/survtrans")
 
 This is a basic example which shows you how to solve a common problem:
 
+### Multi-Source Survival Analysis
+
 ```{r example}
 library(survtrans)
 
 formula <- Surv(time, status) ~ . - group - id
 group <- as.factor(sim2$group)
 
-## Subgroup analysis
+# Target learning
+fit <- ncvcox(formula, sim2[group == 10, ], lambda = 0.15, penalty = "SCAD")
+fit$coefficients
+
+## Sub-group analysis
 fit <- coxsg(
   formula, sim2, group,
-  lambda1 = 0.01, lambda2 = 0.04, penalty = "SCAD"
+  lambda1 = 0.07, lambda2 = 0.05, penalty = "SCAD"
 )
-fit$coefficients
-fit$coefficients_group
+fit$coefficients[, 10]
 
 ## Transfer learning
 fit <- coxtl(
-  formula, sim2, group,
-  target = 10, lambda = 0.15, penalty = "SCAD"
+  formula, sim2, group, 10,
+  lambda1 = 0.04, lambda2 = 0.11, penalty = "SCAD"
 )
 fit$beta
-fit$eta
 
 ## Multi-task learning
 fit <- coxmtl(
   formula, sim2, group,
-  lambda1 = 0.05, lambda2 = 0.05, penalty = "SCAD"
+  lambda1 = 0.06, lambda2 = 0.06, lambda3 = 0.04, penalty = "SCAD"
 )
-fit$beta
-fit$eta
-fit$eta_group
+fit$beta + fit$eta[, 10]
 ```
 
 ## Code of Conduct

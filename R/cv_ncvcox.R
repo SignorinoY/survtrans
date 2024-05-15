@@ -20,18 +20,7 @@
 #' @param ... Other arguments passed to \code{\link{survtrans_control}}.
 #' @return a cv_ncvcox object.
 #' @export
-#' @examples
-#' library(survtrans)
-#' formula <- Surv(time, status) ~ . - id
-#' cv_fit <- cv_ncvcox(formula, sim_sparse, penalty = "SCAD")
-#' coef(cv_fit, "lambda.min")
-#' offset <- 0.5 * sim_sparse$X1 + 0.5 * sim_sparse$X2
-#' cv_fit <- cv_ncvcox(
-#'   formula = formula, data = sim_sparse, offset = offset,
-#'   penalty = "SCAD"
-#' )
-#' coef(cv_fit, "lambda.min")
-cv_ncvcox <- function( # nolint: cyclocomp_linter.
+cv_ncvcox <- function(
     formula, data, group, offset, penalty = c("lasso", "MCP", "SCAD"),
     gamma = switch(penalty,
       SCAD = 3.7,

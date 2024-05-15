@@ -17,22 +17,7 @@
 #' \code{survtrans_control(...)}.
 #' @param ... Other arguments passed to \code{\link{survtrans_control}}.
 #' @return a coxmtl object.
-#' @export
-#' @examples
-#' formula <- Surv(time, status) ~ . - group - id
-#' sparse_idx <- matrix(
-#'   rep(rep(c(FALSE, TRUE), each = 10), 5),
-#'   ncol = 10, byrow = TRUE
-#' )
-#' group_idx <- matrix(
-#'   rep(c(rep(1, 10), rep(c(1, 2), 5)), 5),
-#'   ncol = 10, byrow = TRUE
-#' )
-#' fit <- coxmtl_oracle(
-#'   formula, sim2, as.factor(sim2$group), sparse_idx, group_idx
-#' )
-#' fit$eta
-coxmtl_oracle <- function( # nolint: cyclocomp_linter.
+coxmtl_oracle <- function(
     formula, data, group, sparse_idx, group_idx, rho = 2.0, init,
     control, ...) {
   # Load the data

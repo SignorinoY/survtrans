@@ -10,7 +10,7 @@
 #' @param ... Unused.
 #' @return the BIC of the model.
 #' @export
-BIC.coxsg <- function(  # nolint: object_name_linter.
+BIC.coxsg <- function(
     object, data, group, type = c("trad", "mod"), ...) {
   type <- match.arg(type)
 

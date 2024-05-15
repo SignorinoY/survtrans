@@ -32,7 +32,7 @@
 #' )
 #' fit$eta
 #' BIC(fit, sim2, as.factor(sim2$group))
-coxtl_group <- function( # nolint: cyclocomp_linter.
+coxtl_group <- function(
     formula, data, group, target, lambda1 = 0, lambda2 = 0,
     penalty = c("lasso", "MCP", "SCAD"),
     gamma = switch(penalty,

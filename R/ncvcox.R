@@ -21,16 +21,20 @@
 #' @export
 #' @examples
 #' library(survtrans)
-#' formula <- Surv(time, status) ~ . - id
-#' fit <- ncvcox(formula, data = sim_sparse, lambda = 0.1, penalty = "SCAD")
-#' fit$coefficients
-#' offset <- 0.5 * sim_sparse$X1 + 0.5 * sim_sparse$X2
-#' fit <- ncvcox(
-#'   formula = formula, data = sim_sparse, offset = offset,
+#' formula <- Surv(time, status) ~ . - group - id
+#' group <- as.factor(sim1$group)
+#' fit.src <- ncvcox(
+#'   formula, sim1[group == 1, ],
 #'   lambda = 0.1, penalty = "SCAD"
 #' )
-#' fit$coefficients
-ncvcox <- function( # nolint: cyclocomp_linter.
+#' fit.src$coefficients
+#' offset.trg <- predict(fit.src, newdata = sim1[group == 2, ], type = "lp")
+#' fit.trg <- ncvcox(
+#'   formula, sim1[group == 2, ],
+#'   offset = offset.trg, lambda = 0.2, penalty = "SCAD"
+#' )
+#' fit.trg$coefficients
+ncvcox <- function(
     formula, data, group, offset, lambda = 0,
     penalty = c("lasso", "MCP", "SCAD"),
     gamma = switch(penalty,

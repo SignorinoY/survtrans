@@ -25,13 +25,13 @@
 #' @examples
 #' library(survtrans)
 #' formula <- Surv(time, status) ~ . - group - id
+#' group <- as.factor(sim2$group)
 #' fit <- coxsg(
-#'   formula, sim2, as.factor(sim2$group),
-#'   lambda1 = 0.01, lambda2 = 0.04, penalty = "SCAD"
+#'   formula, sim2, group,
+#'   lambda1 = 0.07, lambda2 = 0.05, penalty = "SCAD"
 #' )
 #' fit$coefficients
-#' BIC(fit, sim2, as.factor(sim2$group))
-coxsg <- function( # nolint: cyclocomp_linter.
+coxsg <- function(
     formula, data, group, lambda1 = 0, lambda2 = 0,
     penalty = c("lasso", "MCP", "SCAD"),
     gamma = switch(penalty,
@@ -39,6 +39,8 @@ coxsg <- function( # nolint: cyclocomp_linter.
       MCP = 3,
       1
     ), rho = 2.0, init, control, ...) {
+  set.seed(42)
+
   # Load the data
   data_ <- data
   group_ <- group
@@ -157,7 +159,7 @@ coxsg <- function( # nolint: cyclocomp_linter.
       r_ <- r[idx] - x_ %*% beta[, k]
       xw_ <- x_ * w[idx]
       xwx_ <- colMeans(w[idx] * x2[idx, , drop = FALSE])
-      for (iter in 1:control$maxit) {
+      for (iter in 1:control$inner.maxit) {
         beta_old <- beta[, k]
         features_idx <- sample(seq_len(n_features), n_features, FALSE)
         for (j in features_idx) {
@@ -167,9 +169,9 @@ coxsg <- function( # nolint: cyclocomp_linter.
           beta[j, k] <- penalty_solution(phi, psi, penalty, lambda1, gamma)
           r_ <- r_ - x_[, j] * (beta[j, k] - beta_old[j])
         }
-        if (max(abs(beta_old - beta[, k])) <= control$eps) break
+        if (max(abs(beta_old - beta[, k])) <= control$inner.eps) break
       }
-      if (iter == control$maxit) sub_convergence <- FALSE
+      if (iter == control$inner.maxit) sub_convergence <- FALSE
     }
 
     # Update xi
@@ -230,7 +232,9 @@ coxsg <- function( # nolint: cyclocomp_linter.
   # Unscale the coefficients
   coefficients <- beta
   coefficients <- sweep(coefficients, 1, x_scale, `/`)
-  beta <- coefficients[, 1:n_groups]
+
+  colnames(coefficients) <- group_levels
+  rownames(coefficients) <- colnames(x)
 
   # Return the fit
   fit <- list(

@@ -10,6 +10,7 @@ coxmtl(
   group,
   lambda1 = 0,
   lambda2 = 0,
+  lambda3 = 0,
   penalty = c("lasso", "MCP", "SCAD"),
   gamma = switch(penalty, SCAD = 3.7, MCP = 3, 1),
   rho = 2,
@@ -30,7 +31,10 @@ returned by the \code{\link{Surv}} function.}
 \item{lambda1}{a non-negative value specifying the sparse penalty
 parameter. The default is 0.}
 
-\item{lambda2}{a non-negative value specifying the group penalty
+\item{lambda2}{a non-negative value specifying the transfer penalty
+parameter. The default is 0.}
+
+\item{lambda3}{a non-negative value specifying the group penalty
 parameter. The default is 0.}
 
 \item{penalty}{a character string specifying the penalty function.
@@ -60,9 +64,10 @@ Multi-task Learning for Cox proportional hazards model
 \examples{
 library(survtrans)
 formula <- Surv(time, status) ~ . - group - id
+group <- as.factor(sim2$group)
 fit <- coxmtl(
-  formula, sim2, as.factor(sim2$group),
-  lambda1 = 0.05, lambda2 = 0.04, penalty = "SCAD"
+  formula, sim2, group,
+  lambda1 = 0.06, lambda2 = 0.06, lambda3 = 0.04, penalty = "SCAD"
 )
 fit$eta
 }

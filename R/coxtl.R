@@ -5,7 +5,9 @@
 #' @param data a data frame containing the variables in the model.
 #' @param group a factor specifying the group of each sample.
 #' @param target a factor specifying the target group.
-#' @param lambda a non-negative value specifying the sparse penalty
+#' @param lambda1 a non-negative value specifying the sparse penalty
+#' parameter. The default is 0.
+#' @param lambda2 a non-negative value specifying the transfer penalty
 #' parameter. The default is 0.
 #' @param penalty a character string specifying the penalty function.
 #' The default is "lasso". Other options are "MCP" and "SCAD".
@@ -22,20 +24,23 @@
 #' @examples
 #' library(survtrans)
 #' formula <- Surv(time, status) ~ . - group - id
+#' group <- as.factor(sim2$group)
 #' fit <- coxtl(
-#'   formula, sim2, as.factor(sim2$group), 1,
-#'   lambda = 0.04, penalty = "SCAD"
+#'   formula, sim2, group, 10,
+#'   lambda1 = 0.04, lambda2 = 0.11, penalty = "SCAD"
 #' )
+#' fit$beta
 #' fit$eta
-#' BIC(fit, sim2, as.factor(sim2$group))
-coxtl <- function( # nolint: cyclocomp_linter.
-    formula, data, group, target, lambda = 0,
+coxtl <- function(
+    formula, data, group, target, lambda1 = 0, lambda2 = 0,
     penalty = c("lasso", "MCP", "SCAD"),
     gamma = switch(penalty,
       SCAD = 3.7,
       MCP = 3,
       1
     ), init, control, ...) {
+  set.seed(42)
+
   # Load the data
   data_ <- data
   group_ <- group
@@ -104,6 +109,10 @@ coxtl <- function( # nolint: cyclocomp_linter.
     # Calculate the loss
     hazard <- exp(theta - max(theta))
     risk_set <- ave(hazard, group, FUN = cumsum)
+    for (k in 1:n_groups) {
+      idx <- group == group_levels[k]
+      risk_set[idx] <- ave(risk_set[idx], time[idx], FUN = max)
+    }
     loss <- -sum(status * (theta - log(risk_set) - max(theta)))
 
     # Check the convergence
@@ -120,27 +129,37 @@ coxtl <- function( # nolint: cyclocomp_linter.
       r[idx] <- wls$residuals
     }
 
-    # Update beta by weighted least squares
+    # Update beta by cyclic coordinate descent
     xw <- x * w
-    beta <- beta + solve(t(xw) %*% x, t(xw) %*% r)
+    xwx <- colMeans(w * x2)
+    for (iter in 1:control$inner.maxit) {
+      beta_old <- beta
+      features_idx <- sample(seq_len(n_features), n_features, FALSE)
+      for (j in features_idx) {
+        z <- mean(xw[, j] * r) + xwx[j] * beta[j]
+        beta[j] <- penalty_solution(z, xwx[j], penalty, lambda1, gamma)
+        r <- r - x[, j] * (beta[j] - beta_old[j])
+      }
+      if (max(abs(beta_old - beta)) <= control$inner.eps) break
+    }
 
     # Update eta by cyclic coordinate descent
     r <- r + theta - x %*% beta
     for (k in 1:(n_groups - 1)) {
       idx <- group == group_levels_drop[k]
-      x_ <- x[idx, , drop = FALSE]
-      r_ <- r[idx] - x_ %*% eta[, k]
-      xw_ <- x_ * w[idx]
-      xwx_ <- colMeans(w[idx] * x2[idx, , drop = FALSE])
-      for (iter in 1:control$maxit) {
+      xk <- x[idx, , drop = FALSE]
+      rk <- r[idx] - xk %*% eta[, k]
+      xwk <- xk * w[idx]
+      xwxk <- colMeans(w[idx] * x2[idx, , drop = FALSE])
+      for (iter in 1:control$inner.maxit) {
         eta_old <- eta[, k]
         features_idx <- sample(seq_len(n_features), n_features, FALSE)
         for (j in features_idx) {
-          phi <- mean(xw_[, j] * r_) + xwx_[j] * eta[j, k]
-          eta[j, k] <- penalty_solution(phi, xwx_[j], penalty, lambda, gamma)
-          r_ <- r_ - x_[, j] * (eta[j, k] - eta_old[j])
+          phi <- mean(xwk[, j] * rk) + xwxk[j] * eta[j, k]
+          eta[j, k] <- penalty_solution(phi, xwxk[j], penalty, lambda2, gamma)
+          rk <- rk - xk[, j] * (eta[j, k] - eta_old[j])
         }
-        if (max(abs(eta_old - eta[, k])) <= control$eps) break
+        if (max(abs(eta_old - eta[, k])) <= control$inner.eps) break
       }
     }
   }
@@ -148,6 +167,10 @@ coxtl <- function( # nolint: cyclocomp_linter.
   # Unscale the coefficients
   coefficients <- cbind(eta, beta)
   coefficients <- sweep(coefficients, 1, x_scale, `/`)
+
+  colnames(coefficients) <- c(group_levels_drop, target)
+  rownames(coefficients) <- colnames(x)
+
   eta <- coefficients[, 1:(n_groups - 1)]
   beta <- coefficients[, n_groups]
   coefficients <- as.vector(coefficients)
@@ -157,7 +180,8 @@ coxtl <- function( # nolint: cyclocomp_linter.
     coefficients = coefficients, beta = beta, eta = eta,
     group_levels = group_levels, logLik = -loss, iter = record$n_iterations,
     message = record$message, target = target, penalty = penalty,
-    lambda = lambda, gamma = gamma, formula = formula, call = match.call()
+    lambda1 = lambda1, lambda2 = lambda2, gamma = gamma, formula = formula,
+    call = match.call()
   )
   class(fit) <- "coxtl"
   return(fit)

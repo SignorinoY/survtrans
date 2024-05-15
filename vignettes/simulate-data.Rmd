@@ -16,6 +16,10 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(survtrans)
+
+library(dplyr)
+library(MASS)
+library(simsurv)
 ```
 
 ## Examples

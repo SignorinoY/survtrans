@@ -57,15 +57,3 @@ a cv_ncvcox object.
 \description{
 Cross-validation for \code{ncvcox}
 }
-\examples{
-library(survtrans)
-formula <- Surv(time, status) ~ . - id
-cv_fit <- cv_ncvcox(formula, sim_sparse, penalty = "SCAD")
-coef(cv_fit, "lambda.min")
-offset <- 0.5 * sim_sparse$X1 + 0.5 * sim_sparse$X2
-cv_fit <- cv_ncvcox(
-  formula = formula, data = sim_sparse, offset = offset,
-  penalty = "SCAD"
-)
-coef(cv_fit, "lambda.min")
-}

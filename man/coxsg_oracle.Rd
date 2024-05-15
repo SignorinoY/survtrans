@@ -36,15 +36,3 @@ a coxmtl object.
 \description{
 Personalized Multi-task Learning of Cox proportional hazards model (Oracle)
 }
-\examples{
-formula <- Surv(time, status) ~ . - group - id
-sparse_idx <- matrix(TRUE, nrow = 10, ncol = 10)
-group_idx <- matrix(
-  rep(c(rep(1, 10), rep(c(1, 2), 5)), 5),
-  ncol = 10, byrow = TRUE
-)
-fit <- coxsg_oracle(
-  formula, sim2, as.factor(sim2$group), sparse_idx, group_idx
-)
-fit$eta
-}

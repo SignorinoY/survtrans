@@ -9,7 +9,8 @@ coxtl(
   data,
   group,
   target,
-  lambda = 0,
+  lambda1 = 0,
+  lambda2 = 0,
   penalty = c("lasso", "MCP", "SCAD"),
   gamma = switch(penalty, SCAD = 3.7, MCP = 3, 1),
   init,
@@ -28,7 +29,10 @@ returned by the \code{\link{Surv}} function.}
 
 \item{target}{a factor specifying the target group.}
 
-\item{lambda}{a non-negative value specifying the sparse penalty
+\item{lambda1}{a non-negative value specifying the sparse penalty
+parameter. The default is 0.}
+
+\item{lambda2}{a non-negative value specifying the transfer penalty
 parameter. The default is 0.}
 
 \item{penalty}{a character string specifying the penalty function.
@@ -55,10 +59,11 @@ Transfer Learning for Cox proportional hazards model
 \examples{
 library(survtrans)
 formula <- Surv(time, status) ~ . - group - id
+group <- as.factor(sim2$group)
 fit <- coxtl(
-  formula, sim2, as.factor(sim2$group), 1,
-  lambda = 0.04, penalty = "SCAD"
+  formula, sim2, group, 10,
+  lambda1 = 0.04, lambda2 = 0.11, penalty = "SCAD"
 )
+fit$beta
 fit$eta
-BIC(fit, sim2, as.factor(sim2$group))
 }

@@ -60,10 +60,10 @@ Subgroup Analysis for Cox proportional hazards model
 \examples{
 library(survtrans)
 formula <- Surv(time, status) ~ . - group - id
+group <- as.factor(sim2$group)
 fit <- coxsg(
-  formula, sim2, as.factor(sim2$group),
-  lambda1 = 0.01, lambda2 = 0.04, penalty = "SCAD"
+  formula, sim2, group,
+  lambda1 = 0.07, lambda2 = 0.05, penalty = "SCAD"
 )
 fit$coefficients
-BIC(fit, sim2, as.factor(sim2$group))
 }

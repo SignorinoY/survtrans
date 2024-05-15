@@ -10,23 +10,24 @@
 #' @param ... Unused.
 #' @return the BIC of the model.
 #' @export
-BIC.coxmtl <- function( # nolint: object_name_linter.
+BIC.coxmtl <- function(
     object, data, group, type = c("trad", "mod"), ...) {
   type <- match.arg(type)
 
+  beta <- object$beta
   eta <- object$eta
   n_samples <- nrow(data)
   n_features <- nrow(eta)
   n_groups <- ncol(eta)
 
   loglik <- logLik(object, data, group)
-  n_parameters <- 0
+  n_parameters <- sum(beta != 0)
   for (j in 1:n_features) {
     nonzeros <- eta[j, eta[j, ] != 0]
     if (length(nonzeros) > 0) {
       n_parameters <- n_parameters + length(unique(nonzeros))
     }
   }
-  c <- ifelse(type == "trad", 1, log(log(n_features * n_groups)))
+  c <- ifelse(type == "trad", 1, log(log(n_features * (n_groups + 1))))
   return(-2 * loglik + c * n_parameters * log(n_samples))
 }

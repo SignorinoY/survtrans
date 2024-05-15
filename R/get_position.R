@@ -1,4 +1,4 @@
-get_position <- function(i_vec, j_vec, s) { # nolint: cyclocomp_linter.
+get_position <- function(i_vec, j_vec, s) {
   n_search <- length(i_vec)
   pos <- numeric(n_search)
   for (k in seq_len(n_search)) {

@@ -57,6 +57,6 @@ Multiple-sources Cox proportional hazards model with group sparsity
 library(survtrans)
 formula <- Surv(time, status) ~ . - group - id
 group <- as.factor(sim2$group)
-fit <- coxgrp(formula, sim2, group, lambda = 0.07, penalty = "SCAD")
+fit <- coxgrp(formula, sim2, group, lambda = 0.02, penalty = "SCAD")
 fit$coefficients
 }

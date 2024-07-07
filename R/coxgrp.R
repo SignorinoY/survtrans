@@ -24,7 +24,7 @@
 #' library(survtrans)
 #' formula <- Surv(time, status) ~ . - group - id
 #' group <- as.factor(sim2$group)
-#' fit <- coxgrp(formula, sim2, group, lambda = 0.07, penalty = "SCAD")
+#' fit <- coxgrp(formula, sim2, group, lambda = 0.02, penalty = "SCAD")
 #' fit$coefficients
 coxgrp <- function(
     formula, data, group, lambda = 0,
@@ -60,7 +60,7 @@ coxgrp <- function(
 
   ## Check the penalty argument
   penalty <- match.arg(penalty)
-  lambda <- lambda * sqrt(n_samples)
+  lambda <- lambda * sqrt(n_groups)
 
   ## Check the init argument
   if (!missing(init) && length(init) > 0) {

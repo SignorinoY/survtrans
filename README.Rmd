@@ -47,21 +47,25 @@ group <- as.factor(sim2$group)
 fit <- ncvcox(formula, sim2[group == 10, ], lambda = 0.15, penalty = "SCAD")
 fit$coefficients
 
-## Sub-group analysis
+# Source learning
+fit <- coxgrp(formula, sim2, group, lambda = 0.02, penalty = "SCAD")
+fit$coefficients[, 10]
+
+# Sub-group analysis
 fit <- coxsg(
   formula, sim2, group,
   lambda1 = 0.07, lambda2 = 0.05, penalty = "SCAD"
 )
 fit$coefficients[, 10]
 
-## Transfer learning
+# Transfer learning
 fit <- coxtl(
   formula, sim2, group, 10,
   lambda1 = 0.04, lambda2 = 0.11, penalty = "SCAD"
 )
 fit$beta
 
-## Multi-task learning
+# Multi-task learning
 fit <- coxmtl(
   formula, sim2, group,
   lambda1 = 0.06, lambda2 = 0.06, lambda3 = 0.04, penalty = "SCAD"

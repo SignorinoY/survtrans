@@ -33,6 +33,9 @@ library(survtrans)
 #> 载入需要的程序包：progress
 #> 载入需要的程序包：survode
 #> 载入需要的程序包：survival
+```
+
+``` r
 
 formula <- Surv(time, status) ~ . - group - id
 group <- as.factor(sim2$group)
@@ -46,8 +49,24 @@ fit$coefficients
 #>  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000 
 #>        X15        X16        X17        X18        X19        X20 
 #>  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000
+```
 
-## Sub-group analysis
+``` r
+
+# Source learning
+fit <- coxgrp(formula, sim2, group, lambda = 0.02, penalty = "SCAD")
+fit$coefficients[, 10]
+#>         X1         X2         X3         X4         X5         X6         X7 
+#> -0.6895172 -0.6184747  0.4903296  0.9018439  0.0000000  0.0000000  0.0000000 
+#>         X8         X9        X10        X11        X12        X13        X14 
+#>  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000 
+#>        X15        X16        X17        X18        X19        X20 
+#>  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000
+```
+
+``` r
+
+# Sub-group analysis
 fit <- coxsg(
   formula, sim2, group,
   lambda1 = 0.07, lambda2 = 0.05, penalty = "SCAD"
@@ -59,8 +78,11 @@ fit$coefficients[, 10]
 #>  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000 
 #>        X15        X16        X17        X18        X19        X20 
 #>  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000
+```
 
-## Transfer learning
+``` r
+
+# Transfer learning
 fit <- coxtl(
   formula, sim2, group, 10,
   lambda1 = 0.04, lambda2 = 0.11, penalty = "SCAD"
@@ -74,8 +96,11 @@ fit$beta
 #>  0.00000000  0.00000000  0.00000000  0.00000000  0.00000000  0.00000000 
 #>         X19         X20 
 #>  0.00000000 -0.03663008
+```
 
-## Multi-task learning
+``` r
+
+# Multi-task learning
 fit <- coxmtl(
   formula, sim2, group,
   lambda1 = 0.06, lambda2 = 0.06, lambda3 = 0.04, penalty = "SCAD"

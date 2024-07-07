@@ -204,41 +204,94 @@ coxsg <- function(
   }
 
   # Recognize the group assignment
-  beta_processed <- matrix(0, nrow = n_features, ncol = n_groups)
-  coefficients_group <- matrix(0, nrow = n_features, ncol = n_groups)
+  coefs_proc <- matrix(0, nrow = n_features, ncol = n_groups)
+  coefs_group <- matrix(0, nrow = n_features, ncol = n_groups)
   for (i in 1:n_features) {
     is_processed <- rep(FALSE, n_groups)
     for (j in 1:n_groups) {
       if (is_processed[j]) next
       is_processed[j] <- TRUE
-      coefficients_group[i, j] <- j
+      coefs_group[i, j] <- j
       for (k in 1:n_groups) {
         if (is_processed[k]) next
         pos <- get_position(j, k, n_groups)
         if (abs(xi[i, pos]) < control$eps) {
-          coefficients_group[i, k] <- j
+          coefs_group[i, k] <- j
           is_processed[k] <- TRUE
         }
       }
     }
-    for (j in unique(coefficients_group[i, ])) {
-      idx <- which(coefficients_group[i, ] == j)
-      beta_processed[i, idx] <- mean(beta[i, idx])
+    for (j in unique(coefs_group[i, ])) {
+      idx <- which(coefs_group[i, ] == j)
+      coefs_proc[i, idx] <- mean(beta[i, idx])
     }
   }
-  beta <- beta_processed
-  beta[abs(beta) < control$eps] <- 0
+  coefs <- coefs_proc
+  coefs[abs(coefs) < control$eps] <- 0
+
+  # Reassign the coefficients' group
+  n_total_groups <- 0
+  coefs_expanded <- c()
+  coefs_group <- matrix(0, nrow = n_features, ncol = n_groups)
+  for (j in 1:n_features) {
+    feature_groups <- as.factor(as.character(coefs[j, ]))
+    feature_levels <- levels(feature_groups)
+    for (k in seq_along(feature_levels)) {
+      idx <- feature_groups == feature_levels[k]
+      coefs_group[j, idx] <- k + n_total_groups
+    }
+    coefs_expanded <- c(coefs_expanded, as.numeric(feature_levels))
+    n_total_groups <- n_total_groups + length(feature_levels)
+  }
+  coefs_expanded <- as.matrix(coefs_expanded)
+  sparse_mark <- coefs_expanded == 0
+
+  # Group the features
+  x_grouped <- c()
+  for (k in 1:n_groups) {
+    idx <- group_idxs[[k]]
+    feature_map <- matrix(0, n_features, n_total_groups)
+    for (j in 1:n_features) {
+      feature_map[j, coefs_group[j, k]] <- 1
+    }
+    x_grouped_k <- x[idx, ] %*% feature_map
+    x_grouped <- rbind(x_grouped, x_grouped_k)
+  }
+  x_grouped <- as.data.frame(x_grouped)
+
+  # Calulate the variance-covariance matrix of non-sparse coefficients
+  x_grouped_sparse <- x_grouped[, !sparse_mark]
+  coefs_expanded_sparse <- coefs_expanded[!sparse_mark]
+  theta <- as.matrix(x_grouped_sparse) %*% coefs_expanded_sparse
+  n_nonzero <- sum(!sparse_mark)
+
+  grads <- c()
+  hessians <- c()
+  for (k in 1:n_groups) {
+    idx <- group_idxs[[k]]
+    ghs <- calc_grads_hessians(
+      theta[idx], x_grouped_sparse[idx, ], time[idx], status[idx]
+    )
+    grads <- rbind(grads, ghs$grads)
+    hessians <- rbind(hessians, ghs$hessians)
+  }
+  hess <- matrix(colSums(hessians), nrow = n_nonzero, ncol = n_nonzero)
+  cov_grad <- cov(grads) * n_samples / (n_samples - 1)
+  sigma_coefs <- penalty_grad(coefs_expanded_sparse, penalty, lambda1, gamma)
+  sigma_coefs <- diag(sigma_coefs / abs(coefs_expanded_sparse) * n_samples)
+  hess_inv <- solve(hess + sigma_coefs)
+  var <- hess_inv %*% cov_grad %*% hess_inv
 
   # Unscale the coefficients
-  coefficients <- beta
-  coefficients <- sweep(coefficients, 1, x_scale, `/`)
+  coefs <- sweep(coefs, 1, x_scale, `/`)
 
-  colnames(coefficients) <- group_levels
-  rownames(coefficients) <- colnames(x)
+  colnames(coefs) <- group_levels
+  rownames(coefs) <- colnames(x)
 
   # Return the fit
   fit <- list(
-    coefficients = coefficients, coefficients_group = coefficients_group,
+    coefficients = coefs, coefficients_group = coefs_group,
+    coefficients_expanded = coefs_expanded, var = var,
     xi = xi, mu = mu, alpha = alpha, group_levels = group_levels,
     logLik = -loss, iter = record$n_iterations, message = record$message,
     penalty = penalty, lambda1 = lambda1, gamma = gamma,

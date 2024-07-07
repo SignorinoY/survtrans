@@ -131,29 +131,50 @@ control parameters for the fitting algorithm. Default is
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/SignorinoY/survtrans" class="external-link">survtrans</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">formula</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">.</span> <span class="op">-</span> <span class="va">group</span> <span class="op">-</span> <span class="va">id</span></span></span>
 <span class="r-in"><span><span class="va">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">sim2</span><span class="op">$</span><span class="va">group</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">coxgrp</span><span class="op">(</span><span class="va">formula</span>, <span class="va">sim2</span>, <span class="va">group</span>, lambda <span class="op">=</span> <span class="fl">0.07</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">coxgrp</span><span class="op">(</span><span class="va">formula</span>, <span class="va">sim2</span>, <span class="va">group</span>, lambda <span class="op">=</span> <span class="fl">0.02</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">fit</span><span class="op">$</span><span class="va">coefficients</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     1 2 3 4 5 6 7 8 9 10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X1  0 0 0 0 0 0 0 0 0  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X2  0 0 0 0 0 0 0 0 0  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X3  0 0 0 0 0 0 0 0 0  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X4  0 0 0 0 0 0 0 0 0  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X5  0 0 0 0 0 0 0 0 0  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X6  0 0 0 0 0 0 0 0 0  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X7  0 0 0 0 0 0 0 0 0  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X8  0 0 0 0 0 0 0 0 0  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X9  0 0 0 0 0 0 0 0 0  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X10 0 0 0 0 0 0 0 0 0  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X11 0 0 0 0 0 0 0 0 0  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X12 0 0 0 0 0 0 0 0 0  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X13 0 0 0 0 0 0 0 0 0  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X14 0 0 0 0 0 0 0 0 0  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X15 0 0 0 0 0 0 0 0 0  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X16 0 0 0 0 0 0 0 0 0  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X17 0 0 0 0 0 0 0 0 0  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X18 0 0 0 0 0 0 0 0 0  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X19 0 0 0 0 0 0 0 0 0  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X20 0 0 0 0 0 0 0 0 0  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             1          2         3          4         5          6         7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X1  0.5394258 -0.7628322 0.7133059 -0.5241018 0.4686284 -0.6207682 0.5623104</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X2  0.5845159 -0.5714762 0.7693320 -0.5994700 0.4725933 -0.7439499 0.3209021</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X3  0.4562600  0.6392264 0.8669619  0.4704888 0.5578964  0.4915979 0.7639459</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X4  0.3481866  0.7535935 0.6419702  0.4545768 0.5752310  0.5641411 0.5731811</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X5  0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X6  0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X7  0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X8  0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X9  0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X10 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X11 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X12 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X13 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X14 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X15 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X16 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X17 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X18 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X19 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X20 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              8         9         10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X1  -0.7321618 0.5783262 -0.6895172</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X2  -0.6494250 0.5948016 -0.6184747</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X3   0.5293477 0.4676483  0.4903296</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X4   0.4680858 0.3319988  0.9018439</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X5   0.0000000 0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X6   0.0000000 0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X7   0.0000000 0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X8   0.0000000 0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X9   0.0000000 0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X10  0.0000000 0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X11  0.0000000 0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X12  0.0000000 0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X13  0.0000000 0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X14  0.0000000 0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X15  0.0000000 0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X16  0.0000000 0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X17  0.0000000 0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X18  0.0000000 0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X19  0.0000000 0.0000000  0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X20  0.0000000 0.0000000  0.0000000</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

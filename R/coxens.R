@@ -102,11 +102,11 @@ coxens <- function(
   z <- numeric(n_samples)
 
   idx <- which(lower.tri(matrix(1, n_groups, n_groups)), arr.ind = TRUE)
-  E <- Matrix::Matrix(0, nrow(idx), n_groups, sparse = TRUE)
-  E[cbind(seq_len(nrow(idx)), idx[, 1])] <- 1
-  E[cbind(seq_len(nrow(idx)), idx[, 2])] <- -1
+  e <- Matrix::Matrix(0, nrow(idx), n_groups, sparse = TRUE)
+  e[cbind(seq_len(nrow(idx)), idx[, 1])] <- 1
+  e[cbind(seq_len(nrow(idx)), idx[, 2])] <- -1
 
-  A <- Matrix::Matrix(
+  contr_sum <- Matrix::Matrix(
     cbind(
       kronecker(
         matrix(1, nrow = 1, ncol = n_groups),
@@ -116,7 +116,7 @@ coxens <- function(
     ),
     sparse = TRUE
   )
-  B <- rbind(
+  contr_penalty <- rbind(
     cbind(
       Matrix::Diagonal(n_features * n_groups),
       matrix(0, nrow = n_features * n_groups, ncol = n_features)
@@ -126,13 +126,13 @@ coxens <- function(
       -kronecker(matrix(1, n_groups, 1), diag(n_features))
     ),
     cbind(
-      kronecker(E, diag(n_features)),
+      kronecker(e, diag(n_features)),
       matrix(0, n_groups * (n_groups - 1) * n_features / 2, n_features)
     )
   )
-  n_constraints <- nrow(B)
-  AA <- Matrix::crossprod(A)
-  BB <- Matrix::crossprod(B)
+  n_constraints <- nrow(contr_penalty)
+  contr_sum2 <- Matrix::crossprod(contr_sum)
+  contr_penalty2 <- Matrix::crossprod(contr_penalty)
 
   x_tilde <- Matrix::bdiag(lapply(group_idxs, function(idx) x[idx, ]))
   x_tilde <- cbind(x_tilde, matrix(0, nrow = n_samples, ncol = n_features))
@@ -165,15 +165,15 @@ coxens <- function(
     xwx <- Matrix::crossprod(x_tilde, w_tilde %*% x_tilde) / n_samples
     xwz <- Matrix::crossprod(x_tilde, w_tilde %*% z) / n_samples
     beta <- Matrix::solve(
-      xwx + vartheta * (AA + BB),
-      xwz - Matrix::crossprod(A, mu) +
-        vartheta * Matrix::crossprod(B, eta - nu / vartheta),
+      xwx + vartheta * (contr_sum2 + contr_penalty2),
+      xwz - Matrix::crossprod(contr_sum, mu) +
+        vartheta * Matrix::crossprod(contr_penalty, eta - nu / vartheta),
       sparse = TRUE
     )
 
     # Update the auxiliary variables
     eta_old <- eta
-    eta <- B %*% beta + nu / vartheta
+    eta <- contr_penalty %*% beta + nu / vartheta
 
     ## Group Sparsity
     for (j in 1:n_features) {
@@ -194,15 +194,17 @@ coxens <- function(
     eta[local_indices] <- vapply(local_indices, function(idx) {
       threshold(eta[idx], vartheta, penalty, lambda2 * (1 - alpha), gamma)
     }, numeric(1))
-    mu <- mu + vartheta * A %*% beta
-    nu <- nu + vartheta * (B %*% beta - eta)
+    mu <- mu + vartheta * contr_sum %*% beta
+    nu <- nu + vartheta * (contr_penalty %*% beta - eta)
 
     # Update the penalty parameter
     r <- max(
-      Matrix::norm(A %*% beta, type = "I"),
-      Matrix::norm(B %*% beta - eta, type = "I")
+      Matrix::norm(contr_sum %*% beta, type = "I"),
+      Matrix::norm(contr_penalty %*% beta - eta, type = "I")
     )
-    s <- Matrix::norm(Matrix::crossprod(B, eta - eta_old), type = "e")
+    s <- Matrix::norm(
+      Matrix::crossprod(contr_penalty, eta - eta_old), type = "I"
+    )
     if (r > 10 * s) vartheta <- vartheta * rho
     if (r < 10 * s) vartheta <- vartheta / rho
     vartheta <- max(1, vartheta)

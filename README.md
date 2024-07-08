@@ -30,9 +30,9 @@ This is a basic example which shows you how to solve a common problem:
 
 ``` r
 library(survtrans)
-#> 载入需要的程序包：progress
-#> 载入需要的程序包：survode
-#> 载入需要的程序包：survival
+#> Loading required package: progress
+#> Loading required package: survode
+#> Loading required package: survival
 ```
 
 ``` r
@@ -53,7 +53,7 @@ fit$coefficients
 
 ``` r
 
-# Source learning
+# Group learning
 fit <- coxgrp(formula, sim2, group, lambda = 0.02, penalty = "SCAD")
 fit$coefficients[, 10]
 #>         X1         X2         X3         X4         X5         X6         X7 
@@ -66,7 +66,7 @@ fit$coefficients[, 10]
 
 ``` r
 
-# Sub-group analysis
+# Sub-group learning
 fit <- coxsg(
   formula, sim2, group,
   lambda1 = 0.07, lambda2 = 0.05, penalty = "SCAD"
@@ -96,6 +96,22 @@ fit$beta
 #>  0.00000000  0.00000000  0.00000000  0.00000000  0.00000000  0.00000000 
 #>         X19         X20 
 #>  0.00000000 -0.03663008
+```
+
+``` r
+
+# Ensemble learning
+fit <- coxens(
+  formula, sim2, group,
+  lambda1 = 0.02, lambda2 = 0.005, penalty = "SCAD"
+)
+fit$coefficients[, 10]
+#>         X1         X2         X3         X4         X5         X6         X7 
+#> -0.6605156 -0.6196182  0.5558083  0.5547476  0.0000000  0.0000000  0.0000000 
+#>         X8         X9        X10        X11        X12        X13        X14 
+#>  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000 
+#>        X15        X16        X17        X18        X19        X20 
+#>  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000
 ```
 
 ``` r

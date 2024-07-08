@@ -6,7 +6,7 @@
 \usage{
 survtrans_control(
   eps = 1e-04,
-  maxit = 1000,
+  maxit = 10000,
   inner.eps = 0.001,
   inner.maxit = 100,
   verbose = FALSE
@@ -17,7 +17,7 @@ survtrans_control(
 Default is 1e-4.}
 
 \item{maxit}{the maximum number of iterations for the proposed algorithm.
-Default is 1000.}
+Default is 10000.}
 
 \item{inner.eps}{the convergence criteria for the inner loop of the CCD
 algorithm. Default is 1e-3.}

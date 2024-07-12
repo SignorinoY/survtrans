@@ -70,7 +70,7 @@ formula <- Surv(time, status) ~ . - group - id
 group <- as.factor(sim2$group)
 fit <- coxens(
   formula, sim2, group,
-  lambda1 = 0.02, lambda2 = 0.005, penalty = "SCAD"
+  lambda1 = 0.02, lambda2 = 0.006, penalty = "SCAD"
 )
 fit$coefficients
 }

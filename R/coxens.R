@@ -32,7 +32,7 @@
 #' group <- as.factor(sim2$group)
 #' fit <- coxens(
 #'   formula, sim2, group,
-#'   lambda1 = 0.02, lambda2 = 0.005, penalty = "SCAD"
+#'   lambda1 = 0.02, lambda2 = 0.006, penalty = "SCAD"
 #' )
 #' fit$coefficients
 coxens <- function(
@@ -106,17 +106,7 @@ coxens <- function(
   e[cbind(seq_len(nrow(idx)), idx[, 1])] <- 1
   e[cbind(seq_len(nrow(idx)), idx[, 2])] <- -1
 
-  contr_sum <- Matrix::Matrix(
-    cbind(
-      kronecker(
-        matrix(1, nrow = 1, ncol = n_groups),
-        diag(n_features)
-      ),
-      -n_groups * diag(n_features)
-    ),
-    sparse = TRUE
-  )
-  contr_penalty <- rbind(
+  contr <- rbind(
     cbind(
       Matrix::Diagonal(n_features * n_groups),
       matrix(0, nrow = n_features * n_groups, ncol = n_features)
@@ -130,9 +120,11 @@ coxens <- function(
       matrix(0, n_groups * (n_groups - 1) * n_features / 2, n_features)
     )
   )
-  n_constraints <- nrow(contr_penalty)
-  contr_sum2 <- Matrix::crossprod(contr_sum)
-  contr_penalty2 <- Matrix::crossprod(contr_penalty)
+  n_constraints <- nrow(contr)
+  contr2 <- Matrix::crossprod(contr)
+  global_indices <- (n_groups * n_features + 1):
+    (n_groups * n_features + n_features * n_groups)
+  local_indices <- (2 * n_groups * n_features + 1):n_constraints
 
   x_tilde <- Matrix::bdiag(lapply(group_idxs, function(idx) x[idx, ]))
   x_tilde <- cbind(x_tilde, matrix(0, nrow = n_samples, ncol = n_features))
@@ -140,8 +132,7 @@ coxens <- function(
   status_tilde <- unlist(lapply(group_idxs, function(idx) status[idx]))
 
   eta <- Matrix::Matrix(0, n_constraints, 1, sparse = TRUE)
-  mu <- Matrix::Matrix(0, n_features, 1, sparse = TRUE)
-  nu <- Matrix::Matrix(0, n_constraints, 1, sparse = TRUE)
+  mu <- Matrix::Matrix(0, n_constraints, 1, sparse = TRUE)
   vartheta <- 1
 
   repeat {
@@ -165,15 +156,14 @@ coxens <- function(
     xwx <- Matrix::crossprod(x_tilde, w_tilde %*% x_tilde) / n_samples
     xwz <- Matrix::crossprod(x_tilde, w_tilde %*% z) / n_samples
     beta <- Matrix::solve(
-      xwx + vartheta * (contr_sum2 + contr_penalty2),
-      xwz - Matrix::crossprod(contr_sum, mu) +
-        vartheta * Matrix::crossprod(contr_penalty, eta - nu / vartheta),
+      xwx + vartheta * contr2,
+      xwz + vartheta * Matrix::crossprod(contr, eta - mu / vartheta),
       sparse = TRUE
     )
 
     # Update the auxiliary variables
     eta_old <- eta
-    eta <- contr_penalty %*% beta + nu / vartheta
+    eta <- contr %*% beta + mu / vartheta
 
     ## Group Sparsity
     for (j in 1:n_features) {
@@ -184,37 +174,26 @@ coxens <- function(
       ) * eta[idx] / etaj_norm
     }
     ## Transfer Global
-    global_indices <- (n_groups * n_features + 1):
-      (n_groups * n_features + n_features * n_groups)
     eta[global_indices] <- vapply(global_indices, function(idx) {
       threshold(eta[idx], vartheta, penalty, lambda2 * alpha, gamma)
     }, numeric(1))
     ## Transfer Local
-    local_indices <- (2 * n_groups * n_features + 1):n_constraints
     eta[local_indices] <- vapply(local_indices, function(idx) {
       threshold(eta[idx], vartheta, penalty, lambda2 * (1 - alpha), gamma)
     }, numeric(1))
-    mu <- mu + vartheta * contr_sum %*% beta
-    nu <- nu + vartheta * (contr_penalty %*% beta - eta)
+    mu <- mu + vartheta * (contr %*% beta - eta)
 
     # Update the penalty parameter
-    r <- max(
-      Matrix::norm(contr_sum %*% beta, type = "I"),
-      Matrix::norm(contr_penalty %*% beta - eta, type = "I")
-    )
+    r <- Matrix::norm(contr %*% beta - eta, type = "I")
     s <- Matrix::norm(
-      Matrix::crossprod(contr_penalty, eta - eta_old), type = "I"
+      Matrix::crossprod(contr, eta - eta_old),
+      type = "I"
     )
     if (r > 10 * s) vartheta <- vartheta * rho
     if (r < 10 * s) vartheta <- vartheta / rho
     vartheta <- max(1, vartheta)
 
     # Check the convergence
-    offset <- x_tilde %*% beta
-    hazard <- exp(offset)
-    risk_set <- ave(hazard, group, FUN = cumsum)
-    loss <- -sum(status * (offset - log(risk_set)))
-
     if (n_iterations >= control$maxit) {
       convergence <- TRUE
       message <- paste0(
@@ -227,6 +206,11 @@ coxens <- function(
         "Convergence reached at iteration ", n_iterations, "."
       )
     }
+
+    offset <- x_tilde %*% beta
+    hazard <- exp(offset)
+    risk_set <- ave(hazard, group, FUN = cumsum)
+    loss <- -sum(status * (offset - log(risk_set)))
     if (-loss / null_deviance < 0.01) {
       convergence <- TRUE
       message <- paste0(
@@ -237,21 +221,116 @@ coxens <- function(
     if (convergence) break
   }
 
-  # Unscale the coefficients
   beta <- matrix(beta, nrow = n_features, ncol = n_groups + 1)
-  beta <- beta[, 1:n_groups]
-  beta[abs(beta) < control$eps] <- 0
-  beta <- cbind(beta, rowMeans(beta))
-  coefficients <- sweep(beta, 1, x_scale, `/`)
+  xi <- matrix(eta[local_indices, 1], nrow = n_features)
+  coefs_proc <- matrix(0, nrow = n_features, ncol = n_groups)
+  coefs_group <- matrix(0, nrow = n_features, ncol = n_groups)
+  for (i in 1:n_features) {
+    is_processed <- rep(FALSE, n_groups)
+    for (j in 1:n_groups) {
+      if (is_processed[j]) next
+      is_processed[j] <- TRUE
+      coefs_group[i, j] <- j
+      for (k in 1:n_groups) {
+        if (is_processed[k]) next
+        pos <- get_position(j, k, n_groups)
+        if (abs(xi[i, pos]) < control$eps) {
+          coefs_group[i, k] <- j
+          is_processed[k] <- TRUE
+        }
+      }
+    }
+    for (j in unique(coefs_group[i, ])) {
+      idx <- which(coefs_group[i, ] == j)
+      coefs_proc[i, idx] <- mean(beta[i, idx])
+    }
+  }
+  coefs <- coefs_proc
+  coefs[abs(coefs) < control$eps] <- 0
+
+  # Reassign the coefficients' group
+  n_total_groups <- 0
+  coefs_expanded <- c()
+  coefs_group <- matrix(0, nrow = n_features, ncol = n_groups)
+  for (j in 1:n_features) {
+    feature_groups <- as.factor(as.character(coefs[j, ]))
+    feature_levels <- levels(feature_groups)
+    for (k in seq_along(feature_levels)) {
+      idx <- feature_groups == feature_levels[k]
+      coefs_group[j, idx] <- k + n_total_groups
+    }
+    coefs_expanded <- c(coefs_expanded, as.numeric(feature_levels))
+    n_total_groups <- n_total_groups + length(feature_levels)
+  }
+  coefs_expanded <- as.matrix(coefs_expanded)
+  sparse_mark <- coefs_expanded == 0
+
+  # Group the features
+  x_grouped <- c()
+  for (k in 1:n_groups) {
+    idx <- group_idxs[[k]]
+    feature_map <- matrix(0, n_features, n_total_groups)
+    for (j in 1:n_features) {
+      feature_map[j, coefs_group[j, k]] <- 1
+    }
+    x_grouped_k <- x[idx, ] %*% feature_map
+    x_grouped <- rbind(x_grouped, x_grouped_k)
+  }
+  x_grouped <- as.data.frame(x_grouped)
+
+  # Calulate the variance-covariance matrix of non-sparse coefficients
+  x_grouped_sparse <- x_grouped[, !sparse_mark]
+  coefs_expanded_sparse <- coefs_expanded[!sparse_mark]
+  offset <- as.matrix(x_grouped_sparse) %*% coefs_expanded_sparse
+  n_nonzero <- sum(!sparse_mark)
+  grads <- c()
+  hessians <- c()
+  for (k in 1:n_groups) {
+    idx <- group_idxs[[k]]
+    ghs <- calc_grads_hessians(
+      offset[idx], x_grouped_sparse[idx, ], time[idx], status[idx]
+    )
+    grads <- rbind(grads, ghs$grads)
+    hessians <- rbind(hessians, ghs$hessians)
+  }
+  hess <- matrix(colSums(hessians), nrow = n_nonzero, ncol = n_nonzero)
+  cov_grad <- cov(grads) * n_samples / (n_samples - 1)
+
+  sigma_coefs <- c()
+  for (j in 1:n_features) {
+    coef_norm <- norm(matrix(coefs[j, ]), type = "e")
+    coef_j_nonzero <- coefs_group[j, abs(coefs[j, ]) > 0]
+    coef_j_center <- beta[j, n_groups + 1]
+    coef_idx <- unique(coef_j_nonzero)
+    coef_j_sparse <- coefs[j, coef_idx]
+    # TODO: pair-wise group sparsity needs to be implemented
+    sigma_coefs <- c(
+      sigma_coefs,
+      penalty_grad(
+        coef_norm, penalty, lambda1 * sqrt(n_groups), gamma
+      ) / coef_norm + penalty_grad(
+        coef_j_sparse - coef_j_center, penalty, lambda2 * alpha, gamma
+      ) / abs(coef_j_sparse)
+    )
+  }
+  sigma_coefs <- diag(sigma_coefs * n_samples)
+  hess_inv <- solve(hess + sigma_coefs)
+  var <- hess_inv %*% cov_grad %*% hess_inv
+
+  # Unscale the coefficients
+  coefficients <- cbind(coefs, beta[, n_groups + 1])
+  coefficients[abs(coefficients) < control$eps] <- 0
+  coefficients <- sweep(coefficients, 1, x_scale, `/`)
   colnames(coefficients) <- c(group_levels, "Center")
   rownames(coefficients) <- colnames(x)
 
   # Return the fitted model
   fit <- list(
-    coefficients = coefficients, group_levels = group_levels, logLik = -loss,
-    iter = n_iterations, message = message, penalty = penalty,
-    lambda1 = lambda1, lambda2 = lambda2, alpha = alpha,
-    gamma = gamma, formula = formula, call = match.call()
+    coefficients = coefficients, coefficients_group = coefs_group,
+    coefficients_expanded = coefs_expanded, var = var,
+    group_levels = group_levels, logLik = -loss, iter = n_iterations,
+    message = message, penalty = penalty, lambda1 = lambda1, lambda2 = lambda2,
+    alpha = alpha, gamma = gamma, formula = formula, call = match.call()
   )
   class(fit) <- "coxens"
   return(fit)

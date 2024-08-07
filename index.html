@@ -74,9 +74,9 @@
 </h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/SignorinoY/survtrans" class="external-link">survtrans</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Loading required package: progress</span></span>
-<span><span class="co">#&gt; Loading required package: survode</span></span>
-<span><span class="co">#&gt; Loading required package: survival</span></span></code></pre></div>
+<span><span class="co">#&gt; 载入需要的程序包：progress</span></span>
+<span><span class="co">#&gt; 载入需要的程序包：survode</span></span>
+<span><span class="co">#&gt; 载入需要的程序包：survival</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">formula</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">.</span> <span class="op">-</span> <span class="va">group</span> <span class="op">-</span> <span class="va">id</span></span>
@@ -140,12 +140,14 @@
 <span>  lambda1 <span class="op">=</span> <span class="fl">0.02</span>, lambda2 <span class="op">=</span> <span class="fl">0.006</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">fit</span><span class="op">$</span><span class="va">coefficients</span><span class="op">[</span>, <span class="fl">10</span><span class="op">]</span></span>
-<span><span class="co">#&gt;         X1         X2         X3         X4         X5         X6         X7 </span></span>
-<span><span class="co">#&gt; -0.6590562 -0.6395145  0.5569259  0.5485407  0.0000000  0.0000000  0.0000000 </span></span>
-<span><span class="co">#&gt;         X8         X9        X10        X11        X12        X13        X14 </span></span>
-<span><span class="co">#&gt;  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000 </span></span>
-<span><span class="co">#&gt;        X15        X16        X17        X18        X19        X20 </span></span>
-<span><span class="co">#&gt;  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000</span></span></code></pre></div>
+<span><span class="co">#&gt;          X1          X2          X3          X4          X5          X6 </span></span>
+<span><span class="co">#&gt; -0.60069568 -0.57103767 -0.02291781  0.00000000  0.00000000  0.00000000 </span></span>
+<span><span class="co">#&gt;          X7          X8          X9         X10         X11         X12 </span></span>
+<span><span class="co">#&gt;  0.00000000  0.00000000  0.00000000  0.00000000  0.00000000  0.00000000 </span></span>
+<span><span class="co">#&gt;         X13         X14         X15         X16         X17         X18 </span></span>
+<span><span class="co">#&gt;  0.00000000  0.00000000  0.00000000  0.00000000  0.00000000  0.00000000 </span></span>
+<span><span class="co">#&gt;         X19         X20 </span></span>
+<span><span class="co">#&gt;  0.00000000  0.00000000</span></span></code></pre></div>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Multi-task learning</span></span>

@@ -30,12 +30,12 @@
 #' library(survtrans)
 #' formula <- Surv(time, status) ~ . - group - id
 #' group <- as.factor(sim2$group)
-#' fit <- coxens(
+#' fit <- coxens1(
 #'   formula, sim2, group,
-#'   lambda1 = 0.02, lambda2 = 0.005, penalty = "SCAD"
+#'   lambda1 = 0.002, lambda2 = 0.005, penalty = "SCAD"
 #' )
 #' fit$coefficients
-coxens <- function(
+coxens1 <- function(
     formula, data, group, lambda1 = 0, lambda2 = 0, alpha = 0.5,
     penalty = c("lasso", "MCP", "SCAD"),
     gamma = switch(penalty,
@@ -110,17 +110,7 @@ coxens <- function(
   e[cbind(seq_len(nrow(idx)), idx[, 1])] <- 1
   e[cbind(seq_len(nrow(idx)), idx[, 2])] <- -1
 
-  contr_sum <- Matrix::Matrix(
-    cbind(
-      kronecker(
-        matrix(1, nrow = 1, ncol = n_groups),
-        diag(n_features)
-      ),
-      0 * diag(n_features)
-    ),
-    sparse = TRUE
-  )
-  contr_penalty <- rbind(
+  contr <- rbind(
     cbind(
       Matrix::Diagonal(n_features * n_groups),
       kronecker(matrix(1, n_groups, 1), diag(n_features))
@@ -134,13 +124,12 @@ coxens <- function(
       matrix(0, n_groups * (n_groups - 1) * n_features / 2, n_features)
     )
   )
-  n_constraints <- nrow(contr_penalty)
-  contr_sum2 <- Matrix::crossprod(contr_sum)
-  contr_penalty2 <- Matrix::crossprod(contr_penalty)
+  n_constraints <- nrow(contr)
+  contr2 <- Matrix::crossprod(contr)
 
-  sparse_idx <- 1:(n_groups * n_features)
-  global_idx <- (n_groups * n_features + 1):(2 * n_groups * n_features)
-  local_idx <- (2 * n_groups * n_features + 1):n_constraints
+  sparse_idx <- 1:(n_features * n_groups)
+  global_idx <- (n_features * n_groups + 1):(2 * n_features * n_groups)
+  local_idx <- (n_features * n_groups * 2 + 1):n_constraints
 
   x_tilde <- cbind(
     Matrix::bdiag(lapply(group_idxs, function(idx) x[idx, ])),
@@ -150,8 +139,7 @@ coxens <- function(
   status_tilde <- unlist(lapply(group_idxs, function(idx) status[idx]))
 
   alpha <- Matrix::Matrix(0, n_constraints, 1, sparse = TRUE)
-  mu <- Matrix::Matrix(0, n_features, 1, sparse = TRUE)
-  nu <- Matrix::Matrix(0, n_constraints, 1, sparse = TRUE)
+  mu <- Matrix::Matrix(0, n_constraints, 1, sparse = TRUE)
   vartheta <- 1
 
   repeat {
@@ -175,15 +163,14 @@ coxens <- function(
     xwx <- Matrix::crossprod(x_tilde, w_tilde %*% x_tilde) / n_samples
     xwz <- Matrix::crossprod(x_tilde, w_tilde %*% z) / n_samples
     theta <- Matrix::solve(
-      xwx + vartheta * (contr_sum2 + contr_penalty2),
-      xwz - Matrix::crossprod(contr_sum, mu) +
-        vartheta * Matrix::crossprod(contr_penalty, alpha - nu / vartheta),
+      xwx + vartheta * contr2,
+      xwz + vartheta * Matrix::crossprod(contr, alpha - mu / vartheta),
       sparse = TRUE
     )
 
     # Update the auxiliary variables
     alpha_old <- alpha
-    alpha <- contr_penalty %*% theta + nu / vartheta
+    alpha <- contr %*% theta + mu / vartheta
 
     ## Group Sparsity
     alpha[sparse_idx] <- vapply(sparse_idx, function(idx) {
@@ -197,14 +184,12 @@ coxens <- function(
     alpha[local_idx] <- vapply(local_idx, function(idx) {
       threshold(alpha[idx], vartheta, penalty, lambda3, gamma)
     }, numeric(1))
-    mu <- mu + vartheta * contr_sum %*% theta
-    nu <- nu + vartheta * (contr_penalty %*% theta - alpha)
+    mu <- mu + vartheta * (contr %*% theta - alpha)
 
     # Update the penalty parameter
-    r <- Matrix::norm(contr_penalty %*% theta - alpha, type = "I") +
-      Matrix::norm(contr_sum %*% theta, type = "I")
+    r <- Matrix::norm(contr %*% theta - alpha, type = "I")
     s <- Matrix::norm(
-      Matrix::crossprod(contr_penalty, alpha - alpha_old),
+      Matrix::crossprod(contr, alpha - alpha_old),
       type = "I"
     )
     if (r > 10 * s) vartheta <- vartheta * rho
@@ -239,8 +224,10 @@ coxens <- function(
     if (convergence) break
   }
 
+  # Recover the coefficients
   theta <- matrix(theta, nrow = n_features, ncol = n_groups + 1)
   alpha_local <- matrix(alpha[local_idx, 1], nrow = n_features)
+
   eta <- matrix(0, nrow = n_features, ncol = n_groups)
   eta_idx <- matrix(0, nrow = n_features, ncol = n_groups)
   for (i in 1:n_features) {
@@ -270,8 +257,8 @@ coxens <- function(
 
   # Reassign the coefficients' group
   n_total_groups <- 0
-  eta_expanded <- c()
   eta_idx <- matrix(0, nrow = n_features, ncol = n_groups)
+  eta_expanded <- c()
   for (j in 1:n_features) {
     feature_groups <- as.factor(as.character(eta[j, ]))
     feature_levels <- levels(feature_groups)
@@ -292,8 +279,7 @@ coxens <- function(
     for (j in 1:n_features) {
       feature_map[j, eta_idx[j, k]] <- 1
     }
-    z_k <- x[idx, ] %*% feature_map
-    z <- rbind(z, z_k)
+    z <- rbind(z, x[idx, ] %*% feature_map)
   }
 
   # Calulate the variance-covariance matrix of non-sparse coefficients

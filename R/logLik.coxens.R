@@ -16,8 +16,10 @@ logLik.coxens <- function(object, data, group, ...) {
   group_levels <- object$group_levels
   n_groups <- length(group_levels)
 
-  beta <- object$coefficients
-  beta <- beta * x_scale
+  theta <- object$coefficients
+  theta <- theta * x_scale
+
+  beta <- theta[, 1:n_groups] + theta[, (n_groups + 1)]
 
   offset <- numeric(nrow(x))
   for (k in 1:n_groups) {

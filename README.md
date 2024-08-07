@@ -30,9 +30,9 @@ This is a basic example which shows you how to solve a common problem:
 
 ``` r
 library(survtrans)
-#> Loading required package: progress
-#> Loading required package: survode
-#> Loading required package: survival
+#> 载入需要的程序包：progress
+#> 载入需要的程序包：survode
+#> 载入需要的程序包：survival
 ```
 
 ``` r
@@ -106,12 +106,14 @@ fit <- coxens(
   lambda1 = 0.02, lambda2 = 0.006, penalty = "SCAD"
 )
 fit$coefficients[, 10]
-#>         X1         X2         X3         X4         X5         X6         X7 
-#> -0.6590562 -0.6395145  0.5569259  0.5485407  0.0000000  0.0000000  0.0000000 
-#>         X8         X9        X10        X11        X12        X13        X14 
-#>  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000 
-#>        X15        X16        X17        X18        X19        X20 
-#>  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000
+#>          X1          X2          X3          X4          X5          X6 
+#> -0.60069568 -0.57103767 -0.02291781  0.00000000  0.00000000  0.00000000 
+#>          X7          X8          X9         X10         X11         X12 
+#>  0.00000000  0.00000000  0.00000000  0.00000000  0.00000000  0.00000000 
+#>         X13         X14         X15         X16         X17         X18 
+#>  0.00000000  0.00000000  0.00000000  0.00000000  0.00000000  0.00000000 
+#>         X19         X20 
+#>  0.00000000  0.00000000
 ```
 
 ``` r

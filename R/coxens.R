@@ -284,7 +284,7 @@ coxens <- function(
   }
   theta_expanded <- as.matrix(c(eta_expanded, beta))
 
-  # Group the features
+  # Calulate the variance-covariance matrix of non-sparse coefficients
   z <- c()
   for (k in 1:n_groups) {
     idx <- group_idxs[[k]]
@@ -295,29 +295,30 @@ coxens <- function(
     z_k <- x[idx, ] %*% feature_map
     z <- rbind(z, z_k)
   }
-
-  # Calulate the variance-covariance matrix of non-sparse coefficients
   z1 <- as.matrix(cbind(z[, eta_expanded != 0], x[, beta != 0]))
   theta1 <- c(
     eta_expanded[eta_expanded != 0], beta[beta != 0]
   )
-  offset <- z1 %*% theta1
   n_nonzero <- length(theta1)
-  grads <- c()
-  hessians <- c()
-  for (k in 1:n_groups) {
-    idx <- group_idxs[[k]]
-    ghs <- calc_grads_hessians(
-      offset[idx], z1[idx, ], time[idx], status[idx]
-    )
-    grads <- rbind(grads, ghs$grads)
-    hessians <- rbind(hessians, ghs$hessians)
+  if (n_nonzero > 0) {
+    offset <- z1 %*% theta1
+    grads <- c()
+    hessians <- c()
+    for (k in 1:n_groups) {
+      idx <- group_idxs[[k]]
+      ghs <- calc_grads_hessians(
+        offset[idx], z1[idx, ], time[idx], status[idx]
+      )
+      grads <- rbind(grads, ghs$grads)
+      hessians <- rbind(hessians, ghs$hessians)
+    }
+    hess <- matrix(colSums(hessians), nrow = n_nonzero, ncol = n_nonzero)
+    cov_grad <- cov(grads) * n_samples / (n_samples - 1)
+    hess_inv <- solve(hess)
+    var <- hess_inv %*% cov_grad %*% hess_inv
+  } else {
+    var <- NULL
   }
-  hess <- matrix(colSums(hessians), nrow = n_nonzero, ncol = n_nonzero)
-  cov_grad <- cov(grads) * n_samples / (n_samples - 1)
-
-  hess_inv <- solve(hess)
-  var <- hess_inv %*% cov_grad %*% hess_inv
 
   # Unscale the coefficients
   coefficients <- sweep(cbind(eta, beta), 1, x_scale, `/`)

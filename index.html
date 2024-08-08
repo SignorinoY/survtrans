@@ -95,13 +95,49 @@
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Group learning</span></span>
 <span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/coxgrp.html">coxgrp</a></span><span class="op">(</span><span class="va">formula</span>, <span class="va">sim2</span>, <span class="va">group</span>, lambda <span class="op">=</span> <span class="fl">0.02</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span><span class="op">)</span></span>
-<span><span class="va">fit</span><span class="op">$</span><span class="va">coefficients</span><span class="op">[</span>, <span class="fl">10</span><span class="op">]</span></span>
-<span><span class="co">#&gt;         X1         X2         X3         X4         X5         X6         X7 </span></span>
-<span><span class="co">#&gt; -0.6895172 -0.6184747  0.4903296  0.9018439  0.0000000  0.0000000  0.0000000 </span></span>
-<span><span class="co">#&gt;         X8         X9        X10        X11        X12        X13        X14 </span></span>
-<span><span class="co">#&gt;  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000 </span></span>
-<span><span class="co">#&gt;        X15        X16        X17        X18        X19        X20 </span></span>
-<span><span class="co">#&gt;  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000</span></span></code></pre></div>
+<span><span class="va">fit</span><span class="op">$</span><span class="va">coefficients</span></span>
+<span><span class="co">#&gt;             1          2         3          4         5          6         7</span></span>
+<span><span class="co">#&gt; X1  0.5394258 -0.7628322 0.7133059 -0.5241018 0.4686284 -0.6207682 0.5623104</span></span>
+<span><span class="co">#&gt; X2  0.5845159 -0.5714762 0.7693320 -0.5994700 0.4725933 -0.7439499 0.3209021</span></span>
+<span><span class="co">#&gt; X3  0.4562600  0.6392264 0.8669619  0.4704888 0.5578964  0.4915979 0.7639459</span></span>
+<span><span class="co">#&gt; X4  0.3481866  0.7535935 0.6419702  0.4545768 0.5752310  0.5641411 0.5731811</span></span>
+<span><span class="co">#&gt; X5  0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X6  0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X7  0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X8  0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X9  0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X10 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X11 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X12 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X13 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X14 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X15 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X16 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X17 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X18 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X19 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X20 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt;              8         9         10</span></span>
+<span><span class="co">#&gt; X1  -0.7321618 0.5783262 -0.6895172</span></span>
+<span><span class="co">#&gt; X2  -0.6494250 0.5948016 -0.6184747</span></span>
+<span><span class="co">#&gt; X3   0.5293477 0.4676483  0.4903296</span></span>
+<span><span class="co">#&gt; X4   0.4680858 0.3319988  0.9018439</span></span>
+<span><span class="co">#&gt; X5   0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X6   0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X7   0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X8   0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X9   0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X10  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X11  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X12  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X13  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X14  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X15  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X16  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X17  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X18  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X19  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X20  0.0000000 0.0000000  0.0000000</span></span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Sub-group learning</span></span>
@@ -109,13 +145,49 @@
 <span>  <span class="va">formula</span>, <span class="va">sim2</span>, <span class="va">group</span>,</span>
 <span>  lambda1 <span class="op">=</span> <span class="fl">0.07</span>, lambda2 <span class="op">=</span> <span class="fl">0.05</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">fit</span><span class="op">$</span><span class="va">coefficients</span><span class="op">[</span>, <span class="fl">10</span><span class="op">]</span></span>
-<span><span class="co">#&gt;         X1         X2         X3         X4         X5         X6         X7 </span></span>
-<span><span class="co">#&gt; -0.6600533 -0.6405885  0.5567368  0.5539575  0.0000000  0.0000000  0.0000000 </span></span>
-<span><span class="co">#&gt;         X8         X9        X10        X11        X12        X13        X14 </span></span>
-<span><span class="co">#&gt;  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000 </span></span>
-<span><span class="co">#&gt;        X15        X16        X17        X18        X19        X20 </span></span>
-<span><span class="co">#&gt;  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000</span></span></code></pre></div>
+<span><span class="va">fit</span><span class="op">$</span><span class="va">coefficients</span></span>
+<span><span class="co">#&gt;             1          2         3          4         5          6         7</span></span>
+<span><span class="co">#&gt; X1  0.5346558 -0.6600533 0.5346558 -0.6600533 0.5346558 -0.6600533 0.5346558</span></span>
+<span><span class="co">#&gt; X2  0.5089769 -0.6405885 0.5089769 -0.6405885 0.5089769 -0.6405885 0.5089769</span></span>
+<span><span class="co">#&gt; X3  0.5567368  0.5567368 0.5567368  0.5567368 0.5567368  0.5567368 0.5567368</span></span>
+<span><span class="co">#&gt; X4  0.5539575  0.5539575 0.5539575  0.5539575 0.5539575  0.5539575 0.5539575</span></span>
+<span><span class="co">#&gt; X5  0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X6  0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X7  0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X8  0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X9  0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X10 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X11 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X12 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X13 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X14 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X15 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X16 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X17 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X18 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X19 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt; X20 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000</span></span>
+<span><span class="co">#&gt;              8         9         10</span></span>
+<span><span class="co">#&gt; X1  -0.6600533 0.5346558 -0.6600533</span></span>
+<span><span class="co">#&gt; X2  -0.6405885 0.5089769 -0.6405885</span></span>
+<span><span class="co">#&gt; X3   0.5567368 0.5567368  0.5567368</span></span>
+<span><span class="co">#&gt; X4   0.5539575 0.5539575  0.5539575</span></span>
+<span><span class="co">#&gt; X5   0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X6   0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X7   0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X8   0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X9   0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X10  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X11  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X12  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X13  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X14  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X15  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X16  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X17  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X18  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X19  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X20  0.0000000 0.0000000  0.0000000</span></span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Transfer learning</span></span>
@@ -137,17 +209,51 @@
 <span><span class="co"># Ensemble learning</span></span>
 <span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/coxens.html">coxens</a></span><span class="op">(</span></span>
 <span>  <span class="va">formula</span>, <span class="va">sim2</span>, <span class="va">group</span>,</span>
-<span>  lambda1 <span class="op">=</span> <span class="fl">0.02</span>, lambda2 <span class="op">=</span> <span class="fl">0.006</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span>
+<span>  lambda1 <span class="op">=</span> <span class="fl">0.02</span>, lambda2 <span class="op">=</span> <span class="fl">0.002</span>, lambda3 <span class="op">=</span> <span class="fl">0.002</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">fit</span><span class="op">$</span><span class="va">coefficients</span><span class="op">[</span>, <span class="fl">10</span><span class="op">]</span></span>
-<span><span class="co">#&gt;          X1          X2          X3          X4          X5          X6 </span></span>
-<span><span class="co">#&gt; -0.60069568 -0.57103767 -0.02291781  0.00000000  0.00000000  0.00000000 </span></span>
-<span><span class="co">#&gt;          X7          X8          X9         X10         X11         X12 </span></span>
-<span><span class="co">#&gt;  0.00000000  0.00000000  0.00000000  0.00000000  0.00000000  0.00000000 </span></span>
-<span><span class="co">#&gt;         X13         X14         X15         X16         X17         X18 </span></span>
-<span><span class="co">#&gt;  0.00000000  0.00000000  0.00000000  0.00000000  0.00000000  0.00000000 </span></span>
-<span><span class="co">#&gt;         X19         X20 </span></span>
-<span><span class="co">#&gt;  0.00000000  0.00000000</span></span></code></pre></div>
+<span><span class="va">fit</span><span class="op">$</span><span class="va">coefficients</span></span>
+<span><span class="co">#&gt;               1           2         3           4           5           6</span></span>
+<span><span class="co">#&gt; X1   0.61030744 -0.61030744 0.6103074 -0.61030744  0.61030744 -0.61030744</span></span>
+<span><span class="co">#&gt; X2   0.64239028 -0.48606504 0.7553069 -0.60320251  0.49628990 -0.70900422</span></span>
+<span><span class="co">#&gt; X3  -0.04221492 -0.04221492 0.2245804 -0.04221492 -0.04221492 -0.04221492</span></span>
+<span><span class="co">#&gt; X4   0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span></span>
+<span><span class="co">#&gt; X5   0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span></span>
+<span><span class="co">#&gt; X6   0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span></span>
+<span><span class="co">#&gt; X7   0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span></span>
+<span><span class="co">#&gt; X8   0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span></span>
+<span><span class="co">#&gt; X9   0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span></span>
+<span><span class="co">#&gt; X10  0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span></span>
+<span><span class="co">#&gt; X11  0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span></span>
+<span><span class="co">#&gt; X12  0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span></span>
+<span><span class="co">#&gt; X13  0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span></span>
+<span><span class="co">#&gt; X14  0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span></span>
+<span><span class="co">#&gt; X15  0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span></span>
+<span><span class="co">#&gt; X16  0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span></span>
+<span><span class="co">#&gt; X17  0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span></span>
+<span><span class="co">#&gt; X18  0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span></span>
+<span><span class="co">#&gt; X19  0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span></span>
+<span><span class="co">#&gt; X20  0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span></span>
+<span><span class="co">#&gt;             7           8           9         10      Center</span></span>
+<span><span class="co">#&gt; X1  0.6103074 -0.61030744  0.61030744 -0.6103074 -0.04052748</span></span>
+<span><span class="co">#&gt; X2  0.3639090 -0.58444928  0.64239028 -0.5175653 -0.04688340</span></span>
+<span><span class="co">#&gt; X3  0.2245804 -0.04221492 -0.04221492 -0.1536563  0.55302966</span></span>
+<span><span class="co">#&gt; X4  0.0000000  0.00000000  0.00000000  0.0000000  0.55696139</span></span>
+<span><span class="co">#&gt; X5  0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span></span>
+<span><span class="co">#&gt; X6  0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span></span>
+<span><span class="co">#&gt; X7  0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span></span>
+<span><span class="co">#&gt; X8  0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span></span>
+<span><span class="co">#&gt; X9  0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span></span>
+<span><span class="co">#&gt; X10 0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span></span>
+<span><span class="co">#&gt; X11 0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span></span>
+<span><span class="co">#&gt; X12 0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span></span>
+<span><span class="co">#&gt; X13 0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span></span>
+<span><span class="co">#&gt; X14 0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span></span>
+<span><span class="co">#&gt; X15 0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span></span>
+<span><span class="co">#&gt; X16 0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span></span>
+<span><span class="co">#&gt; X17 0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span></span>
+<span><span class="co">#&gt; X18 0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span></span>
+<span><span class="co">#&gt; X19 0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span></span>
+<span><span class="co">#&gt; X20 0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span></span></code></pre></div>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Multi-task learning</span></span>
@@ -155,13 +261,49 @@
 <span>  <span class="va">formula</span>, <span class="va">sim2</span>, <span class="va">group</span>,</span>
 <span>  lambda1 <span class="op">=</span> <span class="fl">0.06</span>, lambda2 <span class="op">=</span> <span class="fl">0.06</span>, lambda3 <span class="op">=</span> <span class="fl">0.04</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">fit</span><span class="op">$</span><span class="va">beta</span> <span class="op">+</span> <span class="va">fit</span><span class="op">$</span><span class="va">eta</span><span class="op">[</span>, <span class="fl">10</span><span class="op">]</span></span>
-<span><span class="co">#&gt;         X1         X2         X3         X4         X5         X6         X7 </span></span>
-<span><span class="co">#&gt; -0.5915504 -0.5672794  0.5561607  0.5477745  0.0000000  0.0000000  0.0000000 </span></span>
-<span><span class="co">#&gt;         X8         X9        X10        X11        X12        X13        X14 </span></span>
-<span><span class="co">#&gt;  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000 </span></span>
-<span><span class="co">#&gt;        X15        X16        X17        X18        X19        X20 </span></span>
-<span><span class="co">#&gt;  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000  0.0000000</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">beta</span>, <span class="va">fit</span><span class="op">$</span><span class="va">eta</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                       1          2         3          4         5          6</span></span>
+<span><span class="co">#&gt; X1  0.0000000 0.5915504 -0.5915504 0.5915504 -0.5915504 0.5915504 -0.5915504</span></span>
+<span><span class="co">#&gt; X2  0.0000000 0.5748578 -0.5672794 0.5748578 -0.5672794 0.5748578 -0.5672794</span></span>
+<span><span class="co">#&gt; X3  0.5561607 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X4  0.5477745 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X5  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X6  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X7  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X8  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X9  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X10 0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X11 0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X12 0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X13 0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X14 0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X15 0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X16 0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X17 0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X18 0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X19 0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X20 0.0000000 0.0000000  0.0000000 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt;             7          8         9         10</span></span>
+<span><span class="co">#&gt; X1  0.5915504 -0.5915504 0.5915504 -0.5915504</span></span>
+<span><span class="co">#&gt; X2  0.5369661 -0.5672794 0.5748578 -0.5672794</span></span>
+<span><span class="co">#&gt; X3  0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X4  0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X5  0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X6  0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X7  0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X8  0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X9  0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X10 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X11 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X12 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X13 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X14 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X15 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X16 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X17 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X18 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X19 0.0000000  0.0000000 0.0000000  0.0000000</span></span>
+<span><span class="co">#&gt; X20 0.0000000  0.0000000 0.0000000  0.0000000</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">

@@ -11,7 +11,7 @@ coxens1(
   group,
   lambda1 = 0,
   lambda2 = 0,
-  alpha = 0.5,
+  lambda3 = 0,
   penalty = c("lasso", "MCP", "SCAD"),
   gamma = switch(penalty, SCAD = 3.7, MCP = 3, 1),
   rho = 2,
@@ -32,12 +32,11 @@ returned by the \code{\link{Surv}} function.}
 \item{lambda1}{a non-negative value specifying the sparse penalty
 parameter. The default is 0.}
 
-\item{lambda2}{a non-negative value specifying the transfer penalty
+\item{lambda2}{a non-negative value specifying the global biased penalty
 parameter. The default is 0.}
 
-\item{alpha}{a value in (0, 1) specifying the proportion of the penalty
-applied to the transfer coefficients between global and local models. The
-default is 0.5.}
+\item{lambda3}{a non-negative value specifying the local biased penalty
+parameter. The default is 0.}
 
 \item{penalty}{a character string specifying the penalty function.
 The default is "lasso". Other options are "MCP" and "SCAD".}
@@ -70,7 +69,7 @@ formula <- Surv(time, status) ~ . - group - id
 group <- as.factor(sim2$group)
 fit <- coxens1(
   formula, sim2, group,
-  lambda1 = 0.002, lambda2 = 0.005, penalty = "SCAD"
+  lambda1 = 0.002, lambda2 = 0.002, lambda3 = 0.002, penalty = "SCAD"
 )
 fit$coefficients
 }

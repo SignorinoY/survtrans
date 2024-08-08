@@ -49,14 +49,14 @@ fit$coefficients
 
 # Group learning
 fit <- coxgrp(formula, sim2, group, lambda = 0.02, penalty = "SCAD")
-fit$coefficients[, 10]
+fit$coefficients
 
 # Sub-group learning
 fit <- coxsg(
   formula, sim2, group,
   lambda1 = 0.07, lambda2 = 0.05, penalty = "SCAD"
 )
-fit$coefficients[, 10]
+fit$coefficients
 
 # Transfer learning
 fit <- coxtl(
@@ -68,16 +68,16 @@ fit$beta
 # Ensemble learning
 fit <- coxens(
   formula, sim2, group,
-  lambda1 = 0.02, lambda2 = 0.006, penalty = "SCAD"
+  lambda1 = 0.02, lambda2 = 0.002, lambda3 = 0.002, penalty = "SCAD"
 )
-fit$coefficients[, 10]
+fit$coefficients
 
 # Multi-task learning
 fit <- coxmtl(
   formula, sim2, group,
   lambda1 = 0.06, lambda2 = 0.06, lambda3 = 0.04, penalty = "SCAD"
 )
-fit$beta + fit$eta[, 10]
+cbind(fit$beta, fit$eta)
 ```
 
 ## Code of Conduct

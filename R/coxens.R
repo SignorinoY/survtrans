@@ -7,11 +7,10 @@
 #' @param group a factor specifying the group of each sample.
 #' @param lambda1 a non-negative value specifying the sparse penalty
 #' parameter. The default is 0.
-#' @param lambda2 a non-negative value specifying the transfer penalty
+#' @param lambda2 a non-negative value specifying the global biased penalty
 #' parameter. The default is 0.
-#' @param alpha a value in (0, 1) specifying the proportion of the penalty
-#' applied to the transfer coefficients between global and local models. The
-#' default is 0.5.
+#' @param lambda3 a non-negative value specifying the local biased penalty
+#' parameter. The default is 0.
 #' @param penalty a character string specifying the penalty function.
 #' The default is "lasso". Other options are "MCP" and "SCAD".
 #' @param gamma a non-negative value specifying the penalty parameter. The
@@ -32,11 +31,11 @@
 #' group <- as.factor(sim2$group)
 #' fit <- coxens(
 #'   formula, sim2, group,
-#'   lambda1 = 0.02, lambda2 = 0.005, penalty = "SCAD"
+#'   lambda1 = 0.02, lambda2 = 0.002, lambda3 = 0.002, penalty = "SCAD"
 #' )
 #' fit$coefficients
 coxens <- function(
-    formula, data, group, lambda1 = 0, lambda2 = 0, alpha = 0.5,
+    formula, data, group, lambda1 = 0, lambda2 = 0, lambda3 = 0,
     penalty = c("lasso", "MCP", "SCAD"),
     gamma = switch(penalty,
       SCAD = 3.7,
@@ -69,10 +68,6 @@ coxens <- function(
 
   ## Check the penalty argument
   penalty <- match.arg(penalty, choices = c("lasso", "MCP", "SCAD"))
-  lambda2_ <- lambda2
-  alpha_ <- alpha
-  lambda2 <- lambda2_ * alpha_
-  lambda3 <- lambda2_ * (1 - alpha_)
 
   ## Check the init argument
   if (!missing(init) && length(init) > 0) {
@@ -330,8 +325,8 @@ coxens <- function(
     coefficients = coefficients, coefficients_group = eta_idx,
     coefficients_expanded = theta_expanded, var = var,
     group_levels = group_levels, logLik = -loss, iter = n_iterations,
-    message = message, penalty = penalty, lambda1 = lambda1, lambda2 = lambda2_,
-    alpha = alpha_, gamma = gamma, formula = formula, call = match.call()
+    message = message, penalty = penalty, lambda1 = lambda1, lambda2 = lambda2,
+    lambda3 = lambda3, gamma = gamma, formula = formula, call = match.call()
   )
   class(fit) <- "coxens"
   return(fit)

@@ -35,6 +35,7 @@ calc_lambda_max <- function(formula, data, group, offset) {
     } else {
       xwr <- 0
     }
+    xwr[is.na(xwr)] <- 0
     lambda_max <- max(lambda_max, max(abs(xwr)))
   }
   return(lambda_max)

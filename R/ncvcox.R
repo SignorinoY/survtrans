@@ -88,7 +88,10 @@ ncvcox <- function(
 
   offset <- numeric(n_samples)
   w <- numeric(n_samples)
-  z <- numeric(n_samples)
+  r <- numeric(n_samples)
+
+  # Pre-calculate the quantities
+  x2 <- x**2
 
   repeat {
     n_iterations <- n_iterations + 1
@@ -102,15 +105,23 @@ ncvcox <- function(
         offset = offset[idx], time = time[idx], status = status[idx]
       )
       w[idx] <- wls$weights
-      z[idx] <- wls$residuals
+      r[idx] <- wls$residuals
     }
 
     # Update coefficients by cyclic coordinate descent
-    features_idx <- sample(seq_len(n_features), n_features, FALSE)
-    for (j in features_idx) {
-      v <- mean(w * x[, j]**2)
-      r <- mean(x[, j] * w * z) + coefficients[j] * v
-      coefficients[j] <- penalty_solution(r, v, penalty, lambda, gamma)
+    xw <- x * w
+    xwx <- colMeans(w * x2)
+    for (i in seq_len(control$inner.maxit)) {
+      coefficients_old <- coefficients
+      delta_max <- 0
+      for (j in seq_len(n_features)) {
+        xwr <- mean(xw[, j] * r)
+        coefficients[j] <- penalty_solution(xwr, xwx[j], penalty, lambda, gamma)
+        delta <- coefficients[j] - coefficients_old[j]
+        r <- r - x[, j] * delta
+        delta_max <- max(delta_max, abs(delta))
+      }
+      if (delta_max < control$inner.eps) break
     }
 
     # Check the convergence
@@ -146,6 +157,7 @@ ncvcox <- function(
   }
 
   # Unstandardize the coefficients
+  coefficients[abs(coefficients) < control$eps] <- 0
   coefficients <- coefficients / x_scale
   names(coefficients) <- colnames(x)
 

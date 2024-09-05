@@ -59,12 +59,15 @@ cv_ncvcox <- function(
   lambdas <- exp(seq(log(lambda_max), log(lambda_min), length.out = nlambdas))
 
   coefs <- matrix(0, nrow = nlambdas, ncol = n_features)
+  init <- numeric(n_features)
   for (i in seq_along(lambdas)) {
-    coefs[i, ] <- ncvcox(
+    fit <- ncvcox(
       formula, data, group, offset,
       lambda = lambdas[i], penalty = penalty,
-      gamma = gamma, control = control, ...
-    )$coefficients
+      gamma = gamma, init = init, control = control, ...
+    )
+    init <- fit$coefficients
+    coefs[i, ] <- fit$coefficients
   }
   colnames(coefs) <- colnames(x)
 

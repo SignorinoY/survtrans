@@ -146,7 +146,7 @@ coxens1 <- function(
     for (k in 1:n_groups) {
       idx <- n_passes + seq_len(length(group_idxs[[k]]))
       n_passes <- n_passes + length(group_idxs[[k]])
-      wls <- calc_weights_residuals(
+      wls <- approx_likelihood(
         offset = offset[idx], time = time_tilde[idx], status = status_tilde[idx]
       )
       w[idx] <- wls$weights

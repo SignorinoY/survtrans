@@ -103,7 +103,7 @@ coxgrp <- function(
     # Calculate the weights and residuals
     for (k in 1:n_groups) {
       idx <- group_idxs[[k]]
-      wls <- calc_weights_residuals(
+      wls <- approx_likelihood(
         offset = offset[idx], time = time[idx], status = status[idx]
       )
       w[idx] <- wls$weights

@@ -14,6 +14,8 @@
 #' @param lambda_min_ratio a numeric value specifying the minimum lambda value
 #' as a fraction of lambda_max.
 #' @param seed an integer specifying the random seed.
+#' @param parallel a logical value specifying whether to perform the
+#' cross-validation in parallel. Default is \code{FALSE}.
 #' @param control Object of class \link{survtrans_control} containing
 #' control parameters for the fitting algorithm. Default is
 #' \code{survtrans_control(...)}.
@@ -25,7 +27,8 @@
 #' formula <- Surv(time, status) ~ . - group - id
 #' group <- as.factor(sim1$group)
 #' cv_fit <- cv_ncvcox(
-#'  formula, sim1[sim1$group == 1, ], penalty = "SCAD"
+#'   formula, sim1[sim1$group == 1, ],
+#'   penalty = "SCAD"
 #' )
 #' coef(cv_fit)
 cv_ncvcox <- function(
@@ -35,19 +38,16 @@ cv_ncvcox <- function(
       MCP = 3,
       1
     ), nfolds = 10, nlambdas = 100, lambda_min_ratio = NULL,
-    seed = 0, control, ...) {
-  set.seed(seed)
-  penalty <- match.arg(penalty)
-
+    seed = 0, parallel = FALSE, control, ...) {
   # Properties of the data
   x <- model.matrix(formula, data)
-  x <- x[, -1] # Remove the intercept column
   n_samples <- nrow(data)
-  n_features <- ncol(x)
+  n_features <- ncol(x) - 1
 
   # Check the arguments
   if (missing(group)) group <- rep(1, n_samples)
   if (missing(offset)) offset <- rep(0, n_samples)
+  penalty <- match.arg(penalty, choices = c("lasso", "MCP", "SCAD"))
   if (is.null(lambda_min_ratio)) {
     lambda_min_ratio <- ifelse(n_samples < n_features, 0.01, 1e-04)
   }
@@ -69,19 +69,37 @@ cv_ncvcox <- function(
     init <- fit$coefficients
     coefs[i, ] <- fit$coefficients
   }
-  colnames(coefs) <- colnames(x)
+  colnames(coefs) <- colnames(x[-1])
 
+  set.seed(seed)
   idx <- sample(1:nfolds, n_samples, replace = TRUE)
-  criterions <- matrix(0, nrow = nlambdas, ncol = nfolds)
-  for (i in seq_along(lambdas)) {
-    for (k in 1:nfolds) {
-      fit <- ncvcox(
-        formula = formula, data = data[idx != k, ],
-        group = group[idx != k], offset = offset[idx != k],
-        lambda = lambdas[i], penalty = penalty, gamma = gamma,
-        init = coefs[i, ], control = control, ...
-      )
-      criterions[i, k] <- logLik(fit, data, group, offset) - fit$logLik
+
+  if (!parallel) {
+    criterions <- matrix(0, nrow = nlambdas, ncol = nfolds)
+    for (i in seq_along(lambdas)) {
+      for (k in 1:nfolds) {
+        fit <- ncvcox(
+          formula = formula, data = data[idx != k, ],
+          group = group[idx != k], offset = offset[idx != k],
+          lambda = lambdas[i], penalty = penalty, gamma = gamma,
+          init = coefs[i, ], control = control, ...
+        )
+        criterions[i, k] <- logLik(fit, data, group, offset) - fit$logLik
+      }
+    }
+  } else {
+    criterions <- foreach(i = seq_along(lambdas), .combine = "rbind") %dopar% {
+      criterion <- numeric(nfolds)
+      for (k in 1:nfolds) {
+        fit <- ncvcox(
+          formula = formula, data = data[idx != k, ],
+          group = group[idx != k], offset = offset[idx != k],
+          lambda = lambdas[i], penalty = penalty, gamma = gamma,
+          init = coefs[i, ], control = control, ...
+        )
+        criterion[k] <- logLik(fit, data, group, offset) - fit$logLik
+      }
+      criterion
     }
   }
 

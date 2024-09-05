@@ -135,7 +135,7 @@ coxmtl <- function(
     # Calculate the weights and residuals
     for (k in 1:n_groups) {
       idx <- group_idxs[[k]]
-      wls <- calc_weights_residuals(
+      wls <- approx_likelihood(
         offset = theta[idx], time = time[idx], status = status[idx]
       )
       w[idx] <- wls$weights
@@ -150,7 +150,7 @@ coxmtl <- function(
       features_idx <- sample(seq_len(n_features), n_features, FALSE)
       for (j in features_idx) {
         z <- mean(xw[, j] * r) + xwx[j] * beta[j]
-        beta[j] <- penalty_solution(z, xwx[j], penalty, lambda1, gamma)
+        beta[j] <- close_update(z, xwx[j], penalty, lambda1, gamma)
         r <- r - x[, j] * (beta[j] - beta_old[j])
       }
       if (max(abs(beta_old - beta)) <= control$inner.eps) break
@@ -186,7 +186,7 @@ coxmtl <- function(
         for (j in features_idx) {
           phi <- mean(xw_[, j] * r_) + xwx_[j] * eta[j, k] -
             mu[j] - nu_sum[j, k] + alpha * xi_sum[j, k]
-          eta[j, k] <- penalty_solution(phi, psi[j], penalty, lambda2, gamma)
+          eta[j, k] <- close_update(phi, psi[j], penalty, lambda2, gamma)
           r_ <- r_ - x_[, j] * (eta[j, k] - eta_old[j])
         }
         if (max(abs(eta_old - eta[, k])) <= control$inner.eps) break
@@ -201,7 +201,7 @@ coxmtl <- function(
         pos <- get_position(i, j, n_groups)
         zeta <- eta[, i] - eta[, j] + nu[, pos] / alpha
         for (k in 1:n_features) {
-          xi[k, pos] <- penalty_solution(
+          xi[k, pos] <- close_update(
             zeta[k], 1, penalty, lambda3 / alpha, gamma
           )
         }
@@ -261,7 +261,7 @@ coxmtl <- function(
   }
   for (k in 1:n_groups) {
     idx <- group_idxs[[k]]
-    wls <- calc_weights_residuals(
+    wls <- approx_likelihood(
       offset = theta[idx], time = time[idx], status = status[idx]
     )
     w[idx] <- wls$weights
@@ -274,7 +274,7 @@ coxmtl <- function(
     features_idx <- sample(seq_len(n_features), n_features, FALSE)
     for (j in features_idx) {
       z <- mean(xw[, j] * r) + xwx[j] * beta[j]
-      beta[j] <- penalty_solution(z, xwx[j], penalty, lambda1, gamma)
+      beta[j] <- close_update(z, xwx[j], penalty, lambda1, gamma)
       r <- r - x[, j] * (beta[j] - beta_old[j])
     }
     if (max(abs(beta_old - beta)) <= control$inner.eps) break

@@ -122,7 +122,7 @@ coxtl <- function(
     # Calculate the weights and residuals
     for (k in 1:n_groups) {
       idx <- group == group_levels[k]
-      wls <- calc_weights_residuals(
+      wls <- approx_likelihood(
         offset = theta[idx], time = time[idx], status = status[idx]
       )
       w[idx] <- wls$weights
@@ -137,7 +137,7 @@ coxtl <- function(
       features_idx <- sample(seq_len(n_features), n_features, FALSE)
       for (j in features_idx) {
         z <- mean(xw[, j] * r) + xwx[j] * beta[j]
-        beta[j] <- penalty_solution(z, xwx[j], penalty, lambda1, gamma)
+        beta[j] <- close_update(z, xwx[j], penalty, lambda1, gamma)
         r <- r - x[, j] * (beta[j] - beta_old[j])
       }
       if (max(abs(beta_old - beta)) <= control$inner.eps) break
@@ -156,7 +156,7 @@ coxtl <- function(
         features_idx <- sample(seq_len(n_features), n_features, FALSE)
         for (j in features_idx) {
           phi <- mean(xwk[, j] * rk) + xwxk[j] * eta[j, k]
-          eta[j, k] <- penalty_solution(phi, xwxk[j], penalty, lambda2, gamma)
+          eta[j, k] <- close_update(phi, xwxk[j], penalty, lambda2, gamma)
           rk <- rk - xk[, j] * (eta[j, k] - eta_old[j])
         }
         if (max(abs(eta_old - eta[, k])) <= control$inner.eps) break

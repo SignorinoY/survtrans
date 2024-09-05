@@ -71,7 +71,7 @@ ncvcox <- function(
   # Check the init argument
   if (!missing(init) && length(init) > 0) {
     if (length(init) != n_features) {
-      stop("Wrong length for inital values")
+      stop("Wrong length for initial values")
     }
   } else {
     init <- numeric(n_features)
@@ -90,39 +90,40 @@ ncvcox <- function(
   w <- numeric(n_samples)
   r <- numeric(n_samples)
 
-  # Pre-calculate the quantities
-  x2 <- x**2
+  x2 <- x ** 2
 
   repeat {
     n_iterations <- n_iterations + 1
     last_coefficients <- coefficients
 
     # Calculate the weights and residuals
-    offset <- x %*% coefficients
     for (k in 1:n_groups) {
       idx <- group_idxs[[k]]
-      wls <- calc_weights_residuals(
+      wls <- approx_likelihood(
         offset = offset[idx], time = time[idx], status = status[idx]
       )
       w[idx] <- wls$weights
       r[idx] <- wls$residuals
     }
+    xw <- x * w
+    xwx <- colMeans(x2 * w)
 
     # Update coefficients by cyclic coordinate descent
-    xw <- x * w
-    xwx <- colMeans(w * x2)
-    for (i in seq_len(control$inner.maxit)) {
-      coefficients_old <- coefficients
-      delta_max <- 0
-      for (j in seq_len(n_features)) {
-        xwr <- mean(xw[, j] * r)
-        coefficients[j] <- penalty_solution(xwr, xwx[j], penalty, lambda, gamma)
-        delta <- coefficients[j] - coefficients_old[j]
-        r <- r - x[, j] * delta
-        delta_max <- max(delta_max, abs(delta))
-      }
-      if (delta_max < control$inner.eps) break
+    features_idx <- sample(seq_len(n_features), n_features, FALSE)
+    for (j in features_idx) {
+      z <- mean(xw[, j] * r) + coefficients[j] * xwx[j]
+      coefficients[j] <- close_update(z, xwx[j], penalty, lambda, gamma)
     }
+    offset <- x %*% coefficients
+
+    # Calculate the log-likelihood
+    hazard <- exp(offset)
+    risk_set <- ave(hazard, group, FUN = cumsum)
+    for (k in 1:n_groups) {
+      idx <- group_idxs[[k]]
+      risk_set[idx] <- ave(risk_set[idx], time[idx], FUN = max)
+    }
+    loss <- -sum(status * (offset - log(risk_set)))
 
     # Check the convergence
     if (n_iterations >= control$maxit) {
@@ -137,15 +138,6 @@ ncvcox <- function(
         "Convergence reached at iteration ", n_iterations, "."
       )
     }
-    offset <- x %*% coefficients
-    offset_max <- max(offset)
-    hazard <- exp(offset - offset_max)
-    risk_set <- ave(hazard, group, FUN = cumsum)
-    for (k in 1:n_groups) {
-      idx <- group_idxs[[k]]
-      risk_set[idx] <- ave(risk_set[idx], time[idx], FUN = max)
-    }
-    loss <- -sum(status * (offset - log(risk_set) - offset_max))
     if (-loss / null_deviance < 0.01) {
       convergence <- TRUE
       message <- paste0(
@@ -157,7 +149,6 @@ ncvcox <- function(
   }
 
   # Unstandardize the coefficients
-  coefficients[abs(coefficients) < control$eps] <- 0
   coefficients <- coefficients / x_scale
   names(coefficients) <- colnames(x)
 

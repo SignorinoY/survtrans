@@ -15,6 +15,7 @@ cv_ncvcox(
   nlambdas = 100,
   lambda_min_ratio = NULL,
   seed = 0,
+  parallel = FALSE,
   control,
   ...
 )
@@ -45,6 +46,9 @@ as a fraction of lambda_max.}
 
 \item{seed}{an integer specifying the random seed.}
 
+\item{parallel}{a logical value specifying whether to perform the
+cross-validation in parallel. Default is \code{FALSE}.}
+
 \item{control}{Object of class \link{survtrans_control} containing
 control parameters for the fitting algorithm. Default is
 \code{survtrans_control(...)}.}
@@ -62,7 +66,8 @@ library(survtrans)
 formula <- Surv(time, status) ~ . - group - id
 group <- as.factor(sim1$group)
 cv_fit <- cv_ncvcox(
- formula, sim1[sim1$group == 1, ], penalty = "SCAD"
+  formula, sim1[sim1$group == 1, ],
+  penalty = "SCAD"
 )
 coef(cv_fit)
 }

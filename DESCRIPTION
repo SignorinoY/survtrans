@@ -1,6 +1,6 @@
 Package: survtrans
 Title: Transfer Learning for Survival Analysis
-Version: 1.0.0
+Version: 1.1.0
 Authors@R: 
     person("Ziyang", "Gong", , "gongziyang@swufe.edu.cn", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
@@ -15,8 +15,10 @@ Depends:
     survival
 Imports: 
     dplyr,
+    foreach,
     MASS,
     Matrix,
+    Rcpp,
     simsurv,
     stats
 Remotes: 
@@ -32,3 +34,6 @@ BugReports: https://github.com/SignorinoY/survtrans/issues
 LazyData: true
 VignetteBuilder: knitr
 Language: en-US
+LinkingTo: 
+    Rcpp,
+    RcppArmadillo

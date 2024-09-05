@@ -124,9 +124,9 @@ coxgrp <- function(
     alpha_old <- alpha
     for (j in 1:n_features) {
       alphaj <- beta[j, ] + mu[j, ] / vartheta
-      alphaj_norm <- norm(matrix(alphaj), type = "e")
-      alpha[j, ] <- threshold(alphaj_norm, vartheta, penalty, lambda, gamma) *
-        alphaj / alphaj_norm
+      alpha_norm <- norm(matrix(alphaj), type = "e")
+      weight <- c(threshold(alpha_norm, vartheta, penalty, lambda, gamma))
+      alpha[j, ] <- weight *  alphaj / alpha_norm
     }
     mu <- mu + vartheta * (beta - alpha)
 

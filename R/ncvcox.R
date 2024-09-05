@@ -58,7 +58,6 @@ ncvcox <- function(
   group_levels <- levels(group)
   group_idxs <- lapply(group_levels, function(x) which(group == x))
 
-  # Calculate the null deviance
   risk_set_size <- ave(rep(1, n_samples), group, FUN = cumsum)
   for (k in 1:n_groups) {
     idx <- group_idxs[[k]]
@@ -67,78 +66,94 @@ ncvcox <- function(
   null_deviance <- -sum(status * log(risk_set_size))
 
   # Check the penalty argument
-  penalty <- match.arg(penalty)
+  penalty <- match.arg(penalty, choices = c("lasso", "MCP", "SCAD"))
 
   # Check the init argument
-  n_features <- ncol(x)
   if (!missing(init) && length(init) > 0) {
     if (length(init) != n_features) {
       stop("Wrong length for inital values")
     }
   } else {
-    init <- rep(0.0, n_features)
+    init <- numeric(n_features)
   }
 
   # Check the control argument
   if (missing(control)) control <- survtrans_control(...)
 
   # Initialize the training process
-  record <- list(
-    convergence = FALSE, n_iterations = 0, null_deviance = null_deviance,
-    maxit = control$maxit, eps = control$eps
-  )
-  beta <- init
-  theta <- rep(0.0, n_samples)
-  w <- rep(1.0, n_samples)
-  r <- rep(0.0, n_samples)
+  n_iterations <- 0
+  message <- ""
+  convergence <- FALSE
+  coefficients <- init
+
+  offset <- numeric(n_samples)
+  w <- numeric(n_samples)
+  z <- numeric(n_samples)
 
   repeat {
-    # Calculate the theta
+    n_iterations <- n_iterations + 1
+    last_coefficients <- coefficients
+
+    # Calculate the weights and residuals
+    offset <- x %*% coefficients
     for (k in 1:n_groups) {
       idx <- group_idxs[[k]]
-      theta[idx] <- x[idx, ] %*% beta + offset[idx]
+      wls <- calc_weights_residuals(
+        offset = offset[idx], time = time[idx], status = status[idx]
+      )
+      w[idx] <- wls$weights
+      z[idx] <- wls$residuals
     }
 
-    # Calculate the loss
-    hazard <- exp(theta)
+    # Update coefficients by cyclic coordinate descent
+    features_idx <- sample(seq_len(n_features), n_features, FALSE)
+    for (j in features_idx) {
+      v <- mean(w * x[, j]**2)
+      r <- mean(x[, j] * w * z) + coefficients[j] * v
+      coefficients[j] <- penalty_solution(r, v, penalty, lambda, gamma)
+    }
+
+    # Check the convergence
+    if (n_iterations >= control$maxit) {
+      convergence <- TRUE
+      message <- paste0(
+        "Maximum number of iterations reached (", control$maxit, ")."
+      )
+    }
+    if (max(abs(coefficients - last_coefficients)) <= control$eps) {
+      convergence <- TRUE
+      message <- paste0(
+        "Convergence reached at iteration ", n_iterations, "."
+      )
+    }
+    offset <- x %*% coefficients
+    hazard <- exp(offset)
     risk_set <- ave(hazard, group, FUN = cumsum)
     for (k in 1:n_groups) {
       idx <- group_idxs[[k]]
       risk_set[idx] <- ave(risk_set[idx], time[idx], FUN = max)
     }
-    loss <- -sum(status * (theta - log(risk_set)))
-
-    # Check the convergence
-    record <- check_convergence(beta, loss, record)
-    if (record$convergence) break
-
-    # Calculate the weights and residuals
-    for (k in 1:n_groups) {
-      idx <- group_idxs[[k]]
-      wls <- calc_weights_residuals(
-        offset = theta[idx], time = time[idx], status = status[idx]
+    loss <- -sum(status * (offset - log(risk_set)))
+    if (-loss / null_deviance < 0.01) {
+      convergence <- TRUE
+      message <- paste0(
+        "The log-likelihood is too small (", -loss / null_deviance,
+        "). Stopping the algorithm."
       )
-      w[idx] <- wls$weights
-      r[idx] <- wls$residuals
     }
-
-    # Update beta by cyclic coordinate descent
-    features_idx <- sample(seq_len(n_features), n_features, FALSE)
-    for (j in features_idx) {
-      v <- mean(w * x[, j]**2)
-      z <- mean(x[, j] * w * r) + beta[j] * v
-      beta[j] <- penalty_solution(z, v, penalty, lambda, gamma)
-    }
+    if (convergence) break
   }
 
   # Unstandardize the coefficients
-  beta <- beta / x_scale
+  coefficients <- coefficients / x_scale
+  names(coefficients) <- colnames(x)
 
   # Return the fit
   fit <- list(
-    coefficients = beta, group_levels = group_levels, logLik = -loss,
-    penalty = penalty, lambda = lambda, gamma = gamma,
-    iter = record$n_iterations, formula = formula, call = match.call()
+    coefficients = coefficients, group_levels = group_levels,
+    logLik = -loss, iter = n_iterations, message = message,
+    penalty = penalty, lambda = lambda, gamma = gamma, formula = formula,
+    call = match.call()
   )
   class(fit) <- "ncvcox"
   return(fit)

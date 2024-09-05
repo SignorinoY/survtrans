@@ -20,6 +20,14 @@
 #' @param ... Other arguments passed to \code{\link{survtrans_control}}.
 #' @return a cv_ncvcox object.
 #' @export
+#' @examples
+#' library(survtrans)
+#' formula <- Surv(time, status) ~ . - group - id
+#' group <- as.factor(sim1$group)
+#' cv_fit <- cv_ncvcox(
+#'  formula, sim1[sim1$group == 1, ], penalty = "SCAD"
+#' )
+#' coef(cv_fit)
 cv_ncvcox <- function(
     formula, data, group, offset, penalty = c("lasso", "MCP", "SCAD"),
     gamma = switch(penalty,
@@ -37,16 +45,12 @@ cv_ncvcox <- function(
   n_samples <- nrow(data)
   n_features <- ncol(x)
 
-  # Check the group & offset argument
+  # Check the arguments
   if (missing(group)) group <- rep(1, n_samples)
   if (missing(offset)) offset <- rep(0, n_samples)
-
-  # Check the lambda_min_ratio argument
   if (is.null(lambda_min_ratio)) {
     lambda_min_ratio <- ifelse(n_samples < n_features, 0.01, 1e-04)
   }
-
-  # Check the control argument
   if (missing(control)) control <- survtrans_control(...)
 
   # Determmine the lambda sequence
@@ -54,30 +58,28 @@ cv_ncvcox <- function(
   lambda_min <- lambda_max * lambda_min_ratio
   lambdas <- exp(seq(log(lambda_max), log(lambda_min), length.out = nlambdas))
 
-  idx <- sample(1:nfolds, n_samples, replace = TRUE)
-
-  coef_init <- rep(0, n_features)
-  criterions <- matrix(0, nrow = nlambdas, ncol = nfolds)
   coefs <- matrix(0, nrow = nlambdas, ncol = n_features)
+  for (i in seq_along(lambdas)) {
+    coefs[i, ] <- ncvcox(
+      formula, data, group, offset,
+      lambda = lambdas[i], penalty = penalty,
+      gamma = gamma, control = control, ...
+    )$coefficients
+  }
+  colnames(coefs) <- colnames(x)
+
+  idx <- sample(1:nfolds, n_samples, replace = TRUE)
+  criterions <- matrix(0, nrow = nlambdas, ncol = nfolds)
   for (i in seq_along(lambdas)) {
     for (k in 1:nfolds) {
       fit <- ncvcox(
         formula = formula, data = data[idx != k, ],
         group = group[idx != k], offset = offset[idx != k],
-        lambda = lambdas[i], penalty = penalty, gamma = gamma, init = coef_init,
-        control = control, ...
+        lambda = lambdas[i], penalty = penalty, gamma = gamma,
+        init = coefs[i, ], control = control, ...
       )
-      coef_init <- fit$coefficients
-      coefs[i, ] <- coefs[i, ] + coef_init / nfolds
       criterions[i, k] <- logLik(fit, data, group, offset) - fit$logLik
     }
-  }
-  for (i in seq_along(lambdas)) {
-    coefs[i, ] <- ncvcox(
-      formula, data, group, offset,
-      lambda = lambdas[i], penalty = penalty,
-      gamma = gamma, init = coefs[i, ], control = control, ...
-    )$coefficients
   }
 
   cvm <- rowMeans(criterions)
@@ -85,8 +87,7 @@ cv_ncvcox <- function(
 
   fit <- list(
     lambdas = lambdas, coefs = coefs, cvm = cvm, cvsd = cvsd,
-    formula = formula, call = match.call(),
-    n_features = n_features
+    formula = formula, call = match.call()
   )
   class(fit) <- "cv_ncvcox"
   return(fit)

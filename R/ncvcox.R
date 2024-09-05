@@ -127,13 +127,14 @@ ncvcox <- function(
       )
     }
     offset <- x %*% coefficients
-    hazard <- exp(offset)
+    offset_max <- max(offset)
+    hazard <- exp(offset - offset_max)
     risk_set <- ave(hazard, group, FUN = cumsum)
     for (k in 1:n_groups) {
       idx <- group_idxs[[k]]
       risk_set[idx] <- ave(risk_set[idx], time[idx], FUN = max)
     }
-    loss <- -sum(status * (offset - log(risk_set)))
+    loss <- -sum(status * (offset - log(risk_set) - offset_max))
     if (-loss / null_deviance < 0.01) {
       convergence <- TRUE
       message <- paste0(

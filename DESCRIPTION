@@ -14,14 +14,17 @@ Depends:
     survode (>= 0.0.0.9000),
     survival
 Imports: 
+    doSNOW,
     dplyr,
     foreach,
     graphics,
     MASS,
     Matrix,
+    parallel,
     Rcpp,
     simsurv,
-    stats
+    stats,
+    utils
 Remotes: 
     SignorinoY/survode
 Suggests: 

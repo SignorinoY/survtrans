@@ -15,7 +15,7 @@ cv_ncvcox(
   nlambdas = 100,
   lambda_min_ratio = NULL,
   seed = 0,
-  parallel = FALSE,
+  parallel = 0,
   control,
   ...
 )
@@ -44,10 +44,9 @@ default is 3.7 for SCAD and 3 for MCP.}
 \item{lambda_min_ratio}{a numeric value specifying the minimum lambda value
 as a fraction of lambda_max.}
 
-\item{seed}{an integer specifying the random seed.}
+\item{seed}{an integer specifying the random seed. Default is 0.}
 
-\item{parallel}{a logical value specifying whether to perform the
-cross-validation in parallel. Default is \code{FALSE}.}
+\item{parallel}{a integer specifying the number of parallel workers.}
 
 \item{control}{Object of class \link{survtrans_control} containing
 control parameters for the fitting algorithm. Default is

@@ -13,9 +13,8 @@
 #' @param nlambdas an integer specifying the number of lambda values.
 #' @param lambda_min_ratio a numeric value specifying the minimum lambda value
 #' as a fraction of lambda_max.
-#' @param seed an integer specifying the random seed.
-#' @param parallel a logical value specifying whether to perform the
-#' cross-validation in parallel. Default is \code{FALSE}.
+#' @param seed an integer specifying the random seed. Default is 0.
+#' @param parallel a integer specifying the number of parallel workers.
 #' @param control Object of class \link{survtrans_control} containing
 #' control parameters for the fitting algorithm. Default is
 #' \code{survtrans_control(...)}.
@@ -36,7 +35,7 @@ cv_ncvcox <- function(
       MCP = 3,
       1
     ), nfolds = 10, nlambdas = 100, lambda_min_ratio = NULL,
-    seed = 0, parallel = FALSE, control, ...) {
+    seed = 0, parallel = 0, control, ...) {
   # Properties of the data
   x <- model.matrix(formula, data)
   n_samples <- nrow(data)
@@ -57,7 +56,6 @@ cv_ncvcox <- function(
   lambdas <- exp(seq(log(lambda_max), log(lambda_min), length.out = nlambdas))
 
   coefficients <- matrix(0, nrow = nlambdas, ncol = n_features)
-  init <- numeric(n_features)
   set.seed(seed)
   idx <- sample(1:nfolds, n_samples, replace = TRUE)
   if (!parallel) {
@@ -66,23 +64,28 @@ cv_ncvcox <- function(
       fit <- ncvcox(
         formula, data, group, offset,
         lambda = lambdas[i], penalty = penalty,
-        gamma = gamma, init = init, control = control, ...
+        gamma = gamma, control = control, ...
       )
       coefficients[i, ] <- fit$coefficients
-      init <- fit$coefficients
       for (k in 1:nfolds) {
         fit <- ncvcox(
           formula = formula, data = data[idx != k, ],
           group = group[idx != k], offset = offset[idx != k],
           lambda = lambdas[i], penalty = penalty, gamma = gamma,
-          init = coefficients[i, ], control = control, ...
+          control = control, ...
         )
         criterions[i, k] <- logLik(fit, data, group, offset) - fit$logLik
       }
     }
   } else {
+    cl <- makeCluster(parallel)
+    registerDoSNOW(cl)
+    pb <- txtProgressBar(max = nlambdas, style = 3)
+    progress <- function(n) setTxtProgressBar(pb, n)
+    opts <- list(progress = progress)
     records <- foreach(
-      i = seq_along(lambdas), .combine = "rbind", .errorhandling = "remove"
+      i = seq_along(lambdas), .combine = "rbind", .errorhandling = "remove",
+      .options.snow = opts, .packages = "survtrans"
     ) %dopar% {
       fit <- ncvcox(
         formula, data, group, offset,
@@ -96,16 +99,17 @@ cv_ncvcox <- function(
           formula = formula, data = data[idx != k, ],
           group = group[idx != k], offset = offset[idx != k],
           lambda = lambdas[i], penalty = penalty, gamma = gamma,
-          init = coefficients[i, ], control = control, ...
+          control = control, ...
         )
         criterion[k] <- logLik(fit, data, group, offset) - fit$logLik
       }
       c(coefficients, criterion)
     }
-    coefficients <- matrix(records[, 1:n_features], nrow = nlambdas)
-    criterions <- matrix(records[, -seq_len(n_features)], nrow = nlambdas)
+    coefficients <- records[, 1:n_features]
+    criterions <- records[, -seq_len(n_features)]
+    stopCluster(cl)
+    close(pb)
   }
-
   colnames(coefficients) <- colnames(x[, -1])
   colnames(criterions) <- paste0("Fold", 1:nfolds)
   cvm <- rowMeans(criterions)

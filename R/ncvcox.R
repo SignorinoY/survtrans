@@ -107,11 +107,33 @@ ncvcox <- function(
     xwx <- colMeans(x2 * w)
 
     # Update coefficients by cyclic coordinate descent
+    active_set <- c()
     features_idx <- sample(seq_len(n_features), n_features, FALSE)
     for (j in features_idx) {
+      coef_j <- coefficients[j]
       z <- mean(xw[, j] * r) + coefficients[j] * xwx[j]
       coefficients[j] <- close_update(z, xwx[j], penalty, lambda, gamma)
+      delta_coef <- coefficients[j] - coef_j
+      if (delta_coef != 0) {
+        r <- r - x[, j] * delta_coef
+        active_set <- c(active_set, j)
+      }
     }
+    for (i in 1:control$inner.maxit) {
+      max_diff <- 0
+      for (j in active_set) {
+        coef_j <- coefficients[j]
+        z <- mean(xw[, j] * r) + coefficients[j] * xwx[j]
+        coefficients[j] <- close_update(z, xwx[j], penalty, lambda, gamma)
+        delta_coef <- coefficients[j] - coef_j
+        if (delta_coef != 0) {
+          r <- r - x[, j] * delta_coef
+          max_diff <- max(max_diff, abs(delta_coef))
+        }
+      }
+      if (max_diff <= control$inner.eps) break
+    }
+
     offset <- x %*% coefficients
 
     # Calculate the log-likelihood
@@ -124,8 +146,8 @@ ncvcox <- function(
     loss <- -sum(status * (offset - log(risk_set)))
 
     # Check the convergence
-    if (is.infinite(loss)) {
-      stop("The log-likelihood is infinite. Stopping the algorithm.")
+    if (is.infinite(loss) || is.nan(loss)) {
+      stop("The log-likelihood is not finite. Stopping the algorithm.")
     }
     if (n_iterations >= control$maxit) {
       convergence <- TRUE

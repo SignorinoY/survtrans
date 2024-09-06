@@ -14,6 +14,7 @@
 <url><loc>/reference/BIC.coxtl.html</loc></url>
 <url><loc>/reference/BIC.ncvcox.html</loc></url>
 <url><loc>/reference/calc_lambda_max.html</loc></url>
+<url><loc>/reference/coef.ncvcox.html</loc></url>
 <url><loc>/reference/coxens.html</loc></url>
 <url><loc>/reference/coxens1.html</loc></url>
 <url><loc>/reference/coxgrp.html</loc></url>
@@ -34,6 +35,8 @@
 <url><loc>/reference/logLik.ncvcox.html</loc></url>
 <url><loc>/reference/ncvcox.html</loc></url>
 <url><loc>/reference/odetrans.html</loc></url>
+<url><loc>/reference/plot.cv_ncvcox.html</loc></url>
+<url><loc>/reference/predict.ncvcox.html</loc></url>
 <url><loc>/reference/sim1.html</loc></url>
 <url><loc>/reference/sim2.html</loc></url>
 <url><loc>/reference/simsurv_tl.html</loc></url>

@@ -13,7 +13,7 @@ inline double soft_threshold(double x, double lambda) {
 }
 
 // [[Rcpp::export]]
-arma::vec threshold(const arma::vec& y, double vartheta, std::string penalty, double lambda, double gamma) {
+arma::vec threshold_prox(const arma::vec& y, double vartheta, std::string penalty, double lambda, double gamma) {
   int n = y.n_elem;
   arma::vec x(n);
 

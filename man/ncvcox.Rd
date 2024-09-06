@@ -55,16 +55,14 @@ Non-convex penalized Cox proportional hazards model
 \examples{
 library(survtrans)
 formula <- Surv(time, status) ~ . - group - id
+df_src <- sim1[sim1$group == 1, ]
+df_trg <- sim1[sim1$group == 2, ]
 group <- as.factor(sim1$group)
-fit.src <- ncvcox(
-  formula, sim1[group == 1, ],
-  lambda = 0.1, penalty = "SCAD"
+fit_src <- ncvcox(formula, df_src, lambda = 0.1, penalty = "SCAD")
+offset_trg <- predict(fit_src, newdata = df_trg, type = "lp")
+fit_trg <- ncvcox(
+  formula, df_trg,
+  offset = offset_trg, lambda = 0.2, penalty = "SCAD"
 )
-fit.src$coefficients
-offset.trg <- predict(fit.src, newdata = sim1[group == 2, ], type = "lp")
-fit.trg <- ncvcox(
-  formula, sim1[group == 2, ],
-  offset = offset.trg, lambda = 0.2, penalty = "SCAD"
-)
-fit.trg$coefficients
+coef(fit_trg)
 }

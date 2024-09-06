@@ -16,6 +16,7 @@ Depends:
 Imports: 
     dplyr,
     foreach,
+    graphics,
     MASS,
     Matrix,
     Rcpp,

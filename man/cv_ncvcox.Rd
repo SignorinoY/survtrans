@@ -64,10 +64,8 @@ Cross-validation for \code{ncvcox}
 \examples{
 library(survtrans)
 formula <- Surv(time, status) ~ . - group - id
-group <- as.factor(sim1$group)
-cv_fit <- cv_ncvcox(
-  formula, sim1[sim1$group == 1, ],
-  penalty = "SCAD"
-)
+df <- sim1[sim1$group == 1, ]
+cv_fit <- cv_ncvcox(formula, df, penalty = "SCAD")
 coef(cv_fit)
+plot(cv_fit)
 }

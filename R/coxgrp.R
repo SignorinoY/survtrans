@@ -123,10 +123,10 @@ coxgrp <- function(
     # Update the auxiliary variables
     alpha_old <- alpha
     for (j in 1:n_features) {
-      alphaj <- beta[j, ] + mu[j, ] / vartheta
-      alpha_norm <- norm(matrix(alphaj), type = "e")
-      weight <- c(threshold(alpha_norm, vartheta, penalty, lambda, gamma))
-      alpha[j, ] <- weight *  alphaj / alpha_norm
+      alpha_adjusted <- beta[j, ] + mu[j, ] / vartheta
+      alpha_norm <- norm(matrix(alpha_adjusted), type = "e")
+      weight <- threshold_prox(alpha_norm, vartheta, penalty, lambda, gamma)
+      alpha[j, ] <- as.vector(weight / alpha_norm) * alpha_adjusted
     }
     mu <- mu + vartheta * (beta - alpha)
 

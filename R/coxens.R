@@ -182,15 +182,15 @@ coxens <- function(
 
     ## Group Sparsity
     alpha[sparse_idx] <- vapply(sparse_idx, function(idx) {
-      threshold(alpha[idx], vartheta, penalty, lambda1, gamma)
+      threshold_prox(alpha[idx], vartheta, penalty, lambda1, gamma)
     }, numeric(1))
     ## Transfer Global
     alpha[global_idx] <- vapply(global_idx, function(idx) {
-      threshold(alpha[idx], vartheta, penalty, lambda2, gamma)
+      threshold_prox(alpha[idx], vartheta, penalty, lambda2, gamma)
     }, numeric(1))
     ## Transfer Local
     alpha[local_idx] <- vapply(local_idx, function(idx) {
-      threshold(alpha[idx], vartheta, penalty, lambda3, gamma)
+      threshold_prox(alpha[idx], vartheta, penalty, lambda3, gamma)
     }, numeric(1))
     mu <- mu + vartheta * contr_sum %*% theta
     nu <- nu + vartheta * (contr_penalty %*% theta - alpha)

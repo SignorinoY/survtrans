@@ -25,12 +25,10 @@
 #' @examples
 #' library(survtrans)
 #' formula <- Surv(time, status) ~ . - group - id
-#' group <- as.factor(sim1$group)
-#' cv_fit <- cv_ncvcox(
-#'   formula, sim1[sim1$group == 1, ],
-#'   penalty = "SCAD"
-#' )
+#' df <- sim1[sim1$group == 1, ]
+#' cv_fit <- cv_ncvcox(formula, df, penalty = "SCAD")
 #' coef(cv_fit)
+#' plot(cv_fit)
 cv_ncvcox <- function(
     formula, data, group, offset, penalty = c("lasso", "MCP", "SCAD"),
     gamma = switch(penalty,
@@ -58,57 +56,67 @@ cv_ncvcox <- function(
   lambda_min <- lambda_max * lambda_min_ratio
   lambdas <- exp(seq(log(lambda_max), log(lambda_min), length.out = nlambdas))
 
-  coefs <- matrix(0, nrow = nlambdas, ncol = n_features)
+  coefficients <- matrix(0, nrow = nlambdas, ncol = n_features)
   init <- numeric(n_features)
-  for (i in seq_along(lambdas)) {
-    fit <- ncvcox(
-      formula, data, group, offset,
-      lambda = lambdas[i], penalty = penalty,
-      gamma = gamma, init = init, control = control, ...
-    )
-    init <- fit$coefficients
-    coefs[i, ] <- fit$coefficients
-  }
-  colnames(coefs) <- colnames(x[-1])
-
   set.seed(seed)
   idx <- sample(1:nfolds, n_samples, replace = TRUE)
-
   if (!parallel) {
     criterions <- matrix(0, nrow = nlambdas, ncol = nfolds)
     for (i in seq_along(lambdas)) {
+      fit <- ncvcox(
+        formula, data, group, offset,
+        lambda = lambdas[i], penalty = penalty,
+        gamma = gamma, init = init, control = control, ...
+      )
+      coefficients[i, ] <- fit$coefficients
+      init <- fit$coefficients
       for (k in 1:nfolds) {
         fit <- ncvcox(
           formula = formula, data = data[idx != k, ],
           group = group[idx != k], offset = offset[idx != k],
           lambda = lambdas[i], penalty = penalty, gamma = gamma,
-          init = coefs[i, ], control = control, ...
+          init = coefficients[i, ], control = control, ...
         )
         criterions[i, k] <- logLik(fit, data, group, offset) - fit$logLik
       }
     }
   } else {
-    criterions <- foreach(i = seq_along(lambdas), .combine = "rbind") %dopar% {
+    records <- foreach(
+      i = seq_along(lambdas), .combine = "rbind", .errorhandling = "remove"
+    ) %dopar% {
+      fit <- ncvcox(
+        formula, data, group, offset,
+        lambda = lambdas[i], penalty = penalty,
+        gamma = gamma, control = control, ...
+      )
+      coefficients <- fit$coefficients
       criterion <- numeric(nfolds)
       for (k in 1:nfolds) {
         fit <- ncvcox(
           formula = formula, data = data[idx != k, ],
           group = group[idx != k], offset = offset[idx != k],
           lambda = lambdas[i], penalty = penalty, gamma = gamma,
-          init = coefs[i, ], control = control, ...
+          init = coefficients[i, ], control = control, ...
         )
         criterion[k] <- logLik(fit, data, group, offset) - fit$logLik
       }
-      criterion
+      c(coefficients, criterion)
     }
+    coefficients <- matrix(records[, 1:n_features], nrow = nlambdas)
+    criterions <- matrix(records[, -seq_len(n_features)], nrow = nlambdas)
   }
 
+  colnames(coefficients) <- colnames(x[, -1])
+  colnames(criterions) <- paste0("Fold", 1:nfolds)
   cvm <- rowMeans(criterions)
   cvsd <- apply(criterions, 1, stats::sd)
+  lambda.min <- lambdas[which.max(cvm)]
+  lambda.1se <- lambdas[which.max(cvm + cvsd)]
 
   fit <- list(
-    lambdas = lambdas, coefs = coefs, cvm = cvm, cvsd = cvsd,
-    formula = formula, call = match.call()
+    lambdas = lambdas, coefficients = coefficients, criterions = criterions,
+    name = "Cross-validated log-likelihood", cvm = cvm, cvsd = cvsd,
+    lambda.min = lambda.min, lambda.1se = lambda.1se, call = match.call()
   )
   class(fit) <- "cv_ncvcox"
   return(fit)

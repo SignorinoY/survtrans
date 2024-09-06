@@ -9,7 +9,7 @@ close_update <- function(z, v, penalty, lambda, gamma) {
     .Call(`_survtrans_close_update`, z, v, penalty, lambda, gamma)
 }
 
-threshold <- function(y, vartheta, penalty, lambda, gamma) {
-    .Call(`_survtrans_threshold`, y, vartheta, penalty, lambda, gamma)
+threshold_prox <- function(y, vartheta, penalty, lambda, gamma) {
+    .Call(`_survtrans_threshold_prox`, y, vartheta, penalty, lambda, gamma)
 }
 

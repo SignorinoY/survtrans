@@ -136,51 +136,419 @@ control parameters for the fitting algorithm. Default is
 <span class="r-in"><span><span class="va">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">sim2</span><span class="op">$</span><span class="va">group</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">coxens</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">formula</span>, <span class="va">sim2</span>, <span class="va">group</span>,</span></span>
-<span class="r-in"><span>  lambda1 <span class="op">=</span> <span class="fl">0.02</span>, lambda2 <span class="op">=</span> <span class="fl">0.002</span>, lambda3 <span class="op">=</span> <span class="fl">0.002</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span></span>
+<span class="r-in"><span>  lambda1 <span class="op">=</span> <span class="fl">2e-2</span>, lambda3 <span class="op">=</span> <span class="fl">3e-3</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">fit</span><span class="op">$</span><span class="va">coefficients</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               1           2         3           4           5           6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X1   0.59875975 -0.59875975 0.5987597 -0.59875975  0.59875975 -0.59875975</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X2   0.63640667 -0.47275450 0.7152592 -0.59926360  0.49776398 -0.69176303</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X3  -0.03921319 -0.03921319 0.2141196 -0.03921319 -0.03921319 -0.03921319</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X4   0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X5   0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X6   0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X7   0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X8   0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X9   0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X10  0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X11  0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X12  0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X13  0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X14  0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X15  0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X16  0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X17  0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X18  0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X19  0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X20  0.00000000  0.00000000 0.0000000  0.00000000  0.00000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             7           8           9         10      Center</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X1  0.5987597 -0.59875975  0.59875975 -0.5987597 -0.04026879</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X2  0.3590305 -0.57399371  0.63640667 -0.5070922 -0.04639117</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X3  0.2141196 -0.03921319 -0.03921319 -0.1537469  0.54917449</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X4  0.0000000  0.00000000  0.00000000  0.0000000  0.55328202</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X5  0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X6  0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X7  0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X8  0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X9  0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X10 0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X11 0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X12 0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X13 0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X14 0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X15 0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X16 0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X17 0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X18 0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X19 0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X20 0.0000000  0.00000000  0.00000000  0.0000000  0.00000000</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> coxens(formula = formula, data = sim2, group = group, lambda1 = 0.02, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     lambda3 = 0.003, penalty = "SCAD")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   n=1000, number of events=811</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            coef exp(coef) se(coef)       z Pr(&gt;|z|)    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X1    0.54067   1.71716  0.04802  11.260  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X2    0.55958   1.74994  0.05097  10.979  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X3    0.52807   1.69565  0.03905  13.523  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X4    0.54321   1.72152  0.03951  13.750  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X5    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X6    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X7    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X8    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X9    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X10   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X11   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X12   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X13   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X14   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X15   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X16   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X17   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X18   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X19   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X20   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X1   -0.64495   0.52469  0.05096 -12.656  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X2   -0.62512   0.53520  0.05283 -11.833  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X3    0.52807   1.69565  0.03905  13.523  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X4    0.54321   1.72152  0.03951  13.750  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X5    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X6    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X7    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X8    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X9    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X10   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X11   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X12   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X13   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X14   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X15   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X16   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X17   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X18   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X19   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X20   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X1    0.54067   1.71716  0.04802  11.260  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X2    0.55958   1.74994  0.05097  10.979  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X3    0.52807   1.69565  0.03905  13.523  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X4    0.54321   1.72152  0.03951  13.750  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X5    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X6    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X7    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X8    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X9    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X10   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X11   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X12   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X13   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X14   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X15   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X16   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X17   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X18   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X19   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X20   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X1   -0.64495   0.52469  0.05096 -12.656  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X2   -0.62512   0.53520  0.05283 -11.833  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X3    0.52807   1.69565  0.03905  13.523  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X4    0.54321   1.72152  0.03951  13.750  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X5    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X6    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X7    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X8    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X9    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X10   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X11   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X12   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X13   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X14   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X15   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X16   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X17   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X18   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X19   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X20   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X1    0.54067   1.71716  0.04802  11.260  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X2    0.55958   1.74994  0.05097  10.979  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X3    0.52807   1.69565  0.03905  13.523  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X4    0.54321   1.72152  0.03951  13.750  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X5    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X6    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X7    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X8    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X9    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X10   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X11   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X12   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X13   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X14   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X15   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X16   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X17   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X18   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X19   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X20   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X1   -0.64495   0.52469  0.05096 -12.656  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X2   -0.62512   0.53520  0.05283 -11.833  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X3    0.52807   1.69565  0.03905  13.523  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X4    0.54321   1.72152  0.03951  13.750  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X5    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X6    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X7    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X8    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X9    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X10   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X11   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X12   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X13   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X14   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X15   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X16   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X17   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X18   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X19   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X20   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X1    0.54067   1.71716  0.04802  11.260  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X2    0.31086   1.36460  0.13109   2.371   0.0177 *  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X3    0.75915   2.13646  0.12915   5.878 4.15e-09 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X4    0.54321   1.72152  0.03951  13.750  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X5    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X6    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X7    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X8    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X9    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X10   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X11   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X12   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X13   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X14   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X15   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X16   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X17   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X18   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X19   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X20   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X1   -0.64495   0.52469  0.05096 -12.656  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X2   -0.62512   0.53520  0.05283 -11.833  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X3    0.52807   1.69565  0.03905  13.523  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X4    0.54321   1.72152  0.03951  13.750  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X5    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X6    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X7    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X8    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X9    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X10   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X11   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X12   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X13   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X14   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X15   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X16   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X17   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X18   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X19   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X20   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X1    0.54067   1.71716  0.04802  11.260  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X2    0.55958   1.74994  0.05097  10.979  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X3    0.52807   1.69565  0.03905  13.523  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X4    0.54321   1.72152  0.03951  13.750  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X5    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X6    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X7    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X8    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X9    0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X10   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X11   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X12   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X13   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X14   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X15   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X16   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X17   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X18   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X19   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X20   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X1  -0.64495   0.52469  0.05096 -12.656  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X2  -0.62512   0.53520  0.05283 -11.833  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X3   0.52807   1.69565  0.03905  13.523  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X4   0.54321   1.72152  0.03951  13.750  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X5   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X6   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X7   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X8   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X9   0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X10  0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X11  0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X12  0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X13  0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X14  0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X15  0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X16  0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X17  0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X18  0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X19  0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X20  0.00000   1.00000       NA      NA       NA    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        exp(coef) exp(-coef) lower .95 upper .95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X1   1.7172    0.5824     1.5629    1.8866   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X2   1.7499    0.5714     1.5836    1.9338   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X3   1.6957    0.5897     1.5707    1.8305   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X4   1.7215    0.5809     1.5933    1.8601   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X5   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X6   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X7   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X8   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X9   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X10  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X11  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X12  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X13  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X14  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X15  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X16  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X17  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X18  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X19  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 X20  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X1   0.5247    1.9059     0.4748    0.5798   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X2   0.5352    1.8685     0.4826    0.5936   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X3   1.6957    0.5897     1.5707    1.8305   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X4   1.7215    0.5809     1.5933    1.8601   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X5   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X6   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X7   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X8   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X9   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X10  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X11  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X12  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X13  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X14  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X15  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X16  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X17  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X18  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X19  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 X20  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X1   1.7172    0.5824     1.5629    1.8866   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X2   1.7499    0.5714     1.5836    1.9338   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X3   1.6957    0.5897     1.5707    1.8305   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X4   1.7215    0.5809     1.5933    1.8601   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X5   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X6   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X7   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X8   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X9   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X10  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X11  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X12  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X13  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X14  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X15  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X16  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X17  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X18  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X19  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 X20  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X1   0.5247    1.9059     0.4748    0.5798   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X2   0.5352    1.8685     0.4826    0.5936   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X3   1.6957    0.5897     1.5707    1.8305   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X4   1.7215    0.5809     1.5933    1.8601   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X5   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X6   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X7   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X8   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X9   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X10  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X11  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X12  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X13  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X14  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X15  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X16  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X17  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X18  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X19  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 X20  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X1   1.7172    0.5824     1.5629    1.8866   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X2   1.7499    0.5714     1.5836    1.9338   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X3   1.6957    0.5897     1.5707    1.8305   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X4   1.7215    0.5809     1.5933    1.8601   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X5   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X6   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X7   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X8   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X9   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X10  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X11  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X12  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X13  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X14  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X15  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X16  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X17  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X18  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X19  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 X20  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X1   0.5247    1.9059     0.4748    0.5798   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X2   0.5352    1.8685     0.4826    0.5936   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X3   1.6957    0.5897     1.5707    1.8305   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X4   1.7215    0.5809     1.5933    1.8601   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X5   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X6   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X7   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X8   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X9   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X10  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X11  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X12  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X13  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X14  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X15  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X16  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X17  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X18  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X19  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 X20  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X1   1.7172    0.5824     1.5629    1.8866   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X2   1.3646    0.7328     1.0554    1.7644   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X3   2.1365    0.4681     1.6587    2.7518   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X4   1.7215    0.5809     1.5933    1.8601   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X5   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X6   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X7   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X8   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X9   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X10  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X11  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X12  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X13  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X14  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X15  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X16  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X17  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X18  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X19  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 X20  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X1   0.5247    1.9059     0.4748    0.5798   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X2   0.5352    1.8685     0.4826    0.5936   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X3   1.6957    0.5897     1.5707    1.8305   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X4   1.7215    0.5809     1.5933    1.8601   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X5   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X6   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X7   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X8   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X9   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X10  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X11  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X12  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X13  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X14  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X15  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X16  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X17  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X18  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X19  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 X20  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X1   1.7172    0.5824     1.5629    1.8866   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X2   1.7499    0.5714     1.5836    1.9338   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X3   1.6957    0.5897     1.5707    1.8305   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X4   1.7215    0.5809     1.5933    1.8601   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X5   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X6   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X7   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X8   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X9   1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X10  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X11  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X12  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X13  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X14  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X15  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X16  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X17  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X18  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X19  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 X20  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X1  0.5247    1.9059     0.4748    0.5798   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X2  0.5352    1.8685     0.4826    0.5936   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X3  1.6957    0.5897     1.5707    1.8305   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X4  1.7215    0.5809     1.5933    1.8601   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X5  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X6  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X7  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X8  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X9  1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X10 1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X11 1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X12 1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X13 1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X14 1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X15 1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X16 1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X17 1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X18 1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X19 1.0000    1.0000         NA        NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 X20 1.0000    1.0000         NA        NA   </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

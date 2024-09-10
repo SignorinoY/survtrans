@@ -25,7 +25,7 @@ coef.coxens <- function(object, ...) {
       idx <- feature_groups == level
       ifelse(
         sum(idx) == n_groups,
-        "All", paste0(group_names[idx], collapse = ", ")
+        "ALL", paste0(group_names[idx], collapse = ", ")
       )
     })
     coef_names <- c(

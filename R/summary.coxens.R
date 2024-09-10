@@ -68,7 +68,7 @@ summary.coxens <- function(object, conf.int = 0.95, compressed = TRUE, ...) {
       group_names <- stringr::str_extract(coef_name, "\\(([^)]+)\\)")
       group_names <- gsub("[()]", "", trimws(group_names))
       group_names_split <- stringr::str_split(group_names, ", ")[[1]]
-      if ("All" %in% group_names_split) {
+      if ("ALL" %in% group_names_split) {
         group_names_split <- group_levels
       }
       list(variable = variable_name, groups = group_names_split)

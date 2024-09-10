@@ -77,21 +77,25 @@ vcov.coxens <- function(object, ...) {
 
   # Calculate the Null space of the constraints
   n_constr <- sum(rowSums(eta_idx != 0) > 0)
-  constr_idx <- which(rowSums(eta_idx != 0) > 0)
-  constr <- matrix(0, nrow = n_constr, ncol = sum(coef_expanded != 0))
-  for (i in seq_len(n_constr)) {
-    idx <- constr_idx[i]
-    group_levels <- unique(eta_idx[idx, ])
-    group_levels <- group_levels[group_levels != 0]
-    constr[i, group_levels] <- sapply(
-      group_levels, function(level) sum(eta_idx[idx, ] == level)
-    )
-  }
-  null_constr <- MASS::Null(t(constr))
+  if (n_constr > 0) {
+    constr_idx <- which(rowSums(eta_idx != 0) > 0)
+    constr <- matrix(0, nrow = n_constr, ncol = sum(coef_expanded != 0))
+    for (i in seq_len(n_constr)) {
+      idx <- constr_idx[i]
+      group_levels <- unique(eta_idx[idx, ])
+      group_levels <- group_levels[group_levels != 0]
+      constr[i, group_levels] <- sapply(
+        group_levels, function(level) sum(eta_idx[idx, ] == level)
+      )
+    }
+    null_constr <- MASS::Null(t(constr))
 
-  # Calculate the variance-covariance matrix for the constrained coefficients
-  vcov_constr <- solve(t(null_constr) %*% vcov_expanded_inv %*% null_constr)
-  vcov_constr <- null_constr %*% vcov_constr %*% t(null_constr)
+    # Calculate the variance-covariance matrix for the constrained coefficients
+    vcov_constr <- solve(t(null_constr) %*% vcov_expanded_inv %*% null_constr)
+    vcov_constr <- null_constr %*% vcov_constr %*% t(null_constr)
+  } else {
+    vcov_constr <- vcov_expanded
+  }
 
   # Reconstruct the variance-covariance matrix to the original coefficients
   prox_processed <- matrix(0, n_expanded_nonzero, n_processed_nonzero)

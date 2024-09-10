@@ -31,9 +31,9 @@
 #' group <- as.factor(sim2$group)
 #' fit <- coxens(
 #'   formula, sim2, group,
-#'   lambda1 = 0.02, lambda2 = 0.002, lambda3 = 0.002, penalty = "SCAD"
+#'   lambda1 = 2e-2, lambda3 = 3e-3, penalty = "SCAD"
 #' )
-#' fit$coefficients
+#' summary(fit)
 coxens <- function(
     formula, data, group, lambda1 = 0, lambda2 = 0, lambda3 = 0,
     penalty = c("lasso", "MCP", "SCAD"),
@@ -263,58 +263,6 @@ coxens <- function(
   beta <- theta[, n_groups + 1]
   beta[abs(beta) < control$eps] <- 0
 
-  # Reassign the coefficients' group
-  n_total_groups <- 0
-  eta_expanded <- c()
-  eta_idx <- matrix(0, nrow = n_features, ncol = n_groups)
-  for (j in 1:n_features) {
-    feature_groups <- as.factor(as.character(eta[j, ]))
-    feature_levels <- levels(feature_groups)
-    for (k in seq_along(feature_levels)) {
-      idx <- feature_groups == feature_levels[k]
-      eta_idx[j, idx] <- k + n_total_groups
-    }
-    eta_expanded <- c(eta_expanded, as.numeric(feature_levels))
-    n_total_groups <- n_total_groups + length(feature_levels)
-  }
-  theta_expanded <- as.matrix(c(eta_expanded, beta))
-
-  # Calulate the variance-covariance matrix of non-sparse coefficients
-  z <- c()
-  for (k in 1:n_groups) {
-    idx <- group_idxs[[k]]
-    feature_map <- matrix(0, n_features, n_total_groups)
-    for (j in 1:n_features) {
-      feature_map[j, eta_idx[j, k]] <- 1
-    }
-    z_k <- x[idx, ] %*% feature_map
-    z <- rbind(z, z_k)
-  }
-  z1 <- as.matrix(cbind(z[, eta_expanded != 0], x[, beta != 0]))
-  theta1 <- c(
-    eta_expanded[eta_expanded != 0], beta[beta != 0]
-  )
-  n_nonzero <- length(theta1)
-  if (n_nonzero > 0) {
-    offset <- z1 %*% theta1
-    grads <- c()
-    hessians <- c()
-    for (k in 1:n_groups) {
-      idx <- group_idxs[[k]]
-      ghs <- calc_grads_hessians(
-        offset[idx], z1[idx, ], time[idx], status[idx]
-      )
-      grads <- rbind(grads, ghs$grads)
-      hessians <- rbind(hessians, ghs$hessians)
-    }
-    hess <- matrix(colSums(hessians), nrow = n_nonzero, ncol = n_nonzero)
-    cov_grad <- cov(grads) * n_samples / (n_samples - 1)
-    hess_inv <- solve(hess)
-    var <- hess_inv %*% cov_grad %*% hess_inv
-  } else {
-    var <- NULL
-  }
-
   # Unscale the coefficients
   coefficients <- sweep(cbind(eta, beta), 1, x_scale, `/`)
   colnames(coefficients) <- c(group_levels, "Center")
@@ -322,11 +270,21 @@ coxens <- function(
 
   # Return the fitted model
   fit <- list(
-    coefficients = coefficients, coefficients_group = eta_idx,
-    coefficients_expanded = theta_expanded, var = var,
-    group_levels = group_levels, logLik = -loss, iter = n_iterations,
-    message = message, penalty = penalty, lambda1 = lambda1, lambda2 = lambda2,
-    lambda3 = lambda3, gamma = gamma, formula = formula, call = match.call()
+    coefficients = coefficients,
+    logLik = -loss,
+    iter = n_iterations,
+    message = message,
+    penalty = penalty,
+    lambda1 = lambda1,
+    lambda2 = lambda2,
+    lambda3 = lambda3,
+    gamma = gamma,
+    formula = formula,
+    call = match.call(),
+    time = time,
+    status = status,
+    group = group,
+    x = sweep(x, 2, x_scale, `/`)
   )
   class(fit) <- "coxens"
   return(fit)

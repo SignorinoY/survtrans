@@ -229,59 +229,6 @@ coxsg <- function(
   coefs <- coefs_proc
   coefs[abs(coefs) < control$eps] <- 0
 
-  # Reassign the coefficients' group
-  n_total_groups <- 0
-  coefs_expanded <- c()
-  coefs_group <- matrix(0, nrow = n_features, ncol = n_groups)
-  for (j in 1:n_features) {
-    feature_groups <- as.factor(as.character(coefs[j, ]))
-    feature_levels <- levels(feature_groups)
-    for (k in seq_along(feature_levels)) {
-      idx <- feature_groups == feature_levels[k]
-      coefs_group[j, idx] <- k + n_total_groups
-    }
-    coefs_expanded <- c(coefs_expanded, as.numeric(feature_levels))
-    n_total_groups <- n_total_groups + length(feature_levels)
-  }
-  coefs_expanded <- as.matrix(coefs_expanded)
-  sparse_mark <- coefs_expanded == 0
-
-  # Group the features
-  x_grouped <- c()
-  for (k in 1:n_groups) {
-    idx <- group_idxs[[k]]
-    feature_map <- matrix(0, n_features, n_total_groups)
-    for (j in 1:n_features) {
-      feature_map[j, coefs_group[j, k]] <- 1
-    }
-    x_grouped_k <- x[idx, ] %*% feature_map
-    x_grouped <- rbind(x_grouped, x_grouped_k)
-  }
-  x_grouped <- as.data.frame(x_grouped)
-
-  # Calulate the variance-covariance matrix of non-sparse coefficients
-  x_grouped_sparse <- x_grouped[, !sparse_mark]
-  coefs_expanded_sparse <- coefs_expanded[!sparse_mark]
-  theta <- as.matrix(x_grouped_sparse) %*% coefs_expanded_sparse
-  n_nonzero <- sum(!sparse_mark)
-
-  grads <- c()
-  hessians <- c()
-  for (k in 1:n_groups) {
-    idx <- group_idxs[[k]]
-    ghs <- calc_grads_hessians(
-      theta[idx], x_grouped_sparse[idx, ], time[idx], status[idx]
-    )
-    grads <- rbind(grads, ghs$grads)
-    hessians <- rbind(hessians, ghs$hessians)
-  }
-  hess <- matrix(colSums(hessians), nrow = n_nonzero, ncol = n_nonzero)
-  cov_grad <- cov(grads) * n_samples / (n_samples - 1)
-  sigma_coefs <- penalty_grad(coefs_expanded_sparse, penalty, lambda1, gamma)
-  sigma_coefs <- diag(sigma_coefs / abs(coefs_expanded_sparse) * n_samples)
-  hess_inv <- solve(hess + sigma_coefs)
-  var <- hess_inv %*% cov_grad %*% hess_inv
-
   # Unscale the coefficients
   coefs <- sweep(coefs, 1, x_scale, `/`)
 
@@ -291,7 +238,6 @@ coxsg <- function(
   # Return the fit
   fit <- list(
     coefficients = coefs, coefficients_group = coefs_group,
-    coefficients_expanded = coefs_expanded, var = var,
     xi = xi, mu = mu, alpha = alpha, group_levels = group_levels,
     logLik = -loss, iter = record$n_iterations, message = record$message,
     penalty = penalty, lambda1 = lambda1, gamma = gamma,

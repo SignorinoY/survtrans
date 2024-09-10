@@ -1,38 +1,32 @@
-#' Log-likelihood of a subgroup analysis for Cox proportional hazards model
-#' @param object a coxens object.
-#' @param data a data frame containing the variables in the model.
-#' @param group a factor specifying the group of each sample.
+#' @title BIC method for a \code{coxens} model
+#' @param object the result of a \code{coxens} fit.
 #' @param ... Unused.
-#' @return the log-likelihood of the model.
+#' @return The log-likelihood of the model.
 #' @export
-logLik.coxens <- function(object, data, group, ...) {
-  data <- preprocess_data(object$formula, data, group = group)
-  x <- data$x
-  x_scale <- attr(x, "scale")
-  time <- data$time
-  status <- data$status
-  group <- data$group
+logLik.coxens <- function(object, ...) {
+  # Properties of the coxens object
+  time <- object$time
+  status <- object$status
+  group <- object$group
+  x <- object$x
+  n_groups <- length(unique(group))
+  group_levels <- levels(group)
+  group_idxs <- lapply(group_levels, function(g) which(group == g))
+  coefficients <- object$coefficients
 
-  group_levels <- object$group_levels
-  n_groups <- length(group_levels)
+  beta <- coefficients[, 1:n_groups] + coefficients[, (n_groups + 1)]
 
-  theta <- object$coefficients
-  theta <- theta * x_scale
-
-  beta <- theta[, 1:n_groups] + theta[, (n_groups + 1)]
-
+  # Calculate the log-likelihood
   offset <- numeric(nrow(x))
-  for (k in 1:n_groups) {
-    ind <- group == group_levels[k]
-    offset[ind] <- x[ind, ] %*% beta[, k]
+  for (k in seq_len(n_groups)) {
+    idx <- group_idxs[[k]]
+    offset[idx] <- x[idx, ] %*% beta[, k]
   }
   hazard <- exp(offset - max(offset))
   risk_set <- ave(hazard, group, FUN = cumsum)
-  for (k in 1:n_groups) {
-    ind <- group == group_levels[k]
-    risk_set[ind] <- ave(risk_set[ind], time[ind], FUN = max)
-  }
-
-  loglik <- sum(status * (offset - log(risk_set) - max(offset)))
-  return(loglik)
+  risk_set <- unlist(lapply(seq_len(n_groups), function(k) {
+    idx <- group_idxs[[k]]
+    ave(risk_set[idx], time[idx], FUN = max)
+  })) # Update the risk set for each group based on unique time points
+  return(sum(status * (offset - log(risk_set) - max(offset))))
 }

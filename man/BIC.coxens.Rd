@@ -2,28 +2,22 @@
 % Please edit documentation in R/BIC.coxens.R
 \name{BIC.coxens}
 \alias{BIC.coxens}
-\title{BIC for Subgroup analysis of Cox proportional hazards model}
+\title{BIC method for a \code{coxens} model}
 \usage{
-\method{BIC}{coxens}(object, data, group, type = c("trad", "mod"), ...)
+\method{BIC}{coxens}(object, type = c("traditional", "modified"), ...)
 }
 \arguments{
-\item{object}{a coxens object.}
+\item{object}{the result of a \code{coxens} fit.}
 
-\item{data}{a data frame containing the variables in the model, which
-should be the same as the data used to fit the model.}
-
-\item{group}{a factor specifying the group of each sample, which
-should be the same as the group used to fit the model.}
-
-\item{type}{a character string specifying the type of BIC to compute.
-The default is "trad", corresponding to Cn=1. The other option is
-"mod", corresponding to Cn=log(log(d)).}
+\item{type}{A character string specifying the type of BIC to compute.
+"traditional" corresponds to Cn=1, and "modified" corresponds to
+Cn=log(log(d)).}
 
 \item{...}{Unused.}
 }
 \value{
-the BIC of the model.
+The BIC of the model.
 }
 \description{
-BIC for Subgroup analysis of Cox proportional hazards model
+BIC method for a \code{coxens} model
 }

@@ -5,6 +5,10 @@ approx_likelihood <- function(offset, time, status) {
     .Call(`_survtrans_approx_likelihood`, offset, time, status)
 }
 
+calc_grad_hess <- function(lp, x, time, status) {
+    .Call(`_survtrans_calc_grad_hess`, lp, x, time, status)
+}
+
 close_update <- function(z, v, penalty, lambda, gamma) {
     .Call(`_survtrans_close_update`, z, v, penalty, lambda, gamma)
 }

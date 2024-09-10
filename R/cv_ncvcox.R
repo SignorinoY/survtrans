@@ -1,4 +1,4 @@
-#' Cross-validation for \code{ncvcox}
+#' @title Cross-validation for \code{ncvcox}
 #' @param formula a formula expression as for regression models, of the form
 #' \code{response ~ predictors}. The response must be a survival object as
 #' returned by the \code{\link{Surv}} function.
@@ -78,8 +78,8 @@ cv_ncvcox <- function(
       }
     }
   } else {
-    cl <- makeCluster(parallel)
-    registerDoSNOW(cl)
+    cl <- parallel::makeCluster(parallel)
+    doSNOW::registerDoSNOW(cl)
     pb <- txtProgressBar(max = nlambdas, style = 3)
     progress <- function(n) setTxtProgressBar(pb, n)
     opts <- list(progress = progress)
@@ -107,7 +107,7 @@ cv_ncvcox <- function(
     }
     coefficients <- records[, 1:n_features]
     criterions <- records[, -seq_len(n_features)]
-    stopCluster(cl)
+    parallel::stopCluster(cl)
     close(pb)
   }
   colnames(coefficients) <- colnames(x[, -1])

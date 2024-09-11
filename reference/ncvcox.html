@@ -120,6 +120,24 @@ control parameters for the fitting algorithm. Default is
 <span class="r-in"><span><span class="va">df_src</span> <span class="op">&lt;-</span> <span class="va">sim1</span><span class="op">[</span><span class="va">sim1</span><span class="op">$</span><span class="va">group</span> <span class="op">==</span> <span class="fl">1</span>, <span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">df_trg</span> <span class="op">&lt;-</span> <span class="va">sim1</span><span class="op">[</span><span class="va">sim1</span><span class="op">$</span><span class="va">group</span> <span class="op">==</span> <span class="fl">2</span>, <span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">fit_src</span> <span class="op">&lt;-</span> <span class="fu">ncvcox</span><span class="op">(</span><span class="va">formula</span>, <span class="va">df_src</span>, lambda <span class="op">=</span> <span class="fl">0.1</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit_src</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ncvcox(formula = formula, data = df_src, lambda = 0.1, penalty = "SCAD")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   n=900, number of events=745</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       coef exp(coef) se(coef)     z Pr(&gt;|z|)    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X1 0.50286   1.65345  0.03675 13.68   &lt;2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X2 0.49795   1.64534  0.03525 14.12   &lt;2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X3 0.50875   1.66322  0.03564 14.28   &lt;2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X4 0.54162   1.71879  0.03542 15.29   &lt;2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    exp(coef) exp(-coef) lower .95 upper .95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X1 1.6534    0.6048     1.5385    1.7769   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X2 1.6453    0.6078     1.5355    1.7630   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X3 1.6632    0.6012     1.5510    1.7835   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X4 1.7188    0.5818     1.6035    1.8423   </span>
 <span class="r-in"><span><span class="va">offset_trg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">fit_src</span>, newdata <span class="op">=</span> <span class="va">df_trg</span>, type <span class="op">=</span> <span class="st">"lp"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">fit_trg</span> <span class="op">&lt;-</span> <span class="fu">ncvcox</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">formula</span>, <span class="va">df_trg</span>,</span></span>
@@ -127,7 +145,8 @@ control parameters for the fitting algorithm. Default is
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit_trg</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ncvcox(formula = formula, data = df_trg, offset = offset_trg, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     lambda = 0.2, penalty = "SCAD")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   n=100, number of events=69</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>

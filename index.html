@@ -84,17 +84,19 @@
 </h4>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ncvcox.html">ncvcox</a></span><span class="op">(</span></span>
-<span>  <span class="va">formula</span>, <span class="va">sim2</span><span class="op">[</span><span class="va">sim2</span><span class="op">$</span><span class="va">group</span> <span class="op">==</span> <span class="fl">10</span>, <span class="op">]</span>, lambda <span class="op">=</span> <span class="fl">0.15</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span>
+<span>  <span class="va">formula</span>, <span class="va">sim2</span><span class="op">[</span><span class="va">sim2</span><span class="op">$</span><span class="va">group</span> <span class="op">==</span> <span class="fl">10</span>, <span class="op">]</span>,</span>
+<span>  lambda <span class="op">=</span> <span class="fl">0.15</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Call:</span></span>
-<span><span class="co">#&gt; NULL</span></span>
+<span><span class="co">#&gt; ncvcox(formula = formula, data = sim2[sim2$group == 10, ], lambda = 0.15, </span></span>
+<span><span class="co">#&gt;     penalty = "SCAD")</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   n=100, number of events=76</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;        coef exp(coef) se(coef)      z Pr(&gt;|z|)    </span></span>
 <span><span class="co">#&gt; X1 -0.67132   0.51104  0.13061 -5.140 2.75e-07 ***</span></span>
-<span><span class="co">#&gt; X2 -0.57862   0.56067  0.11382 -5.084 3.71e-07 ***</span></span>
+<span><span class="co">#&gt; X2 -0.57862   0.56067  0.11382 -5.084 3.70e-07 ***</span></span>
 <span><span class="co">#&gt; X3  0.31976   1.37680  0.10605  3.015  0.00257 ** </span></span>
 <span><span class="co">#&gt; X4  0.84723   2.33318  0.07791 10.875  &lt; 2e-16 ***</span></span>
 <span><span class="co">#&gt; ---</span></span>

@@ -4,21 +4,14 @@
 \alias{BIC.ncvcox}
 \title{BIC for Non-convex penalized Cox proportional hazards model}
 \usage{
-\method{BIC}{ncvcox}(object, data, group, offset, type = c("trad", "mod"), ...)
+\method{BIC}{ncvcox}(object, type = c("traditional", "modified"), ...)
 }
 \arguments{
 \item{object}{a ncvcox object.}
 
-\item{data}{a data frame containing the variables in the model, which
-should be the same as the data used to fit the model.}
-
-\item{group}{a factor specifying the group of each sample.}
-
-\item{offset}{a numeric vector specifying the offset for each sample.}
-
-\item{type}{a character string specifying the type of BIC to compute.
-The default is "trad", corresponding to Cn=1. The other option is
-"mod", corresponding to Cn=log(log(d)).}
+\item{type}{A character string specifying the type of BIC to compute.
+"traditional" corresponds to Cn=1, and "modified" corresponds to
+Cn=log(log(d)).}
 
 \item{...}{Unused.}
 }

@@ -4,16 +4,10 @@
 \alias{logLik.ncvcox}
 \title{Log-likelihood of Non-convex penalized Cox proportional hazards model}
 \usage{
-\method{logLik}{ncvcox}(object, data, group, offset, ...)
+\method{logLik}{ncvcox}(object, ...)
 }
 \arguments{
 \item{object}{a ncvcox object.}
-
-\item{data}{a data frame containing the variables in the model.}
-
-\item{group}{a factor specifying the group of each sample.}
-
-\item{offset}{a numeric vector specifying the offset.}
 
 \item{...}{Unused.}
 }

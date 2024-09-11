@@ -24,14 +24,14 @@
 #' formula <- Surv(time, status) ~ . - group - id
 #' df_src <- sim1[sim1$group == 1, ]
 #' df_trg <- sim1[sim1$group == 2, ]
-#' group <- as.factor(sim1$group)
 #' fit_src <- ncvcox(formula, df_src, lambda = 0.1, penalty = "SCAD")
+#' summary(fit_src)
 #' offset_trg <- predict(fit_src, newdata = df_trg, type = "lp")
 #' fit_trg <- ncvcox(
 #'   formula, df_trg,
 #'   offset = offset_trg, lambda = 0.2, penalty = "SCAD"
 #' )
-#' coef(fit_trg)
+#' summary(fit_trg)
 ncvcox <- function(
     formula, data, group, offset, lambda = 0,
     penalty = c("lasso", "MCP", "SCAD"),
@@ -84,7 +84,7 @@ ncvcox <- function(
   convergence <- FALSE
   coefficients <- init
 
-  offset <- numeric(n_samples)
+  lp <- offset
   w <- numeric(n_samples)
   r <- numeric(n_samples)
 
@@ -98,7 +98,7 @@ ncvcox <- function(
     for (k in 1:n_groups) {
       idx <- group_idxs[[k]]
       wls <- approx_likelihood(
-        offset = offset[idx], time = time[idx], status = status[idx]
+        offset = lp[idx], time = time[idx], status = status[idx]
       )
       w[idx] <- wls$weights
       r[idx] <- wls$residuals
@@ -134,16 +134,16 @@ ncvcox <- function(
       if (max_diff <= control$inner.eps) break
     }
 
-    offset <- x %*% coefficients
+    lp <- x %*% coefficients + offset
 
     # Calculate the log-likelihood
-    hazard <- exp(offset)
+    hazard <- exp(lp)
     risk_set <- ave(hazard, group, FUN = cumsum)
     for (k in 1:n_groups) {
       idx <- group_idxs[[k]]
       risk_set[idx] <- ave(risk_set[idx], time[idx], FUN = max)
     }
-    loss <- -sum(status * (offset - log(risk_set)))
+    loss <- -sum(status * (lp - log(risk_set)))
 
     # Check the convergence
     if (is.infinite(loss) || is.nan(loss)) {
@@ -177,10 +177,20 @@ ncvcox <- function(
 
   # Return the fit
   fit <- list(
-    coefficients = coefficients, group_levels = group_levels,
-    logLik = -loss, iter = n_iterations, message = message,
-    penalty = penalty, lambda = lambda, gamma = gamma, formula = formula,
-    call = match.call()
+    coefficients = coefficients,
+    logLik = -loss,
+    iter = n_iterations,
+    message = message,
+    penalty = penalty,
+    lambda = lambda,
+    gamma = gamma,
+    formula = formula,
+    call = match.call(),
+    time = time,
+    status = status,
+    group = group,
+    x = sweep(x, 2, x_scale, `/`),
+    offset = offset
   )
   class(fit) <- "ncvcox"
   return(fit)

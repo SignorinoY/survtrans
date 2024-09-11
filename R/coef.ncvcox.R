@@ -4,5 +4,6 @@
 #' @return a vector of coefficients.
 #' @export
 coef.ncvcox <- function(object, ...) {
-  return(object$coefficients)
+  coefficients <- object$coefficients
+  return(coefficients[coefficients != 0])
 }

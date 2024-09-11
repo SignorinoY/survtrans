@@ -119,10 +119,10 @@ summary.coxens <- function(object, conf.int = 0.95, compressed = TRUE, ...) {
 
   # Create a summary list
   summary_list <- list(
-    call = object$call,
     n = n_samples,
     nevent = n_events,
     logLik = loglik,
+    call = object$call,
     BIC = bic_value,
     coefficients = coef_matrix,
     conf.int = conf_int_matrix

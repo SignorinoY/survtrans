@@ -12,7 +12,7 @@ BIC.ncvcox <- function(object, type = c("traditional", "modified"), ...) {
   # Properties of the coxens object
   coefficients <- object$coefficients
   n_samples <- nrow(object$x)
-  n_features <- nrow(coefficients)
+  n_features <- length(coefficients)
   n_parameters <- sum(coefficients != 0)
 
   loglik <- logLik(object)

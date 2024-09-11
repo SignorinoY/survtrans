@@ -39,12 +39,22 @@ This is a basic example which shows you how to solve a common problem:
 library(survtrans)
 ```
 
-### Multi-Source Survival Analysis
-
-Ensemble Learning
-
+### Multi-Sources Survival Analysis
 ```{r}
 formula <- Surv(time, status) ~ . - group - id
+```
+
+#### Target Learning
+```{r}
+fit <- ncvcox(
+  formula, sim2[sim2$group == 10, ], lambda = 0.15, penalty = "SCAD"
+)
+summary(fit)
+```
+
+#### Ensemble Learning
+
+```{r}
 fit <- coxens(
   formula, sim2, sim2$group,
   lambda1 = 2e-2, lambda2 = 0, lambda3 = 3e-3, penalty = "SCAD"

@@ -40,12 +40,15 @@
 <url><loc>/reference/plot.cv_ncvcox.html</loc></url>
 <url><loc>/reference/predict.ncvcox.html</loc></url>
 <url><loc>/reference/print.summary.coxens.html</loc></url>
+<url><loc>/reference/print.summary.ncvcox.html</loc></url>
 <url><loc>/reference/sim1.html</loc></url>
 <url><loc>/reference/sim2.html</loc></url>
 <url><loc>/reference/simsurv_tl.html</loc></url>
 <url><loc>/reference/summary.coxens.html</loc></url>
+<url><loc>/reference/summary.ncvcox.html</loc></url>
 <url><loc>/reference/survtrans-package.html</loc></url>
 <url><loc>/reference/survtrans_control.html</loc></url>
 <url><loc>/reference/vcov.coxens.html</loc></url>
+<url><loc>/reference/vcov.ncvcox.html</loc></url>
 </urlset>
 

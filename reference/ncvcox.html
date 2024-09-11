@@ -119,16 +119,26 @@ control parameters for the fitting algorithm. Default is
 <span class="r-in"><span><span class="va">formula</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">.</span> <span class="op">-</span> <span class="va">group</span> <span class="op">-</span> <span class="va">id</span></span></span>
 <span class="r-in"><span><span class="va">df_src</span> <span class="op">&lt;-</span> <span class="va">sim1</span><span class="op">[</span><span class="va">sim1</span><span class="op">$</span><span class="va">group</span> <span class="op">==</span> <span class="fl">1</span>, <span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">df_trg</span> <span class="op">&lt;-</span> <span class="va">sim1</span><span class="op">[</span><span class="va">sim1</span><span class="op">$</span><span class="va">group</span> <span class="op">==</span> <span class="fl">2</span>, <span class="op">]</span></span></span>
-<span class="r-in"><span><span class="va">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">sim1</span><span class="op">$</span><span class="va">group</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">fit_src</span> <span class="op">&lt;-</span> <span class="fu">ncvcox</span><span class="op">(</span><span class="va">formula</span>, <span class="va">df_src</span>, lambda <span class="op">=</span> <span class="fl">0.1</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">offset_trg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">fit_src</span>, newdata <span class="op">=</span> <span class="va">df_trg</span>, type <span class="op">=</span> <span class="st">"lp"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">fit_trg</span> <span class="op">&lt;-</span> <span class="fu">ncvcox</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">formula</span>, <span class="va">df_trg</span>,</span></span>
 <span class="r-in"><span>  offset <span class="op">=</span> <span class="va">offset_trg</span>, lambda <span class="op">=</span> <span class="fl">0.2</span>, penalty <span class="op">=</span> <span class="st">"SCAD"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">fit_trg</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  X1  X2  X3  X4  X5  X6  X7  X8  X9 X10 X11 X12 X13 X14 X15 X16 X17 X18 X19 X20 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0 </span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit_trg</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   n=100, number of events=69</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       coef exp(coef) se(coef)      z Pr(&gt;|z|)    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X1 -0.9562    0.3844   0.1010 -9.467  &lt; 2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X2 -0.8537    0.4258   0.1122 -7.608 2.79e-14 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    exp(coef) exp(-coef) lower .95 upper .95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X1 0.3844    2.6017     0.3153    0.4685   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X2 0.4258    2.3483     0.3418    0.5306   </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

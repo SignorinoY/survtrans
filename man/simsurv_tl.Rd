@@ -22,7 +22,8 @@ where K is the number of groups}
 
 \item{maxt}{the maximum time to simulate, a positive number}
 
-\item{n_samples}{the number of samples for each group}
+\item{n_samples}{a vector of length K specifying the number of samples or a
+single number specifying the total number of samples}
 
 \item{seed}{the random seed, the default is 0}
 }

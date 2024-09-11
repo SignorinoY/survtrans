@@ -8,7 +8,8 @@
 #' @param dist the distribution of the baseline hazard, a string, either
 #' "exponential","weibull", or "gompertz"
 #' @param maxt the maximum time to simulate, a positive number
-#' @param n_samples the number of samples for each group
+#' @param n_samples a vector of length K specifying the number of samples or a
+#' single number specifying the total number of samples
 #' @param seed the random seed, the default is 0
 #' @return a data frame with columns "id", "group", "X1", "X2", ..., "Xp",
 #' "time", "status"
@@ -29,13 +30,14 @@ simsurv_tl <- function(
   n_groups <- ncol(eta)
   n_features <- nrow(eta)
   names(beta) <- paste0("X", 1:n_features)
+  if (length(n_samples) == 1) n_samples <- rep(n_samples, n_groups)
   mu <- rep(0, n_features)
   sigma <- diag(n_features)
   covs <- c()
   times <- c()
   for (k in 1:n_groups) {
     cov <- data.frame(
-      id = 1:n_samples, mvrnorm(n_samples, mu = mu, Sigma = sigma)
+      id = seq_len(n_samples[k]), mvrnorm(n_samples[k], mu = mu, Sigma = sigma)
     )
     time <- simsurv(
       lambdas = lambda[k], gammas = gamma[k], dist = dist[k],

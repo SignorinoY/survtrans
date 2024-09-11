@@ -58,6 +58,7 @@ formula <- Surv(time, status) ~ . - group - id
 df_src <- sim1[sim1$group == 1, ]
 df_trg <- sim1[sim1$group == 2, ]
 fit_src <- ncvcox(formula, df_src, lambda = 0.1, penalty = "SCAD")
+summary(fit_src)
 offset_trg <- predict(fit_src, newdata = df_trg, type = "lp")
 fit_trg <- ncvcox(
   formula, df_trg,

@@ -53,13 +53,14 @@ coxens <- function(
   group <- data$group
 
   # Properties of the data
-  n_samples <- nrow(x)
+  n_samples_total <- nrow(x)
   n_features <- ncol(x)
   n_groups <- length(unique(group))
   group_levels <- levels(group)
   group_idxs <- lapply(group_levels, function(x) which(group == x))
+  n_samples_group <- sapply(group_idxs, length)
 
-  risk_set_size <- ave(rep(1, n_samples), group, FUN = cumsum)
+  risk_set_size <- ave(rep(1, n_samples_total), group, FUN = cumsum)
   risk_set_size <- unlist(lapply(1:n_groups, function(k) {
     idx <- group_idxs[[k]]
     ave(risk_set_size[idx], time[idx], FUN = max)
@@ -96,19 +97,19 @@ coxens <- function(
   message <- ""
   convergence <- FALSE
 
-  offset <- numeric(n_samples)
-  w <- numeric(n_samples)
-  z <- numeric(n_samples)
+  offset <- numeric(n_samples_total)
+  w <- numeric(n_samples_total)
+  z <- numeric(n_samples_total)
 
   idx <- which(lower.tri(matrix(1, n_groups, n_groups)), arr.ind = TRUE)
-  e <- Matrix::Matrix(0, nrow(idx), n_groups, sparse = TRUE)
+  e <- matrix(0, nrow = nrow(idx), ncol = n_groups)
   e[cbind(seq_len(nrow(idx)), idx[, 1])] <- 1
   e[cbind(seq_len(nrow(idx)), idx[, 2])] <- -1
 
   contr_sum <- Matrix::Matrix(
     cbind(
       kronecker(
-        matrix(1, nrow = 1, ncol = n_groups),
+        matrix(n_samples_group / n_samples_total, nrow = 1),
         diag(n_features)
       ),
       0 * diag(n_features)
@@ -122,11 +123,13 @@ coxens <- function(
     ),
     cbind(
       Matrix::Diagonal(n_features * n_groups),
-      matrix(0, nrow = n_features * n_groups, ncol = n_features)
+      Matrix::Matrix(0, n_features * n_groups, n_features, sparse = TRUE)
     ),
     cbind(
       kronecker(e, diag(n_features)),
-      matrix(0, n_groups * (n_groups - 1) * n_features / 2, n_features)
+      Matrix::Matrix(
+        0, n_groups * (n_groups - 1) * n_features / 2, n_features, sparse = TRUE
+      )
     )
   )
   n_constraints <- nrow(contr_penalty)
@@ -166,32 +169,26 @@ coxens <- function(
     }
 
     # Update the coefficients
-    w_tilde <- Matrix::Matrix(diag(w), sparse = TRUE)
-    xwx <- Matrix::crossprod(x_tilde, w_tilde %*% x_tilde) / n_samples
-    xwz <- Matrix::crossprod(x_tilde, w_tilde %*% z) / n_samples
-    theta <- Matrix::solve(
-      xwx + vartheta * (contr_sum2 + contr_penalty2),
-      xwz - Matrix::crossprod(contr_sum, mu) +
-        vartheta * Matrix::crossprod(contr_penalty, alpha - nu / vartheta),
-      sparse = TRUE
-    )
+    xwx <- Matrix::crossprod(x_tilde, w * x_tilde) / n_samples_total
+    xwz <- Matrix::crossprod(x_tilde, w * z) / n_samples_total
+    lhs <- xwx + vartheta * (contr_sum2 + contr_penalty2)
+    rhs <- xwz - Matrix::crossprod(contr_sum, mu) +
+      vartheta * Matrix::crossprod(contr_penalty, alpha - nu / vartheta)
+    theta <- Matrix::solve(lhs, rhs, sparse = TRUE, tol = control$eps)
 
     # Update the auxiliary variables
     alpha_old <- alpha
     alpha <- contr_penalty %*% theta + nu / vartheta
 
-    ## Group Sparsity
-    alpha[sparse_idx] <- vapply(sparse_idx, function(idx) {
-      threshold_prox(alpha[idx], vartheta, penalty, lambda1, gamma)
-    }, numeric(1))
-    ## Transfer Global
-    alpha[global_idx] <- vapply(global_idx, function(idx) {
-      threshold_prox(alpha[idx], vartheta, penalty, lambda2, gamma)
-    }, numeric(1))
-    ## Transfer Local
-    alpha[local_idx] <- vapply(local_idx, function(idx) {
-      threshold_prox(alpha[idx], vartheta, penalty, lambda3, gamma)
-    }, numeric(1))
+    alpha[sparse_idx] <- threshold_prox(
+      alpha[sparse_idx], vartheta, penalty, lambda1, gamma
+    )
+    alpha[global_idx] <- threshold_prox(
+      alpha[global_idx], vartheta, penalty, lambda2, gamma
+    )
+    alpha[local_idx] <- threshold_prox(
+      alpha[local_idx], vartheta, penalty, lambda3, gamma
+    )
     mu <- mu + vartheta * contr_sum %*% theta
     nu <- nu + vartheta * (contr_penalty %*% theta - alpha)
 

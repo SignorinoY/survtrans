@@ -84,6 +84,7 @@ summary.ncvcox <- function(object, conf.int = 0.95, compressed = TRUE, ...) {
     n = n_samples,
     nevent = n_events,
     logLik = loglik,
+    call = object$call,
     BIC = bic_value,
     coefficients = coef_matrix,
     conf.int = conf_int_matrix

@@ -47,7 +47,8 @@ formula <- Surv(time, status) ~ . - group - id
 #### Target Learning
 ```{r}
 fit <- ncvcox(
-  formula, sim2[sim2$group == 10, ], lambda = 0.15, penalty = "SCAD"
+  formula, sim2[sim2$group == 10, ],
+  lambda = 0.15, penalty = "SCAD"
 )
 summary(fit)
 ```

@@ -10,11 +10,12 @@ vcov.coxens <- function(object, ...) {
   status <- object$status
   group <- object$group
   x <- object$x
-  n_samples <- nrow(x)
+  n_samples_total <- nrow(x)
   n_features <- ncol(x)
   group_levels <- levels(group)
   n_groups <- length(group_levels)
   group_idxs <- lapply(group_levels, function(g) which(group == g))
+  n_samples_group <- sapply(group_idxs, length)
 
   coefficients <- object$coefficients
   eta <- coefficients[, 1:n_groups]
@@ -71,7 +72,7 @@ vcov.coxens <- function(object, ...) {
     nrow = n_expanded_nonzero, ncol = n_expanded_nonzero
   )
   hess_inv <- solve(hess)
-  cov_grad <- cov(gradients) * n_samples
+  cov_grad <- cov(gradients) * n_samples_total
   vcov_expanded <- hess_inv %*% cov_grad %*% hess_inv
   vcov_expanded_inv <- solve(vcov_expanded)
 
@@ -85,8 +86,9 @@ vcov.coxens <- function(object, ...) {
       group_levels <- unique(eta_idx[idx, ])
       group_levels <- group_levels[group_levels != 0]
       constr[i, group_levels] <- sapply(
-        group_levels, function(level) sum(eta_idx[idx, ] == level)
-      )
+        group_levels,
+        function(level) sum((eta_idx[idx, ] == level) * n_samples_group)
+      ) / n_samples_total
     }
     null_constr <- MASS::Null(t(constr))
 

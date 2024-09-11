@@ -43,17 +43,19 @@ formula <- Surv(time, status) ~ . - group - id
 
 ``` r
 fit <- ncvcox(
-  formula, sim2[sim2$group == 10, ], lambda = 0.15, penalty = "SCAD"
+  formula, sim2[sim2$group == 10, ],
+  lambda = 0.15, penalty = "SCAD"
 )
 summary(fit)
 #> Call:
-#> NULL
+#> ncvcox(formula = formula, data = sim2[sim2$group == 10, ], lambda = 0.15, 
+#>     penalty = "SCAD")
 #> 
 #>   n=100, number of events=76
 #> 
 #>        coef exp(coef) se(coef)      z Pr(>|z|)    
 #> X1 -0.67132   0.51104  0.13061 -5.140 2.75e-07 ***
-#> X2 -0.57862   0.56067  0.11382 -5.084 3.71e-07 ***
+#> X2 -0.57862   0.56067  0.11382 -5.084 3.70e-07 ***
 #> X3  0.31976   1.37680  0.10605  3.015  0.00257 ** 
 #> X4  0.84723   2.33318  0.07791 10.875  < 2e-16 ***
 #> ---

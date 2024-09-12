@@ -50,6 +50,6 @@ simsurv_tl <- function(
   }
   df <- left_join(covs, times, by = c("id", "group")) %>%
     rename(time = "eventtime") %>%
-    mutate(id = 1:(n_samples * n_groups))
+    mutate(id = seq_len(sum(n_samples)))
   return(df)
 }

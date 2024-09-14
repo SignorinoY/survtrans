@@ -31,7 +31,10 @@ vcov.ncvcox <- function(object, ...) {
     colSums(hessians),
     nrow = n_parameters, ncol = n_parameters
   )
-  hess_inv <- solve(hess)
+  sigma <- penalty_grad(
+    coef_nonzero, object$penalty, object$lambda, object$gamma
+  ) / abs(coef_nonzero) * n_samples
+  hess_inv <- solve(hess + diag(sigma))
   cov_grad <- cov(gradients) * n_samples
   vcov <- hess_inv %*% cov_grad %*% hess_inv
   return(vcov)

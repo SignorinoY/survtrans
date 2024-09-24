@@ -94,18 +94,18 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   n=100, number of events=76</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;        coef exp(coef) se(coef)      z Pr(&gt;|z|)    </span></span>
-<span><span class="co">#&gt; X1 -0.67132   0.51104  0.13061 -5.140 2.75e-07 ***</span></span>
-<span><span class="co">#&gt; X2 -0.57862   0.56067  0.11382 -5.084 3.70e-07 ***</span></span>
-<span><span class="co">#&gt; X3  0.31976   1.37680  0.10605  3.015  0.00257 ** </span></span>
-<span><span class="co">#&gt; X4  0.84723   2.33318  0.07791 10.875  &lt; 2e-16 ***</span></span>
+<span><span class="co">#&gt;       coef exp(coef) se(coef)      z Pr(&gt;|z|)    </span></span>
+<span><span class="co">#&gt; X1 -0.6713    0.5110   0.1492 -4.501 6.77e-06 ***</span></span>
+<span><span class="co">#&gt; X2 -0.5786    0.5607   0.1420 -4.076 4.58e-05 ***</span></span>
+<span><span class="co">#&gt; X3  0.3198    1.3768   0.1755  1.822   0.0685 .  </span></span>
+<span><span class="co">#&gt; X4  0.8472    2.3332   0.1231  6.881 5.93e-12 ***</span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt;    exp(coef) exp(-coef) lower .95 upper .95</span></span>
-<span><span class="co">#&gt; X1 0.5110    1.9568     0.3956    0.6601   </span></span>
-<span><span class="co">#&gt; X2 0.5607    1.7836     0.4486    0.7008   </span></span>
-<span><span class="co">#&gt; X3 1.3768    0.7263     1.1184    1.6949   </span></span>
-<span><span class="co">#&gt; X4 2.3332    0.4286     2.0028    2.7181</span></span></code></pre></div>
+<span><span class="co">#&gt; X1 0.5110    1.9568     0.3815    0.6846   </span></span>
+<span><span class="co">#&gt; X2 0.5607    1.7836     0.4245    0.7405   </span></span>
+<span><span class="co">#&gt; X3 1.3768    0.7263     0.9761    1.9420   </span></span>
+<span><span class="co">#&gt; X4 2.3332    0.4286     1.8329    2.9699</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="ensemble-learning">Ensemble Learning<a class="anchor" aria-label="anchor" href="#ensemble-learning"></a>
@@ -123,34 +123,34 @@
 <span><span class="co">#&gt;   n=1000, number of events=811</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;                                     coef exp(coef) se(coef)       z Pr(&gt;|z|)</span></span>
-<span><span class="co">#&gt; X1 (1, 3, 5, 7, 9)               0.54067   1.71716  0.04802  11.260  &lt; 2e-16</span></span>
-<span><span class="co">#&gt; X1 (2, 4, 6, 8, 10)             -0.64495   0.52469  0.05096 -12.656  &lt; 2e-16</span></span>
-<span><span class="co">#&gt; X2 (1, 3, 5, 9)                  0.55958   1.74994  0.05097  10.979  &lt; 2e-16</span></span>
-<span><span class="co">#&gt; X2 (2, 4, 6, 8, 10)             -0.62512   0.53520  0.05283 -11.833  &lt; 2e-16</span></span>
-<span><span class="co">#&gt; X2 (7)                           0.31086   1.36460  0.13109   2.371   0.0177</span></span>
-<span><span class="co">#&gt; X3 (1, 2, 3, 4, 5, 6, 8, 9, 10)  0.52807   1.69565  0.03905  13.523  &lt; 2e-16</span></span>
-<span><span class="co">#&gt; X3 (7)                           0.75915   2.13646  0.12915   5.878 4.15e-09</span></span>
-<span><span class="co">#&gt; X4 (ALL)                         0.54321   1.72152  0.03951  13.750  &lt; 2e-16</span></span>
+<span><span class="co">#&gt; X1 (1, 3, 5, 7, 9)               0.54067   1.71716  0.05585   9.682  &lt; 2e-16</span></span>
+<span><span class="co">#&gt; X1 (2, 4, 6, 8, 10)             -0.64495   0.52469  0.05601 -11.516  &lt; 2e-16</span></span>
+<span><span class="co">#&gt; X2 (1, 3, 5, 9)                  0.55958   1.74994  0.05950   9.405  &lt; 2e-16</span></span>
+<span><span class="co">#&gt; X2 (2, 4, 6, 8, 10)             -0.62512   0.53520  0.06047 -10.338  &lt; 2e-16</span></span>
+<span><span class="co">#&gt; X2 (7)                           0.31086   1.36460  0.11773   2.641  0.00828</span></span>
+<span><span class="co">#&gt; X3 (1, 2, 3, 4, 5, 6, 8, 9, 10)  0.52807   1.69565  0.04478  11.792  &lt; 2e-16</span></span>
+<span><span class="co">#&gt; X3 (7)                           0.75915   2.13646  0.10585   7.172  7.4e-13</span></span>
+<span><span class="co">#&gt; X4 (ALL)                         0.54321   1.72152  0.04328  12.551  &lt; 2e-16</span></span>
 <span><span class="co">#&gt;                                    </span></span>
 <span><span class="co">#&gt; X1 (1, 3, 5, 7, 9)              ***</span></span>
 <span><span class="co">#&gt; X1 (2, 4, 6, 8, 10)             ***</span></span>
 <span><span class="co">#&gt; X2 (1, 3, 5, 9)                 ***</span></span>
 <span><span class="co">#&gt; X2 (2, 4, 6, 8, 10)             ***</span></span>
-<span><span class="co">#&gt; X2 (7)                          *  </span></span>
+<span><span class="co">#&gt; X2 (7)                          ** </span></span>
 <span><span class="co">#&gt; X3 (1, 2, 3, 4, 5, 6, 8, 9, 10) ***</span></span>
 <span><span class="co">#&gt; X3 (7)                          ***</span></span>
 <span><span class="co">#&gt; X4 (ALL)                        ***</span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt;                                 exp(coef) exp(-coef) lower .95 upper .95</span></span>
-<span><span class="co">#&gt; X1 (1, 3, 5, 7, 9)              1.7172    0.5824     1.5629    1.8866   </span></span>
-<span><span class="co">#&gt; X1 (2, 4, 6, 8, 10)             0.5247    1.9059     0.4748    0.5798   </span></span>
-<span><span class="co">#&gt; X2 (1, 3, 5, 9)                 1.7499    0.5714     1.5836    1.9338   </span></span>
-<span><span class="co">#&gt; X2 (2, 4, 6, 8, 10)             0.5352    1.8685     0.4826    0.5936   </span></span>
-<span><span class="co">#&gt; X2 (7)                          1.3646    0.7328     1.0554    1.7644   </span></span>
-<span><span class="co">#&gt; X3 (1, 2, 3, 4, 5, 6, 8, 9, 10) 1.6957    0.5897     1.5707    1.8305   </span></span>
-<span><span class="co">#&gt; X3 (7)                          2.1365    0.4681     1.6587    2.7518   </span></span>
-<span><span class="co">#&gt; X4 (ALL)                        1.7215    0.5809     1.5933    1.8601</span></span></code></pre></div>
+<span><span class="co">#&gt; X1 (1, 3, 5, 7, 9)              1.7172    0.5824     1.5391    1.9158   </span></span>
+<span><span class="co">#&gt; X1 (2, 4, 6, 8, 10)             0.5247    1.9059     0.4701    0.5856   </span></span>
+<span><span class="co">#&gt; X2 (1, 3, 5, 9)                 1.7499    0.5714     1.5573    1.9664   </span></span>
+<span><span class="co">#&gt; X2 (2, 4, 6, 8, 10)             0.5352    1.8685     0.4754    0.6025   </span></span>
+<span><span class="co">#&gt; X2 (7)                          1.3646    0.7328     1.0834    1.7188   </span></span>
+<span><span class="co">#&gt; X3 (1, 2, 3, 4, 5, 6, 8, 9, 10) 1.6957    0.5897     1.5532    1.8512   </span></span>
+<span><span class="co">#&gt; X3 (7)                          2.1365    0.4681     1.7362    2.6290   </span></span>
+<span><span class="co">#&gt; X4 (ALL)                        1.7215    0.5809     1.5815    1.8739</span></span></code></pre></div>
 </div>
 </div>
 </div>
@@ -214,7 +214,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>

@@ -127,17 +127,17 @@ control parameters for the fitting algorithm. Default is
 <span class="r-out co"><span class="r-pr">#&gt;</span>   n=900, number of events=745</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       coef exp(coef) se(coef)     z Pr(&gt;|z|)    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X1 0.50286   1.65345  0.03675 13.68   &lt;2e-16 ***</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X2 0.49795   1.64534  0.03525 14.12   &lt;2e-16 ***</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X3 0.50875   1.66322  0.03564 14.28   &lt;2e-16 ***</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X4 0.54162   1.71879  0.03542 15.29   &lt;2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X1 0.50286   1.65345  0.04023 12.50   &lt;2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X2 0.49795   1.64534  0.03799 13.11   &lt;2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X3 0.50875   1.66322  0.03907 13.02   &lt;2e-16 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X4 0.54162   1.71879  0.03959 13.68   &lt;2e-16 ***</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ---</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    exp(coef) exp(-coef) lower .95 upper .95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X1 1.6534    0.6048     1.5385    1.7769   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X2 1.6453    0.6078     1.5355    1.7630   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X3 1.6632    0.6012     1.5510    1.7835   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X4 1.7188    0.5818     1.6035    1.8423   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X1 1.6534    0.6048     1.5281    1.7891   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X2 1.6453    0.6078     1.5273    1.7725   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X3 1.6632    0.6012     1.5406    1.7956   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X4 1.7188    0.5818     1.5905    1.8575   </span>
 <span class="r-in"><span><span class="va">offset_trg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">fit_src</span>, newdata <span class="op">=</span> <span class="va">df_trg</span>, type <span class="op">=</span> <span class="st">"lp"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">fit_trg</span> <span class="op">&lt;-</span> <span class="fu">ncvcox</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">formula</span>, <span class="va">df_trg</span>,</span></span>
@@ -151,13 +151,13 @@ control parameters for the fitting algorithm. Default is
 <span class="r-out co"><span class="r-pr">#&gt;</span>   n=100, number of events=69</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       coef exp(coef) se(coef)      z Pr(&gt;|z|)    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X1 -0.9562    0.3844   0.1010 -9.467  &lt; 2e-16 ***</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X2 -0.8537    0.4258   0.1122 -7.608 2.79e-14 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X1 -0.9562    0.3844   0.1562 -6.120 9.39e-10 ***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X2 -0.8537    0.4258   0.1452 -5.881 4.07e-09 ***</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ---</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    exp(coef) exp(-coef) lower .95 upper .95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X1 0.3844    2.6017     0.3153    0.4685   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> X2 0.4258    2.3483     0.3418    0.5306   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X1 0.3844    2.6017     0.2830    0.5221   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> X2 0.4258    2.3483     0.3204    0.5660   </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -169,7 +169,7 @@ control parameters for the fitting algorithm. Default is
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>

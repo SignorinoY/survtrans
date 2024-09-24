@@ -128,7 +128,8 @@ coxens <- function(
     cbind(
       kronecker(e, diag(n_features)),
       Matrix::Matrix(
-        0, n_groups * (n_groups - 1) * n_features / 2, n_features, sparse = TRUE
+        0, n_groups * (n_groups - 1) * n_features / 2, n_features,
+        sparse = TRUE
       )
     )
   )

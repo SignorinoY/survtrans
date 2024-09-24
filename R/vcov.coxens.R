@@ -16,17 +16,17 @@ vcov.coxens <- function(object, ...) {
   n_groups <- length(group_levels)
   group_idxs <- lapply(group_levels, function(g) which(group == g))
   n_samples_group <- sapply(group_idxs, length)
-
   coefficients <- object$coefficients
+
+  # Extract the coefficients from the object
   eta <- coefficients[, 1:n_groups]
   beta <- coefficients[, (n_groups + 1)]
 
   # Reassign the coefficients' group and track expanded coefficients
   eta_expanded <- numeric()
-  coef_processed <- numeric()
-  eta_idx <- matrix(0, nrow = n_features, ncol = n_groups)
+  coefs_processed <- numeric()
+  eta_idx <- matrix(0, n_features, n_groups)
   n_total_groups <- 0
-
   for (j in seq_len(n_features)) {
     feature_groups <- as.factor(eta[j, ])
     feature_levels <- unique(as.character(feature_groups))
@@ -36,51 +36,57 @@ vcov.coxens <- function(object, ...) {
       eta_idx[j, idx] <- k + n_total_groups
     }
     eta_expanded <- c(eta_expanded, as.numeric(feature_levels))
-    coef_processed <- c(coef_processed, as.numeric(feature_levels) + beta[j])
+    coefs_processed <- c(coefs_processed, as.numeric(feature_levels) + beta[j])
     n_total_groups <- n_total_groups + length(feature_levels)
   }
-  coef_expanded <- c(eta_expanded, beta)
-  n_expanded_nonzero <- sum(coef_expanded != 0)
-  n_processed_nonzero <- sum(coef_processed != 0)
+  coefs_expanded <- c(eta_expanded, beta)
+
+  # Check if there are non-zero coefficients
+  n_expanded_nonzero <- sum(coefs_expanded != 0)
+  n_processed_nonzero <- sum(coefs_processed != 0)
   if (n_expanded_nonzero == 0 || n_processed_nonzero == 0) {
     stop("No non-zero coefficients to compute the variance-covariance matrix")
   }
 
-  beta_idx <- cumsum(beta != 0) + sum(eta_expanded != 0)
-  beta_idx[beta == 0] <- 0
-
-  # Calculate the variance-covariance matrix for non-sparse coefficients
-  z <- do.call(rbind, lapply(seq_len(n_groups), function(k) {
-    idx <- group_idxs[[k]]
-    feature_map <- matrix(0, nrow = n_features, ncol = n_total_groups)
-    for (j in seq_len(n_features)) {
-      feature_map[j, eta_idx[j, k]] <- 1
-    }
-    x[idx, ] %*% feature_map
-  }))
-  z <- cbind(z, x)[, coef_expanded != 0]
-  coef_expanded <- coef_expanded[coef_expanded != 0]
-  lp <- z %*% coef_expanded
-  ghs_list <- lapply(seq_len(n_groups), function(k) {
-    idx <- group_idxs[[k]]
-    calc_grad_hess(lp[idx], z[idx, ], time[idx], status[idx])
-  })
-  gradients <- do.call(rbind, lapply(ghs_list, function(ghs) ghs$grad))
-  hessians <- do.call(rbind, lapply(ghs_list, function(ghs) ghs$hess))
-  hess <- matrix(
-    colSums(hessians),
-    nrow = n_expanded_nonzero, ncol = n_expanded_nonzero
+  # Group the samples according to the estimated coefficients' group
+  x <- cbind(
+    do.call(rbind, lapply(seq_len(n_groups), function(k) {
+      # Construct the feature map for each group
+      feature_map <- matrix(0, nrow = n_features, ncol = n_total_groups)
+      for (j in seq_len(n_features)) {
+        feature_map[j, eta_idx[j, k]] <- 1
+      }
+      x[group_idxs[[k]], ] %*% feature_map
+    })),
+    do.call(rbind, lapply(group_idxs, function(idx) x[idx, ]))
   )
-  hess_inv <- solve(hess)
-  cov_grad <- cov(gradients) * n_samples_total
-  vcov_expanded <- hess_inv %*% cov_grad %*% hess_inv
-  vcov_expanded_inv <- solve(vcov_expanded)
+  time <- unlist(lapply(group_idxs, function(idx) time[idx]))
+  status <- unlist(lapply(group_idxs, function(idx) status[idx]))
 
-  # Calculate the Null space of the constraints
+  # Select the non-zero coefficients and corresponding variables
+  coefs <- coefs_expanded[coefs_expanded != 0]
+  x <- x[, coefs_expanded != 0]
+
+  # Calculate the gradient and Hessian for the non-zero coefficients
+  lp <- x %*% coefs
+  gradients <- matrix(0, nrow = n_samples_total, ncol = n_expanded_nonzero)
+  hessians <- matrix(0, nrow = n_samples_total, ncol = n_expanded_nonzero^2)
+  n_passes <- 0
+  for (k in seq_len(n_groups)) {
+    idx <- n_passes + seq_len(length(group_idxs[[k]]))
+    n_passes <- n_passes + length(idx)
+    ghs <- calc_grad_hess(lp[idx], x[idx, ], time[idx], status[idx])
+    gradients[idx, ] <- ghs$grad
+    hessians[idx, ] <- ghs$hess
+  }
+  hess <- matrix(colSums(hessians), n_expanded_nonzero, n_expanded_nonzero)
+  cov_grad <- cov(gradients) * n_samples_total
+
+  # Construct the Null space of the constraints
   n_constr <- sum(rowSums(eta_idx != 0) > 0)
   if (n_constr > 0) {
     constr_idx <- which(rowSums(eta_idx != 0) > 0)
-    constr <- matrix(0, nrow = n_constr, ncol = sum(coef_expanded != 0))
+    constr <- matrix(0, nrow = n_constr, ncol = sum(coefs_expanded != 0))
     for (i in seq_len(n_constr)) {
       idx <- constr_idx[i]
       group_levels <- unique(eta_idx[idx, ])
@@ -91,29 +97,31 @@ vcov.coxens <- function(object, ...) {
       ) / n_samples_total
     }
     null_constr <- MASS::Null(t(constr))
-
-    # Calculate the variance-covariance matrix for the constrained coefficients
-    vcov_constr <- solve(t(null_constr) %*% vcov_expanded_inv %*% null_constr)
-    vcov_constr <- null_constr %*% vcov_constr %*% t(null_constr)
+    hess_inv <- null_constr %*%
+      solve(t(null_constr) %*% hess %*% null_constr) %*% t(null_constr)
+    vcov_constr <- hess_inv %*% cov_grad %*% hess_inv
   } else {
-    vcov_constr <- vcov_expanded
+    hess_inv <- solve(hess)
+    vcov_constr <- hess_inv %*% cov_grad %*% hess_inv
   }
 
-  # Reconstruct the variance-covariance matrix to the original coefficients
-  prox_processed <- matrix(0, n_expanded_nonzero, n_processed_nonzero)
+  # Construct the variance-covariance matrix for the original coefficients
+  prox_origional <- matrix(0, n_expanded_nonzero, n_processed_nonzero)
+  beta_idx <- cumsum(beta != 0) + sum(eta_expanded != 0)
+  beta_idx[beta == 0] <- 0
   j <- 1
   for (i in seq_len(n_features)) {
     idx1 <- unique(eta_idx[i, ])
     idx2 <- beta_idx[i]
     if (any(idx1 != 0) || idx2 != 0) {
       for (idx in idx1) {
-        prox_processed[idx, j] <- 1
-        prox_processed[idx2, j] <- 1
+        prox_origional[idx, j] <- 1
+        prox_origional[idx2, j] <- 1
         j <- j + 1
       }
     }
   }
-  vcov_processed <- t(prox_processed) %*% vcov_constr %*% prox_processed
+  vcov_processed <- t(prox_origional) %*% vcov_constr %*% prox_origional
 
   return(vcov_processed)
 }

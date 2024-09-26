@@ -66,8 +66,9 @@ vcov.coxens <- function(object, ...) {
   # Select the non-zero coefficients and corresponding variables
   coefs <- coefs_expanded[coefs_expanded != 0]
   x <- x[, coefs_expanded != 0]
-  eta_idx[eta_idx != 0] <- eta_idx[eta_idx != 0] -
-    (max(eta_idx) - sum(unique(c(eta_idx)) != "0"))
+  from <- sort(unique(c(eta_idx)))
+  to <- seq_len(length(from)) - 1
+  eta_idx <- apply(eta_idx, c(1, 2), function(e) to[match(e, from)])
 
   # Calculate the gradient and Hessian for the non-zero coefficients
   lp <- x %*% coefs

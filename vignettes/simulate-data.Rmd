@@ -1,0 +1,91 @@
+---
+title: "The Generation of Simulated Survival Data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{The Generation of Simulated Survival Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(survtrans)
+
+library(dplyr)
+library(MASS)
+library(simsurv)
+```
+
+## Examples
+
+### Example 1: One-source Transfer Learning
+
+```{r}
+n_samples_source <- 400
+n_samples_target <- 100
+p <- 20
+d <- 4
+
+mu <- rep(0, p)
+sigma <- diag(p)
+beta <- c(rep(0.5, d), rep(0, p - d))
+names(beta) <- paste0("X", 1:p)
+eta <- c(rep(-1, d / 2), rep(0, p - d / 2))
+
+cov_source <- data.frame(
+  id = 1:n_samples_source, mvrnorm(n_samples_source, mu = mu, Sigma = sigma)
+)
+time_source <- simsurv(
+  lambdas = 1 / 3, gammas = 3, x = cov_source, betas = beta, maxt = 2
+)
+cov_source$group <- 1
+time_source$group <- 1
+
+cov_target <- data.frame(
+  id = 1:n_samples_target, mvrnorm(n_samples_target, mu = mu, Sigma = sigma)
+)
+time_target <- simsurv(
+  lambdas = 1 / 2, gammas = 1, x = cov_target, betas = beta + eta, maxt = 2
+)
+cov_target$group <- 2
+time_target$group <- 2
+
+covs <- rbind(cov_source, cov_target)
+times <- rbind(time_source, time_target)
+sim1 <- left_join(covs, times, by = c("id", "group")) %>%
+  rename(time = "eventtime") %>%
+  mutate(id = seq_len(nrow(.)))
+```
+
+### Example 2: Multiple-source Transfer Learning
+
+```{r}
+n_groups <- 5
+n_samples <- 100
+p <- 20
+d <- 4
+
+mu <- rep(0, p)
+sigma <- diag(p)
+beta <- c(rep(0.3, d), rep(0, p - d))
+names(beta) <- paste0("X", 1:p)
+etas <- matrix(0, nrow = p, ncol = n_groups)
+lambdas <- numeric(n_groups)
+gammas <- numeric(n_groups)
+for (k in 1:n_groups) {
+  etas[1:(d / 2), k] <- ifelse(k %% 2, -0.6, 0.6)
+  lambdas[k] <- ifelse(k %% 2, 1 / 3, 1 / 2)
+  gammas[k] <- ifelse(k %% 2, 3, 2)
+}
+etas[, 1] <- rep(0, p)
+dist <- rep("weibull", n_groups)
+maxt <- 2
+
+sim2 <- simsurv_tl(beta, etas, lambdas, gammas, dist, maxt, n_samples)
+```

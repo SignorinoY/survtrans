@@ -1,0 +1,23 @@
+url: ~
+template:
+  bootstrap: 5
+  bootswatch: litera
+  
+reference:
+- title: "Ensemble Learning for Cox Models"
+  contents:
+  - ends_with("coxens")
+- title: "Penalized Cox Models"
+  contents:
+  - ends_with("ncvcox")
+- title: Utils
+  contents:
+  - calc_lambda_max
+  - simsurv_tl
+- title: "Data Sets"
+  contents:
+  - sim1
+  - sim2
+- title: internal
+  contents:
+  - survtrans_control

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">survtrans</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,7 +35,7 @@
     </div>
 
     <div class="section level2">
-      <h2 id="all-functions">All functions<a class="anchor" aria-label="anchor" href="#all-functions"></a></h2>
+      <h2 id="ensemble-learning-for-cox-models">Ensemble Learning for Cox Models<a class="anchor" aria-label="anchor" href="#ensemble-learning-for-cox-models"></a></h2>
 
 
 
@@ -53,52 +53,63 @@
         <dd>BIC method for a <code>coxens</code> model</dd>
       </dl><dl><dt>
 
-          <code><a href="BIC.coxgrp.html">BIC(<i>&lt;coxgrp&gt;</i>)</a></code>
-
-        </dt>
-        <dd>BIC for Multiple-sources Cox proportional hazards model with group sparsity</dd>
-      </dl><dl><dt>
-
-          <code><a href="BIC.coxmtl.html">BIC(<i>&lt;coxmtl&gt;</i>)</a></code>
-
-        </dt>
-        <dd>BIC for Multi-source Cox proportional hazards model</dd>
-      </dl><dl><dt>
-
-          <code><a href="BIC.coxsg.html">BIC(<i>&lt;coxsg&gt;</i>)</a></code>
-
-        </dt>
-        <dd>BIC for Subgroup analysis of Cox proportional hazards model</dd>
-      </dl><dl><dt>
-
-          <code><a href="BIC.coxtl.html">BIC(<i>&lt;coxtl&gt;</i>)</a></code>
-
-        </dt>
-        <dd>BIC of Transfer Learning for Cox proportional hazards model</dd>
-      </dl><dl><dt>
-
-          <code><a href="BIC.ncvcox.html">BIC(<i>&lt;ncvcox&gt;</i>)</a></code>
-
-        </dt>
-        <dd>BIC for Non-convex penalized Cox proportional hazards model</dd>
-      </dl><dl><dt>
-
-          <code><a href="calc_lambda_max.html">calc_lambda_max()</a></code>
-
-        </dt>
-        <dd>Determine the maximum value of the penalty parameter lambda</dd>
-      </dl><dl><dt>
-
           <code><a href="coef.coxens.html">coef(<i>&lt;coxens&gt;</i>)</a></code>
 
         </dt>
         <dd>Extract Model Coefficients from <code>coxens</code> Object</dd>
       </dl><dl><dt>
 
-          <code><a href="coef.cv_ncvcox.html">coef(<i>&lt;cv_ncvcox&gt;</i>)</a></code>
+          <code><a href="coxens.html">coxens()</a></code>
 
         </dt>
-        <dd>Extract coefficients from a cv_ncvcox object</dd>
+        <dd>Multiple-sources Cox proportional hazards model with group sparsity and local-global transfer penalties</dd>
+      </dl><dl><dt>
+
+          <code><a href="logLik.coxens.html">logLik(<i>&lt;coxens&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Log-likelihood for <code>coxens</code> model</dd>
+      </dl><dl><dt>
+
+          <code><a href="print.summary.coxens.html">print(<i>&lt;summary.coxens&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Print method for summary of <code>coxens</code> model</dd>
+      </dl><dl><dt>
+
+          <code><a href="summary.coxens.html">summary(<i>&lt;coxens&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Summary method for a <code>coxens</code> model</dd>
+      </dl><dl><dt>
+
+          <code><a href="vcov.coxens.html">vcov(<i>&lt;coxens&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Variance-covariance method for a <code>coxens</code> model</dd>
+      </dl></div><div class="section level2">
+      <h2 id="penalized-cox-models">Penalized Cox Models<a class="anchor" aria-label="anchor" href="#penalized-cox-models"></a></h2>
+
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="BIC.ncvcox.html">BIC(<i>&lt;ncvcox&gt;</i>)</a></code>
+
+        </dt>
+        <dd>BIC for a <code>ncvcox</code> model</dd>
+      </dl><dl><dt>
+
+          <code><a href="coef.cv.ncvcox.html">coef(<i>&lt;cv.ncvcox&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Extract coefficients from a <code>cv.ncvcox</code> object</dd>
       </dl><dl><dt>
 
           <code><a href="coef.ncvcox.html">coef(<i>&lt;ncvcox&gt;</i>)</a></code>
@@ -107,106 +118,16 @@
         <dd>Extract coefficients from a ncvcox object</dd>
       </dl><dl><dt>
 
-          <code><a href="coxens.html">coxens()</a></code>
-
-        </dt>
-        <dd>Multiple-sources Cox proportional hazards model with group sparsity and Local-Global transfer</dd>
-      </dl><dl><dt>
-
-          <code><a href="coxens1.html">coxens1()</a></code>
-
-        </dt>
-        <dd>Multiple-sources Cox proportional hazards model with group sparsity and Local-Global transfer</dd>
-      </dl><dl><dt>
-
-          <code><a href="coxgrp.html">coxgrp()</a></code>
-
-        </dt>
-        <dd>Multiple-sources Cox proportional hazards model with group sparsity</dd>
-      </dl><dl><dt>
-
-          <code><a href="coxmtl.html">coxmtl()</a></code>
-
-        </dt>
-        <dd>Multi-task Learning for Cox proportional hazards model</dd>
-      </dl><dl><dt>
-
-          <code><a href="coxmtl_oracle.html">coxmtl_oracle()</a></code>
-
-        </dt>
-        <dd>Multi-task Learning of Cox proportional hazards model (Oracle)</dd>
-      </dl><dl><dt>
-
-          <code><a href="coxsg.html">coxsg()</a></code>
-
-        </dt>
-        <dd>Subgroup Analysis for Cox proportional hazards model</dd>
-      </dl><dl><dt>
-
-          <code><a href="coxsg_oracle.html">coxsg_oracle()</a></code>
-
-        </dt>
-        <dd>Personalized Multi-task Learning of Cox proportional hazards model (Oracle)</dd>
-      </dl><dl><dt>
-
-          <code><a href="coxtl.html">coxtl()</a></code>
-
-        </dt>
-        <dd>Transfer Learning for Cox proportional hazards model</dd>
-      </dl><dl><dt>
-
-          <code><a href="coxtl_group.html">coxtl_group()</a></code>
-
-        </dt>
-        <dd>Transfer Learning for Cox proportional hazards model</dd>
-      </dl><dl><dt>
-
-          <code><a href="coxtl_oracle.html">coxtl_oracle()</a></code>
-
-        </dt>
-        <dd>Transfer Learning for Cox proportional hazards model (Oracle) without constraints</dd>
-      </dl><dl><dt>
-
-          <code><a href="cv_ncvcox.html">cv_ncvcox()</a></code>
+          <code><a href="cv.ncvcox.html">cv.ncvcox()</a></code>
 
         </dt>
         <dd>Cross-validation for <code>ncvcox</code></dd>
       </dl><dl><dt>
 
-          <code><a href="cv_odetrans.html">cv_odetrans()</a></code>
-
-        </dt>
-        <dd>Cross-validation for <code>survtran</code></dd>
-      </dl><dl><dt>
-
-          <code><a href="logLik.coxens.html">logLik(<i>&lt;coxens&gt;</i>)</a></code>
-
-        </dt>
-        <dd>BIC method for a <code>coxens</code> model</dd>
-      </dl><dl><dt>
-
-          <code><a href="logLik.coxmtl.html">logLik(<i>&lt;coxmtl&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Log-likelihood of a Multi-task Learning for Cox proportional hazards model</dd>
-      </dl><dl><dt>
-
-          <code><a href="logLik.coxsg.html">logLik(<i>&lt;coxsg&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Log-likelihood of a subgroup analysis for Cox proportional hazards model</dd>
-      </dl><dl><dt>
-
-          <code><a href="logLik.coxtl.html">logLik(<i>&lt;coxtl&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Log-likelihood of Transfer Learning for Cox proportional hazards model</dd>
-      </dl><dl><dt>
-
           <code><a href="logLik.ncvcox.html">logLik(<i>&lt;ncvcox&gt;</i>)</a></code>
 
         </dt>
-        <dd>Log-likelihood of Non-convex penalized Cox proportional hazards model</dd>
+        <dd>Log-likelihood for <code>ncvcox</code> model</dd>
       </dl><dl><dt>
 
           <code><a href="ncvcox.html">ncvcox()</a></code>
@@ -215,35 +136,69 @@
         <dd>Non-convex penalized Cox proportional hazards model</dd>
       </dl><dl><dt>
 
-          <code><a href="odetrans.html">odetrans()</a></code>
+          <code><a href="plot.cv.ncvcox.html">plot(<i>&lt;cv.ncvcox&gt;</i>)</a></code>
 
         </dt>
-        <dd>Transfer Learning for Survival Analysis via Ordinary Differential Equations</dd>
-      </dl><dl><dt>
-
-          <code><a href="plot.cv_ncvcox.html">plot(<i>&lt;cv_ncvcox&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Plot the cross-validation curve from a cv_ncvcox x</dd>
+        <dd>Plot the cross-validation curve from <code>cv.ncvcox</code> object</dd>
       </dl><dl><dt>
 
           <code><a href="predict.ncvcox.html">predict(<i>&lt;ncvcox&gt;</i>)</a></code>
 
         </dt>
-        <dd>Predict method for ncvcox objects</dd>
-      </dl><dl><dt>
-
-          <code><a href="print.summary.coxens.html">print(<i>&lt;summary.coxens&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Print Method for Summary of <code>coxens</code> Model</dd>
+        <dd>Predict method for <code>ncvcox</code> objects</dd>
       </dl><dl><dt>
 
           <code><a href="print.summary.ncvcox.html">print(<i>&lt;summary.ncvcox&gt;</i>)</a></code>
 
         </dt>
-        <dd>Print Method for Summary of <code>ncvcox</code> Model</dd>
+        <dd>Print method for summary of <code>ncvcox</code> model</dd>
       </dl><dl><dt>
+
+          <code><a href="summary.ncvcox.html">summary(<i>&lt;ncvcox&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Summary method for a <code>ncvcox</code> model</dd>
+      </dl><dl><dt>
+
+          <code><a href="vcov.ncvcox.html">vcov(<i>&lt;ncvcox&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Variance-covariance method for a <code>ncvcox</code> model</dd>
+      </dl></div><div class="section level2">
+      <h2 id="utils">Utils<a class="anchor" aria-label="anchor" href="#utils"></a></h2>
+
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="calc_lambda_max.html">calc_lambda_max()</a></code>
+
+        </dt>
+        <dd>Determine the maximum value of the penalty parameter lambda</dd>
+      </dl><dl><dt>
+
+          <code><a href="simsurv_tl.html">simsurv_tl()</a></code>
+
+        </dt>
+        <dd>Simulate survival data of Multi-source Cox model</dd>
+      </dl></div><div class="section level2">
+      <h2 id="data-sets">Data Sets<a class="anchor" aria-label="anchor" href="#data-sets"></a></h2>
+
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
 
           <code><a href="sim1.html">sim1</a></code>
 
@@ -255,44 +210,9 @@
 
         </dt>
         <dd>Simulated Group Survival Data: Multiple-source Transfer Learning</dd>
-      </dl><dl><dt>
-
-          <code><a href="simsurv_tl.html">simsurv_tl()</a></code>
-
-        </dt>
-        <dd>Simulate survival data of Multi-source Cox model</dd>
-      </dl><dl><dt>
-
-          <code><a href="summary.coxens.html">summary(<i>&lt;coxens&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Summary method for a <code>coxens</code> model</dd>
-      </dl><dl><dt>
-
-          <code><a href="summary.ncvcox.html">summary(<i>&lt;ncvcox&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Summary method for a <code>ncvcox</code> model</dd>
-      </dl><dl><dt>
-
-          <code><a href="survtrans_control.html">survtrans_control()</a></code>
-
-        </dt>
-        <dd>Ancillary arguments for controlling survtrans fitting</dd>
-      </dl><dl><dt>
-
-          <code><a href="vcov.coxens.html">vcov(<i>&lt;coxens&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Variance-covariance method for a <code>coxens</code> model</dd>
-      </dl><dl><dt>
-
-          <code><a href="vcov.ncvcox.html">vcov(<i>&lt;ncvcox&gt;</i>)</a></code>
-
-        </dt>
-        <dd>@title Variance-covariance method for a <code>ncvcox</code> model</dd>
       </dl></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">

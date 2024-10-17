@@ -9,6 +9,8 @@ survtrans_control(
   maxit = 1000,
   inner.eps = 0.001,
   inner.maxit = 100,
+  abstol = 1e-04,
+  reltol = 0.001,
   verbose = FALSE
 )
 }
@@ -24,6 +26,12 @@ algorithm. Default is 1e-3.}
 
 \item{inner.maxit}{the maximum number of iterations for the inner loop
 of the CCD algorithm. Default is 100.}
+
+\item{abstol}{the absolute tolerance for the proposed algorithm.
+Default is 1e-4.}
+
+\item{reltol}{the relative tolerance for the proposed algorithm.
+Default is 1e-3.}
 
 \item{verbose}{a logical value indicating whether to print messages
 during the fitting process. Default is \code{FALSE}.}

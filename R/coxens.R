@@ -197,7 +197,7 @@ coxens <- function(
       rbind(contr_penalty %*% theta - alpha, contr_sum %*% theta), "2"
     )
     s_norm <- norm(
-      crossprod(contr_penalty, alpha - alpha_old), "2"
+      Matrix::crossprod(contr_penalty, alpha - alpha_old), "2"
     ) * vartheta
 
     eps_pri <- sqrt(n_constraints) * control$abstol +
@@ -209,7 +209,10 @@ coxens <- function(
       )
     eps_dual <- sqrt(n_parameters) * control$abstol +
       control$reltol * norm(
-        rbind(crossprod(contr_penalty, nu), crossprod(contr_sum, mu)), "2"
+        rbind(
+          Matrix::crossprod(contr_penalty, nu),
+          Matrix::crossprod(contr_sum, mu)
+        ), "2"
       )
 
     # Update the penalty parameter

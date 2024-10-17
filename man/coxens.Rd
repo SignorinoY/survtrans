@@ -68,7 +68,7 @@ library(survtrans)
 formula <- Surv(time, status) ~ . - group - id
 fit <- coxens(
   formula, sim2, sim2$group,
-  lambda1 = 0.03, lambda2 = 0.02, lambda3 = 0.01, penalty = "SCAD"
+  lambda1 = 0.03, lambda2 = 0.04, lambda3 = 0.01, penalty = "SCAD"
 )
 summary(fit)
 }

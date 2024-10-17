@@ -30,7 +30,7 @@
 #' formula <- Surv(time, status) ~ . - group - id
 #' fit <- coxens(
 #'   formula, sim2, sim2$group,
-#'   lambda1 = 0.03, lambda2 = 0.02, lambda3 = 0.01, penalty = "SCAD"
+#'   lambda1 = 0.03, lambda2 = 0.04, lambda3 = 0.01, penalty = "SCAD"
 #' )
 #' summary(fit)
 coxens <- function(
@@ -128,13 +128,18 @@ coxens <- function(
       )
     )
   )
-  n_constraints <- nrow(contr_penalty)
+
+  n_constraints_sum <- nrow(contr_sum)
+  n_constraints_penalty <- nrow(contr_penalty)
+  n_constraints <- n_constraints_sum + n_constraints_penalty
+  n_parameters <- n_features * (n_groups + 1)
+
   contr_sum2 <- Matrix::crossprod(contr_sum)
   contr_penalty2 <- Matrix::crossprod(contr_penalty)
 
   sparse_idx <- 1:(n_groups * n_features)
   global_idx <- (n_groups * n_features + 1):(2 * n_groups * n_features)
-  local_idx <- (2 * n_groups * n_features + 1):n_constraints
+  local_idx <- (2 * n_groups * n_features + 1):n_constraints_penalty
 
   x_tilde <- cbind(
     Matrix::bdiag(lapply(group_idxs, function(idx) x[idx, ])),
@@ -143,9 +148,9 @@ coxens <- function(
   time_tilde <- unlist(lapply(group_idxs, function(idx) time[idx]))
   status_tilde <- unlist(lapply(group_idxs, function(idx) status[idx]))
 
-  alpha <- Matrix::Matrix(0, n_constraints, 1, sparse = TRUE)
+  alpha <- Matrix::Matrix(0, n_constraints_penalty, 1, sparse = TRUE)
   mu <- Matrix::Matrix(0, n_features, 1, sparse = TRUE)
-  nu <- Matrix::Matrix(0, n_constraints, 1, sparse = TRUE)
+  nu <- Matrix::Matrix(0, n_constraints_penalty, 1, sparse = TRUE)
   vartheta <- 1
 
   repeat {
@@ -188,16 +193,29 @@ coxens <- function(
     mu <- mu + vartheta * contr_sum %*% theta
     nu <- nu + vartheta * (contr_penalty %*% theta - alpha)
 
-    # Update the penalty parameter
-    r <- Matrix::norm(contr_penalty %*% theta - alpha, type = "I") +
-      Matrix::norm(contr_sum %*% theta, type = "I")
-    s <- Matrix::norm(
-      Matrix::crossprod(contr_penalty, alpha - alpha_old),
-      type = "I"
+    r_norm <- norm(
+      rbind(contr_penalty %*% theta - alpha, contr_sum %*% theta), "2"
     )
-    if (r > 10 * s) vartheta <- vartheta * rho
-    if (r < 10 * s) vartheta <- vartheta / rho
-    vartheta <- max(1, vartheta)
+    s_norm <- norm(
+      crossprod(contr_penalty, alpha - alpha_old), "2"
+    ) * vartheta
+
+    eps_pri <- sqrt(n_constraints) * control$abstol +
+      control$reltol * pmax(
+        norm(
+          rbind(contr_penalty %*% theta, contr_sum %*% theta), "2"
+        ),
+        norm(alpha, "2")
+      )
+    eps_dual <- sqrt(n_parameters) * control$abstol +
+      control$reltol * norm(
+        rbind(crossprod(contr_penalty, nu), crossprod(contr_sum, mu)), "2"
+      )
+
+    # Update the penalty parameter
+    if (r_norm > 10 * s_norm) vartheta <- vartheta * rho
+    if (s_norm > 10 * r_norm) vartheta <- vartheta / rho
+    vartheta <- min(max(vartheta, 1e-1), 10)
 
     # Check the convergence
     if (n_iterations >= control$maxit) {
@@ -206,16 +224,23 @@ coxens <- function(
         "Maximum number of iterations reached (", control$maxit, ")."
       )
     }
-    if (r < control$eps && s < control$eps) {
+    if (r_norm < eps_pri && s_norm < eps_dual) {
       convergence <- TRUE
       message <- paste0(
         "Convergence reached at iteration ", n_iterations, "."
       )
     }
 
+
     offset <- x_tilde %*% theta
     hazard <- exp(offset)
-    risk_set <- ave(hazard, group, FUN = cumsum)
+    risk_set <- numeric(n_samples_total)
+    n_passes <- 0
+    for (k in 1:n_groups) {
+      idx <- n_passes + seq_len(length(group_idxs[[k]]))
+      n_passes <- n_passes + length(group_idxs[[k]])
+      risk_set[idx] <- cumsum(hazard[idx])
+    }
     loss <- -sum(status * (offset - log(risk_set)))
     if (-loss / null_deviance < 0.01) {
       convergence <- TRUE
@@ -224,6 +249,20 @@ coxens <- function(
         "). Stopping the algorithm."
       )
     }
+
+    loss_penalty <- lambda1 * sum(abs(alpha[sparse_idx])) +
+      lambda2 * sum(abs(alpha[global_idx])) +
+      lambda3 * sum(abs(alpha[local_idx]))
+    loss_penalty <- loss_penalty * n_samples_total
+
+    if (control$verbose) {
+      cat(
+        "Iteration ", n_iterations, ": ", "r: ", r_norm, ", s: ", s_norm, "\n",
+        "Penalty parameter: ", vartheta, "\n",
+        "Loss: ", loss + loss_penalty, "(", loss, "+", loss_penalty, ")\n",
+      )
+    }
+
     if (convergence) break
   }
 

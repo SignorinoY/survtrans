@@ -42,9 +42,7 @@ coxens <- function(
       1
     ), rho = 2.0, init, control, ...) {
   # Load the data
-  data_ <- data
-  group_ <- group
-  data <- preprocess_data(formula, data_, group = group_)
+  data <- preprocess_data(formula, data, group = group)
   x <- data$x
   x_scale <- attr(x, "scale")
   time <- data$time
@@ -243,8 +241,9 @@ coxens <- function(
       idx <- n_passes + seq_len(length(group_idxs[[k]]))
       n_passes <- n_passes + length(group_idxs[[k]])
       risk_set[idx] <- cumsum(hazard[idx])
+      risk_set[idx] <- ave(risk_set[idx], time_tilde[idx], FUN = max)
     }
-    loss <- -sum(status * (offset - log(risk_set)))
+    loss <- -sum(status_tilde * (offset - log(risk_set)))
     if (-loss / null_deviance < 0.01) {
       convergence <- TRUE
       message <- paste0(
@@ -262,7 +261,7 @@ coxens <- function(
       cat(
         "Iteration ", n_iterations, ": ", "r: ", r_norm, ", s: ", s_norm, "\n",
         "Penalty parameter: ", vartheta, "\n",
-        "Loss: ", loss + loss_penalty, "(", loss, "+", loss_penalty, ")\n",
+        "Loss: ", loss + loss_penalty, "(", loss, "+", loss_penalty, ")\n"
       )
     }
 
@@ -282,7 +281,7 @@ coxens <- function(
       for (k in 1:n_groups) {
         if (is_processed[k]) next
         pos <- get_position(j, k, n_groups)
-        if (abs(alpha_local[i, pos]) < control$eps) {
+        if (abs(alpha_local[i, pos]) < control$abstol) {
           eta_idx[i, k] <- j
           is_processed[k] <- TRUE
         }
@@ -293,10 +292,10 @@ coxens <- function(
       eta[i, idx] <- mean(theta[i, idx])
     }
   }
-  eta[abs(eta) < control$eps] <- 0
+  eta[abs(eta) < control$abstol] <- 0
 
   beta <- theta[, n_groups + 1]
-  beta[abs(beta) < control$eps] <- 0
+  beta[abs(beta) < control$abstol] <- 0
 
   # Unscale the coefficients
   coefficients <- sweep(cbind(eta, beta), 1, x_scale, `/`)

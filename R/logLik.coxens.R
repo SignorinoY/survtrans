@@ -11,22 +11,21 @@ logLik.coxens <- function(object, ...) {
   x <- object$x
   n_groups <- length(unique(group))
   group_levels <- levels(group)
-  group_idxs <- lapply(group_levels, function(g) which(group == g))
+  group_idxs <- lapply(group_levels, function(x) which(group == x))
   coefficients <- object$coefficients
 
   beta <- coefficients[, 1:n_groups] + coefficients[, (n_groups + 1)]
-
   # Calculate the log-likelihood
   offset <- numeric(nrow(x))
   for (k in seq_len(n_groups)) {
     idx <- group_idxs[[k]]
     offset[idx] <- x[idx, ] %*% beta[, k]
   }
-  hazard <- exp(offset - max(offset))
+  hazard <- exp(offset)
   risk_set <- ave(hazard, group, FUN = cumsum)
-  risk_set <- unlist(lapply(seq_len(n_groups), function(k) {
+  for (k in seq_len(n_groups)) {
     idx <- group_idxs[[k]]
-    ave(risk_set[idx], time[idx], FUN = max)
-  })) # Update the risk set for each group based on unique time points
-  return(sum(status * (offset - log(risk_set) - max(offset))))
+    risk_set[idx] <- ave(risk_set[idx], time[idx], FUN = max)
+  } # Update the risk set for each group based on unique time points
+  return(sum(status * (offset - log(risk_set))))
 }

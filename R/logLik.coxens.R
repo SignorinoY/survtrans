@@ -13,6 +13,7 @@ logLik.coxens <- function(object, ...) {
   group_levels <- levels(group)
   group_idxs <- lapply(group_levels, function(x) which(group == x))
   coefficients <- object$coefficients
+  coefficients <- sweep(coefficients, 1, attr(x, "scale"), "*")
 
   beta <- coefficients[, 1:n_groups] + coefficients[, (n_groups + 1)]
   # Calculate the log-likelihood

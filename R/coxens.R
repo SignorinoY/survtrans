@@ -318,7 +318,7 @@ coxens <- function(
     time = time,
     status = status,
     group = group,
-    x = sweep(x, 2, x_scale, `/`)
+    x = x
   )
   class(fit) <- "coxens"
   return(fit)

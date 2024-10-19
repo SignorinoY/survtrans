@@ -173,7 +173,7 @@ coxens <- function(
     lhs <- xwx + vartheta * (contr_sum2 + contr_penalty2)
     rhs <- xwz - Matrix::crossprod(contr_sum, mu) +
       vartheta * Matrix::crossprod(contr_penalty, alpha - nu / vartheta)
-    theta <- Matrix::solve(lhs, rhs, sparse = TRUE, tol = control$abstol)
+    theta <- Matrix::solve(lhs, rhs, sparse = TRUE, tol = control$eps)
 
     # Update the auxiliary variables
     alpha_old <- alpha
@@ -282,7 +282,7 @@ coxens <- function(
       for (k in 1:n_groups) {
         if (is_processed[k]) next
         pos <- get_position(j, k, n_groups)
-        if (abs(alpha_local[i, pos]) < control$abstol) {
+        if (abs(alpha_local[i, pos]) < control$eps) {
           eta_idx[i, k] <- j
           is_processed[k] <- TRUE
         }
@@ -294,11 +294,11 @@ coxens <- function(
     }
   }
   # Handling the extreme small values to zero
-  eta[abs(eta) < control$abstol] <- 0
+  eta[abs(eta) < control$eps] <- 0
 
   # Forcing beta satisfying sum(eta) = beta
   beta <- rowMeans(eta) + theta[, n_groups + 1]
-  beta[abs(beta) < control$abstol] <- 0
+  beta[abs(beta) < control$eps] <- 0
 
   # Unscale the coefficients
   coefficients <- sweep(cbind(eta, beta), 1, x_scale, `/`)

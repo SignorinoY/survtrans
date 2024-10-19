@@ -13,15 +13,31 @@ BIC.coxens <- function(object, type = c("traditional", "modified"), ...) {
   coefficients <- object$coefficients
   n_samples <- nrow(object$x)
   n_features <- nrow(coefficients)
-  n_groups <- ncol(coefficients)
+  n_groups <- ncol(coefficients) - 1
+
+  # Number of active constraints
+  eta_group <-  matrix(0, n_features, n_groups)
+  for (j in seq_len(n_features)) {
+    feature_values <- coefficients[j, 1:n_groups]
+    feature_levels <- unique(feature_values)
+    for (k in seq_along(feature_levels)) {
+      eta_group[j, feature_values == feature_levels[k]] <- k
+    }
+  }
+  n_active_constraints <- sum(apply(eta_group, 1, function(row) {
+    length(unique(row)) > 1
+  }))
+
+  # The number of parameters should minus the number of active constraints
+  n_parameters <- sum(apply(coefficients, 1, function(coef_row) {
+    length(unique(coef_row[coef_row != 0]))
+  })) - n_active_constraints
 
   # Log-likelihood of the model
   loglik <- logLik(object)
 
-  # Calculate the BIC
+  # The parameter of the BIC
   c_n <- ifelse(type == "traditional", 1, log(log(n_features * n_groups)))
-  n_parameters <- sum(apply(coefficients, 1, function(coef_row) {
-    length(unique(coef_row[coef_row != 0]))
-  }))
+
   return(-2 * loglik + c_n * n_parameters * log(n_samples))
 }

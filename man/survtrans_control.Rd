@@ -5,18 +5,18 @@
 \title{Ancillary arguments for controlling survtrans fitting}
 \usage{
 survtrans_control(
-  eps = 1e-04,
+  eps = 0.001,
   maxit = 1000,
   inner.eps = 0.001,
   inner.maxit = 100,
-  abstol = 1e-04,
-  reltol = 0.001,
+  abstol = 1e-06,
+  reltol = 1e-04,
   verbose = FALSE
 )
 }
 \arguments{
 \item{eps}{the convergence criteria for the proposed algorithm.
-Default is 1e-4.}
+Default is 1e-3.}
 
 \item{maxit}{the maximum number of iterations for the proposed algorithm.
 Default is 1000.}
@@ -28,10 +28,10 @@ algorithm. Default is 1e-3.}
 of the CCD algorithm. Default is 100.}
 
 \item{abstol}{the absolute tolerance for the proposed algorithm.
-Default is 1e-4.}
+Default is 1e-6.}
 
 \item{reltol}{the relative tolerance for the proposed algorithm.
-Default is 1e-3.}
+Default is 1e-4.}
 
 \item{verbose}{a logical value indicating whether to print messages
 during the fitting process. Default is \code{FALSE}.}

@@ -281,7 +281,7 @@ coxens <- function(
       for (k in 1:n_groups) {
         if (is_processed[k]) next
         pos <- get_position(j, k, n_groups)
-        if (abs(alpha_local[i, pos]) < control$abstol) {
+        if (abs(alpha_local[i, pos]) < control$eps) {
           eta_idx[i, k] <- j
           is_processed[k] <- TRUE
         }
@@ -292,10 +292,10 @@ coxens <- function(
       eta[i, idx] <- mean(theta[i, idx])
     }
   }
-  eta[abs(eta) < control$abstol] <- 0
+  eta[abs(eta) < control$eps] <- 0
 
   beta <- theta[, n_groups + 1]
-  beta[abs(beta) < control$abstol] <- 0
+  beta[abs(beta) < control$eps] <- 0
 
   # Unscale the coefficients
   coefficients <- sweep(cbind(eta, beta), 1, x_scale, `/`)

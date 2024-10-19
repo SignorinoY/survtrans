@@ -252,9 +252,10 @@ coxens <- function(
       )
     }
 
-    loss_penalty <- lambda1 * sum(abs(alpha[sparse_idx])) +
-      lambda2 * sum(abs(alpha[global_idx])) +
-      lambda3 * sum(abs(alpha[local_idx]))
+    alpha_ <- contr_penalty %*% theta
+    loss_penalty <- lambda1 * sum(abs(alpha_[sparse_idx])) +
+      lambda2 * sum(abs(alpha_[global_idx])) +
+      lambda3 * sum(abs(alpha_[local_idx]))
     loss_penalty <- loss_penalty * n_samples_total
 
     if (control$verbose) {
